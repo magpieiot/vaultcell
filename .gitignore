@@ -1,0 +1,48 @@
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# OS
+.DS_Store
+Thumbs.db
+*.orig
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# 本地工具缓存与生成物
+.compile
+spm-packages/
+.taste-skill-vendor/
+
+# AI / 编辑器私有目录（保留 rules.md 供团队共享）
+.codebuddy/*
+!.codebuddy/rules.md
+.workbuddy/
+.trae/
+.vscode/

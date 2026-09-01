@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22203" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CDPasswordEntry" representedClassName="CDPasswordEntry" syncable="YES">
+        <attribute name="OAuthProviderID" optional="YES" attributeType="String"/>
+        <attribute name="accountStatusRaw" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="breachStatusRaw" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="bundleEmailAddress" optional="YES" attributeType="String"/>
+        <attribute name="bundlePhoneNumber" optional="YES" attributeType="String"/>
+        <attribute name="categoryID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="dataSourceRaw" optional="YES" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="encryptedCustomFields" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedNotes" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedPassword" attributeType="Binary"/>
+        <attribute name="encryptedPasswordHistory" optional="YES" attributeType="Binary"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date"/>
+        <attribute name="has2FA" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="hasBundleEmail" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="hasBundlePhone" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isDuplicatePassword" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="isPasswordResetEmail" attributeType="Boolean" defaultValue="NO" renamingIdentifier="isPasswordRecoveryEmail"/>
+        <attribute name="isPasswordResetPhone" attributeType="Boolean" defaultValue="NO" renamingIdentifier="isPasswordRecoveryPhone"/>
+        <attribute name="isSynced" attributeType="Boolean" defaultValue="YES"/>
+        <attribute name="lastUsedAt" optional="YES" attributeType="Date"/>
+        <attribute name="passwordChangedAt" optional="YES" attributeType="Date"/>
+        <attribute name="passwordlessLoginTypeRaw" attributeType="Integer 64" defaultValue="0"/>
+        <attribute name="passwordStrengthRaw" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="siteName" attributeType="String"/>
+        <attribute name="siteURL" optional="YES" attributeType="String"/>
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date"/>
+        <attribute name="username" attributeType="String"/>
+        <attribute name="version" attributeType="Integer 64" defaultValue="1"/>
+        <relationship name="oAuthProvider" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDOAuthProvider" inverseName="passwordEntry" inverseEntity="CDOAuthProvider"/>
+        <relationship name="tagsRelationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="passwordEntries" inverseEntity="CDTag"/>
+        <relationship name="twoFactorConfigs" toMany="YES" deletionRule="Cascade" destinationEntity="CDTwoFactorConfig" inverseName="passwordEntry" inverseEntity="CDTwoFactorConfig"/>
+    </entity>
+    <entity name="CDPincodeEntry" representedClassName="CDPincodeEntry" syncable="YES">
+        <attribute name="categoryID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="dataSourceRaw" optional="YES" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="encryptedCustomFields" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedNotes" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedPincode" attributeType="Binary"/>
+        <attribute name="encryptedPincodeHistory" optional="YES" attributeType="Binary"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="isNumericOnly" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="isSynced" attributeType="Boolean" defaultValue="YES"/>
+        <attribute name="lastUsedAt" optional="YES" attributeType="Date"/>
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date"/>
+        <attribute name="version" attributeType="Integer 64" defaultValue="1"/>
+        <relationship name="tagsRelationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="pincodeEntries" inverseEntity="CDTag"/>
+    </entity>
+    <entity name="CDBankcardEntry" representedClassName="CDBankcardEntry" syncable="YES">
+        <attribute name="bankName" attributeType="String"/>
+        <attribute name="cardNetworks" optional="YES" attributeType="String"/>
+        <attribute name="cardTypeRaw" optional="YES" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="cardholder" attributeType="String"/>
+        <attribute name="categoryID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="dataSourceRaw" optional="YES" attributeType="Integer 16" defaultValue="0"/>
+        <attribute name="encryptedCardNumber" attributeType="Binary"/>
+        <attribute name="encryptedCvv" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedNotes" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedOnlineBankingPassword" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedPin" optional="YES" attributeType="Binary"/>
+        <attribute name="encryptedCustomFields" optional="YES" attributeType="Binary"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date"/>
+        <attribute name="expiryDate" attributeType="String"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="isSynced" attributeType="Boolean" defaultValue="YES"/>
+        <attribute name="issuingChannel" optional="YES" attributeType="String"/>
+        <attribute name="lastUsedAt" optional="YES" attributeType="Date"/>
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date"/>
+        <attribute name="version" attributeType="Integer 64" defaultValue="1"/>
+        <relationship name="tagsRelationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="bankcardEntries" inverseEntity="CDTag"/>
+    </entity>
+    <entity name="CDPasswordCategory" representedClassName="CDPasswordCategory" syncable="YES">
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="hexColor" attributeType="String" defaultValueString="#8E8E93"/>
+        <attribute name="icon" attributeType="String" defaultValueString="folder.fill"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isSystem" attributeType="Boolean" defaultValue="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="sortOrder" attributeType="Integer 32" defaultValue="0"/>
+        <attribute name="updatedAt" attributeType="Date"/>
+    </entity>
+    <entity name="CDTag" representedClassName="CDTag" syncable="YES">
+        <attribute name="createdAt" attributeType="Date"/>
+        <attribute name="hexColor" attributeType="String" defaultValueString="#007AFF"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="sortOrder" attributeType="Integer 32" defaultValue="0"/>
+        <attribute name="updatedAt" attributeType="Date"/>
+        <relationship name="passwordEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDPasswordEntry" inverseName="tagsRelationship" inverseEntity="CDPasswordEntry"/>
+        <relationship name="pincodeEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDPincodeEntry" inverseName="tagsRelationship" inverseEntity="CDPincodeEntry"/>
+        <relationship name="bankcardEntries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBankcardEntry" inverseName="tagsRelationship" inverseEntity="CDBankcardEntry"/>
+    </entity>
+    <entity name="CDTwoFactorConfig" representedClassName="CDTwoFactorConfig" syncable="YES">
+        <attribute name="boundValue" optional="YES" attributeType="String"/>
+        <attribute name="encryptedSecret" optional="YES" attributeType="Binary"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isEnabled" attributeType="Boolean" defaultValue="YES"/>
+        <attribute name="issuer" optional="YES" attributeType="String"/>
+        <attribute name="lastVerifiedAt" optional="YES" attributeType="Date"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="type" attributeType="String"/>
+        <relationship name="passwordEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDPasswordEntry" inverseName="twoFactorConfigs" inverseEntity="CDPasswordEntry"/>
+    </entity>
+    <entity name="CDOAuthProvider" representedClassName="CDOAuthProvider" syncable="YES">
+        <attribute name="boundValue" optional="YES" attributeType="String"/>
+        <attribute name="encryptedSecret" optional="YES" attributeType="Binary"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isEnabled" attributeType="Boolean" defaultValue="YES"/>
+        <attribute name="lastVerifiedAt" optional="YES" attributeType="Date"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="provider" optional="YES" attributeType="String"/>
+        <relationship name="passwordEntry" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDPasswordEntry" inverseName="oAuthProvider" inverseEntity="CDPasswordEntry"/>
+    </entity>
+</model>
