@@ -1,6 +1,6 @@
 # CodeBuddy 行为规则
 
-基于 Andrej Karpathy 对 LLM 编码痛点的洞察制定的行为指南，合并到当前 VaultGo（Swift/iOS）项目中使用。
+基于 Andrej Karpathy 对 LLM 编码痛点的洞察制定的行为指南，合并到当前 VaultCell（Swift/iOS）项目中使用。
 
 **权衡说明：** 这些规则偏向谨慎而非速度。对于简单任务（如修改单个错别字、一目了然的单行修复），请自行判断适度放宽松。
 
@@ -62,7 +62,7 @@
 
 ---
 
-## 5. VaultGo 项目专属规则
+## 5. VaultCell 项目专属规则
 
 - **语言：** 代码注释使用中文，文档使用中文。
 - **架构：** 遵循 MVVM 模式，View 只负责 UI，ViewModel 处理业务逻辑。

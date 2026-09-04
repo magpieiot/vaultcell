@@ -12,9 +12,9 @@
 	"argv": [
 		"/opt/homebrew/bin/xcode-build-server"
 	],
-	"workspace": "/Users/gavanwang/applecode/vaultgo/VaultGo.xcodeproj/project.xcworkspace",
-	"build_root": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultGo-efhmkkfrkzsgkuekgyhxqezdodjl",
-	"scheme": "VaultGo",
+	"workspace": "/Users/gavanwang/applecode/vaultcell/VaultCell.xcodeproj/project.xcworkspace",
+	"build_root": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-efhmkkfrkzsgkuekgyhxqezdodjl",
+	"scheme": "VaultCell",
 	"kind": "manual",
-	"indexStorePath": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultGo-efhmkkfrkzsgkuekgyhxqezdodjl/Index.noindex/DataStore"
+	"indexStorePath": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-efhmkkfrkzsgkuekgyhxqezdodjl/Index.noindex/DataStore"
 }

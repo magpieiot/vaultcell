@@ -1,10 +1,10 @@
-# VaultGo - iOS密码管理器 技术架构设计文档
+# VaultCell - iOS密码管理器 技术架构设计文档
 
 ## 文档信息
 
 | 项目 | 内容
 ---|---
-文档名称 | VaultGo技术架构设计
+文档名称 | VaultCell技术架构设计
 文档版本 | 1.0
 创建日期 | 2026-06-03
 最后更新 | 2026-06-03
@@ -71,10 +71,10 @@ UI框架 | SwiftUI + UIKit | SwiftUI为主，UIKit用于复杂交互
 ### 2.1 主项目结构
 
 ```
-VaultGo/
-├── VaultGo/                      # 主应用
+VaultCell/
+├── VaultCell/                      # 主应用
 │   ├── App/                    # App入口
-│   │   ├── VaultGoApp.swift
+│   │   ├── VaultCellApp.swift
 │   │   ├── AppAssembly.swift
 │   │   └── AppEnvironment.swift
 │   ├── Presentation/            # 视图层
@@ -162,7 +162,7 @@ VaultGo/
 │   ├── Services/
 │   │   ├── KeychainAccess.swift
 │   └── Utils/
-└── VaultGoTests/              # 测试
+└── VaultCellTests/              # 测试
     ├── UnitTests/
     │   ├── SecurityTests/
     │   ├── ServiceTests/
@@ -347,7 +347,7 @@ class CoreDataStack {
     static let shared = CoreDataStack()
     
     lazy var container: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "VaultGo")
+        let container = NSPersistentContainer(name: "VaultCell")
         
         container.loadPersistentStores { description, error in
             if let error = error {
@@ -515,17 +515,17 @@ class KeyDerivationService: KeyDerivationServiceProtocol {
     
     func deriveSubKeys(from masterKey: SymmetricKey) throws -> KeySet {
         let dataEncryptionKey = try masterKey.deriveSubKey(
-            info: "VaultGo_DEK_Purpose_v1", 
+            info: "VaultCell_DEK_Purpose_v1", 
             outputLength: 32
         )
         
         let keyEncryptionKey = try masterKey.deriveSubKey(
-            info: "VaultGo_KEK_Purpose_v1", 
+            info: "VaultCell_KEK_Purpose_v1", 
             outputLength: 32
         )
         
         let hmacKey = try masterKey.deriveSubKey(
-            info: "VaultGo_HMAC_Purpose_v1", 
+            info: "VaultCell_HMAC_Purpose_v1", 
             outputLength: 32
         )
         
@@ -539,7 +539,7 @@ class KeyDerivationService: KeyDerivationServiceProtocol {
 
 extension SymmetricKey {
     func deriveSubKey(info: String, outputLength: Int) throws -> SymmetricKey {
-        let salt = "VaultGo_HKDF_Salt_v1".data(using: .utf8)!
+        let salt = "VaultCell_HKDF_Salt_v1".data(using: .utf8)!
         let infoData = info.data(using: .utf8)!
         
         let hkdf = HKDF<SHA512>(
@@ -563,8 +563,8 @@ extension SymmetricKey {
 
 ```swift
 class KeychainService: KeychainServiceProtocol {
-    private let service = "com.vaultgo.app"
-    private let accessGroup = "group.com.vaultgo.shared"
+    private let service = "com.vaultcell.app"
+    private let accessGroup = "group.com.vaultcell.shared"
     
     func storeKey(_ key: Data, for identifier: String) throws {
         let query: [String: Any] = [
@@ -727,12 +727,12 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
 //
 //    App Groups:
 //      - NSExtensionFileProviderDocumentBrowserViewController
-//      - "com.vaultgo.shared"
+//      - "com.vaultcell.shared"
 //
 
 // SharedConstants.swift
 class AppGroupConstants {
-    static let appGroupIdentifier = "group.com.vaultgo.shared"
+    static let appGroupIdentifier = "group.com.vaultcell.shared"
     static let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier)
 }
 ```
@@ -746,7 +746,7 @@ class AppGroupConstants {
 ```swift
 import XCTest
 import CryptoKit
-@testable import VaultGo
+@testable import VaultCell
 
 final class EncryptionServiceTests: XCTestCase {
     var sut: EncryptionService!
@@ -783,7 +783,7 @@ final class EncryptionServiceTests: XCTestCase {
 
 ```swift
 import XCTest
-@testable import VaultGo
+@testable import VaultCell
 
 class PasswordListViewUITests: XCTestCase {
     var app: XCUIApplication!
@@ -868,13 +868,13 @@ build:
   stage: build
   image: macos-latest
   script:
-    - xcodebuild -scheme VaultGo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build-for-testing
+    - xcodebuild -scheme VaultCell -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build-for-testing
 
 test:
   stage: test
   image: macos-latest
   script:
-    - xcodebuild -scheme VaultGo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' test
+    - xcodebuild -scheme VaultCell -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' test
 ```
 
 ---

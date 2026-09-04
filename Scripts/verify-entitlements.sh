@@ -8,7 +8,7 @@
 # 本脚本在 `xcodegen generate` 之后（options.postGenCommand）自动运行，
 # 校验"Autofill Credential Provider"所必需的 key 是否仍然存在，
 # 缺失任一 key 即打印醒目错误并以非零码退出，
-# 防止"设置中看不到 VaultGo / Final plugin count: 0"静默复发。
+# 防止"设置中看不到 VaultCell / Final plugin count: 0"静默复发。
 #
 # 修复方法：把缺失的 key 补进 project.yml，再重新运行 xcodegen generate。
 # ------------------------------------------------------------------
@@ -31,11 +31,11 @@ check() {
 echo "[verify-entitlements] 校验必须存在的 entitlement / 能力声明 ..."
 
 # --- 主 App ---
-check "$ROOT/VaultGo/VaultGo.entitlements" \
+check "$ROOT/VaultCell/VaultCell.entitlements" \
   "com.apple.developer.authentication-services.autofill-credential-provider"
-check "$ROOT/VaultGo/VaultGo.entitlements" \
+check "$ROOT/VaultCell/VaultCell.entitlements" \
   "com.apple.security.application-groups"
-check "$ROOT/VaultGo/VaultGo.entitlements" \
+check "$ROOT/VaultCell/VaultCell.entitlements" \
   "keychain-access-groups"
 
 # --- 凭据提供器扩展 ---
@@ -53,7 +53,7 @@ check "$ROOT/AutoFillProvider/Info.plist" \
   "NSExtension:NSExtensionAttributes:ASCredentialProviderExtensionCapabilities:SupportsCredentialExchange"
 
 # --- 主 App Info.plist 的凭据交换活动声明 ---
-check "$ROOT/VaultGo/Resources/Info.plist" \
+check "$ROOT/VaultCell/Resources/Info.plist" \
   "NSUserActivityTypes"
 
 if [ "$FAILED" -ne 0 ]; then

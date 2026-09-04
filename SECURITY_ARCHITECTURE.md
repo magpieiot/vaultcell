@@ -1,8 +1,8 @@
-# VaultGo 加密安全架构深度设计
+# VaultCell 加密安全架构深度设计
 
 ## 概述
 
-本文档详细描述 VaultGo 密码管理器的企业级安全架构设计。密码管理器的安全性取决于整个系统的端到端设计，而不仅仅是加密算法本身。
+本文档详细描述 VaultCell 密码管理器的企业级安全架构设计。密码管理器的安全性取决于整个系统的端到端设计，而不仅仅是加密算法本身。
 
 ## 一、当前方案安全分析与改进
 
@@ -116,7 +116,7 @@ class KDFService {
         
         // 3. 生成验证哈希（用于验证主密码）
         let verificationHash = HMAC<SHA256>.authenticationCode(
-            for: "VaultGo_Verification_Key_v1".data(using: .utf8)!,
+            for: "VaultCell_Verification_Key_v1".data(using: .utf8)!,
             using: SymmetricKey(data: masterKeyData)
         )
         
@@ -160,7 +160,7 @@ class Argon2KDFService {
         
         let masterKeyData = result.hashData()
         let verificationHash = HMAC<SHA256>.authenticationCode(
-            for: "VaultGo_Verification_Argon2_v1".data(using: .utf8)!,
+            for: "VaultCell_Verification_Argon2_v1".data(using: .utf8)!,
             using: SymmetricKey(data: masterKeyData)
         )
         
@@ -183,7 +183,7 @@ extension SymmetricKey {
         info: String,
         outputLength: Int = 32
     ) throws -> SymmetricKey {
-        let salt = "VaultGo_Salt_v1".data(using: .utf8)!
+        let salt = "VaultCell_Salt_v1".data(using: .utf8)!
         let infoData = info.data(using: .utf8)!
         
         var hkdf = HKDF<SHA512>(
@@ -205,10 +205,10 @@ extension SymmetricKey {
 // 使用示例
 class KeyDerivationService {
     enum KeyPurpose: String {
-        case dataEncryption = "VaultGo_DEK_Encryption_v1"
-        case keyEncryption = "VaultGo_KEK_Encryption_v1"
-        case hmac = "VaultGo_HMAC_Authentication_v1"
-        case backup = "VaultGo_Backup_Encryption_v1"
+        case dataEncryption = "VaultCell_DEK_Encryption_v1"
+        case keyEncryption = "VaultCell_KEK_Encryption_v1"
+        case hmac = "VaultCell_HMAC_Authentication_v1"
+        case backup = "VaultCell_Backup_Encryption_v1"
     }
     
     static func deriveKeys(from masterKey: SymmetricKey) throws -> KeySet {
@@ -268,7 +268,7 @@ class SecureEncryptionService {
         
         // 3. 关联数据 (AAD) - 用于完整性验证
         let associatedData = """
-            VaultGo_Entry_v1_\(entry.id.uuidString)_\(entry.createdAt.timeIntervalSince1970)
+            VaultCell_Entry_v1_\(entry.id.uuidString)_\(entry.createdAt.timeIntervalSince1970)
             """.data(using: .utf8)!
         
         // 4. AES-256-GCM 加密
@@ -581,7 +581,7 @@ class BiometricAuthService {
 class SecureEnclaveManager {
     static let shared = SecureEnclaveManager()
     
-    private let keyTag = "com.vaultgo.protected-key"
+    private let keyTag = "com.vaultcell.protected-key"
     
     /// 在Secure Enclave中生成密钥对
     func generateSecureEnclaveKey() throws -> SecureEnclave.P256.KeyAgreement.PrivateKey {
@@ -608,7 +608,7 @@ class SecureEnclaveManager {
         
         let symmetricKey = sharedSecret.hkdfDerivedSymmetricKey(
             using: SHA256.self,
-            salt: "VaultGo_SE_KeyWrap_v1".data(using: .utf8)!,
+            salt: "VaultCell_SE_KeyWrap_v1".data(using: .utf8)!,
             sharedInfo: Data(),
             outputByteCount: 32
         )
@@ -639,7 +639,7 @@ class EncryptedCoreDataStack {
     }
     
     func setupContainer() -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: "VaultGo")
+        let container = NSPersistentContainer(name: "VaultCell")
         
         // 配置SQLCipher加密
         let description = NSPersistentStoreDescription()
@@ -677,8 +677,8 @@ class EncryptedCoreDataStack {
 
 ```swift
 class KeychainService {
-    private let service = "com.vaultgo.app"
-    private let accessGroup = "group.com.vaultgo.shared"  // 用于Extension共享
+    private let service = "com.vaultcell.app"
+    private let accessGroup = "group.com.vaultcell.shared"  // 用于Extension共享
     
     enum KeychainItem {
         case masterKeySalt

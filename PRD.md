@@ -1,7 +1,7 @@
-# VaultGo - iOS密码管理器 产品需求文档 (PRD)
+# VaultCell - iOS密码管理器 产品需求文档 (PRD)
 
 ## 文档信息
-- **产品名称**: VaultGo
+- **产品名称**: VaultCell
 - **版本**: v1.0.0
 - **创建日期**: 2026-06-03
 - **文档状态**: 初稿
@@ -12,7 +12,7 @@
 ## 1. 产品概述
 
 ### 1.1 产品定位
-VaultGo是一款专为iOS用户设计的安全、便捷的密码管理器应用。通过本地加密存储、生物识别认证和智能自动填充功能，为用户提供企业级的安全保障和极致的使用体验。
+VaultCell是一款专为iOS用户设计的安全、便捷的密码管理器应用。通过本地加密存储、生物识别认证和智能自动填充功能，为用户提供企业级的安全保障和极致的使用体验。
 
 ### 1.2 核心价值主张
 - **安全至上**: 零知识架构 + AES-256-GCM + Secure Enclave + 600,000次PBKDF2迭代
@@ -32,7 +32,7 @@ VaultGo是一款专为iOS用户设计的安全、便捷的密码管理器应用�
 ### 1.4 市场分析
 
 #### 竞品对比
-| 产品 | 优势 | 劣势 | VaultGo差异化 |
+| 产品 | 优势 | 劣势 | VaultCell差异化 |
 |-----|------|------|---------------|
 | 1Password | 功能强大、跨平台 | 订阅制价格高 | 一次性购买/免费基础版 |
 | LastPass | 云同步、免费版功能全 | 安全事故频发 | 本地存储更安全 |
@@ -52,7 +52,7 @@ VaultGo是一款专为iOS用户设计的安全、便捷的密码管理器应用�
 ### 2.1 功能架构图
 
 ```
-VaultGo
+VaultCell
 ├── 密码库管理
 │   ├── 密码条目CRUD
 │   ├── 分类管理
@@ -750,7 +750,7 @@ struct SecurityRecommendation: Codable {
 
 ```
 ┌─────────────────────────────────────────────┐
-│         VaultGo 2FA 安全审计报告            │
+│         VaultCell 2FA 安全审计报告            │
 │         生成时间: 2026-06-03               │
 ├─────────────────────────────────────────────┤
 │  📊 总体评分: 78/100                       │
@@ -875,7 +875,7 @@ struct PasswordEntry {
 
 ### 3.3 安全架构（企业级军用标准）
 
-VaultGo采用零知识架构(Zero-Knowledge Architecture)，确保即使在最坏情况下，开发者也无法访问用户的密码数据。
+VaultCell采用零知识架构(Zero-Knowledge Architecture)，确保即使在最坏情况下，开发者也无法访问用户的密码数据。
 
 #### 3.3.1 安全架构总览
 
@@ -928,7 +928,7 @@ VaultGo采用零知识架构(Zero-Knowledge Architecture)，确保即使在最�
 
 #### 3.3.2 KDF密钥派生函数
 
-VaultGo支持两种KDF模式，满足不同安全需求：
+VaultCell支持两种KDF模式，满足不同安全需求：
 
 **模式一: PBKDF2 (默认，兼容性优先)**
 ```swift
@@ -960,7 +960,7 @@ class KDFService {
         
         // 生成验证哈希 (用于验证密码正确性，不用于加密)
         let verificationHash = HMAC<SHA256>.authenticationCode(
-            for: "VaultGo_Verification_v1.0".data(using: .utf8)!,
+            for: "VaultCell_Verification_v1.0".data(using: .utf8)!,
             using: SymmetricKey(data: masterKeyData)
         )
         
@@ -999,7 +999,7 @@ class Argon2KDFService {
         
         let masterKeyData = result.hashData()
         let verificationHash = HMAC<SHA256>.authenticationCode(
-            for: "VaultGo_Verification_Argon2_v1.0".data(using: .utf8)!,
+            for: "VaultCell_Verification_Argon2_v1.0".data(using: .utf8)!,
             using: SymmetricKey(data: masterKeyData)
         )
         
@@ -1019,7 +1019,7 @@ extension SymmetricKey {
         info: String,
         outputLength: Int = 32
     ) throws -> SymmetricKey {
-        let salt = "VaultGo_HKDF_Salt_v1.0".data(using: .utf8)!
+        let salt = "VaultCell_HKDF_Salt_v1.0".data(using: .utf8)!
         let infoData = info.data(using: .utf8)!
         
         var hkdf = HKDF<SHA512>(
@@ -1040,10 +1040,10 @@ extension SymmetricKey {
 
 class KeyDerivationService {
     enum KeyPurpose: String {
-        case dataEncryption = "VaultGo_DEK_Purpose_v1.0"
-        case keyEncryption = "VaultGo_KEK_Purpose_v1.0"
-        case hmac = "VaultGo_HMAC_Purpose_v1.0"
-        case backup = "VaultGo_Backup_Purpose_v1.0"
+        case dataEncryption = "VaultCell_DEK_Purpose_v1.0"
+        case keyEncryption = "VaultCell_KEK_Purpose_v1.0"
+        case hmac = "VaultCell_HMAC_Purpose_v1.0"
+        case backup = "VaultCell_Backup_Purpose_v1.0"
     }
     
     static func deriveKeys(from masterKey: SymmetricKey) throws -> KeySet {
@@ -1101,7 +1101,7 @@ class SecureEncryptionService {
         
         // 关联数据 (AAD) - 用于完整性验证，防止替换攻击
         let associatedData = """
-            VaultGo_Entry_v1.0_\(entry.id.uuidString)_\(entry.createdAt.timeIntervalSince1970)
+            VaultCell_Entry_v1.0_\(entry.id.uuidString)_\(entry.createdAt.timeIntervalSince1970)
             """.data(using: .utf8)!
         
         // AES-256-GCM 认证加密
@@ -1163,7 +1163,7 @@ import CryptoKit
 
 class SecureEnclaveManager {
     static let shared = SecureEnclaveManager()
-    private let keyTag = "com.vaultgo.protected.key"
+    private let keyTag = "com.vaultcell.protected.key"
     
     func generateSecureEnclaveKey() throws -> SecureEnclave.P256.KeyAgreement.PrivateKey {
         let accessControl = SecAccessControlCreateWithFlags(
@@ -1188,7 +1188,7 @@ class SecureEnclaveManager {
         
         let symmetricKey = sharedSecret.hkdfDerivedSymmetricKey(
             using: SHA256.self,
-            salt: "VaultGo_SE_Wrap_v1.0".data(using: .utf8)!,
+            salt: "VaultCell_SE_Wrap_v1.0".data(using: .utf8)!,
             sharedInfo: Data(),
             outputByteCount: 32
         )
@@ -1429,7 +1429,7 @@ class BackupManager {
         )
         
         // 4. 保存到文件
-        let fileURL = try saveToFile(encryptedBackup, name: "vaultgo_backup_\(Date()).vbackup")
+        let fileURL = try saveToFile(encryptedBackup, name: "vaultcell_backup_\(Date()).vbackup")
         return fileURL
     }
     
@@ -1539,7 +1539,7 @@ Tab Bar Navigation:
 
 ```
 ┌─────────────────────────────────────┐
-│  ≡  VaultGo              🔍 ⚙️      │  ← 导航栏
+│  ≡  VaultCell              🔍 ⚙️      │  ← 导航栏
 ├─────────────────────────────────────┤
 │  全部  社交  工作  金融  购物  娱乐  │  ← 分类标签
 ├─────────────────────────────────────┤

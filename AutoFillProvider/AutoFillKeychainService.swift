@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------
 /// 版权所有 © 2026 Gavan Wang  保留所有权利。
-/// Project: VaultGo
+/// Project: VaultCell
 /// AutoFillKeychainService.swift
 /// created on: 03/06/2026
 /// ------------------------------------------------------------------
@@ -13,11 +13,11 @@ class AutoFillKeychainService {
     
     init() {
         #if CN
-        let service = "com.magpieapp.vaultgo.cn"
-        let accessGroup = "group.com.magpieapp.vaultgo.cn.shared"
+        let service = "com.magpie.vaultcell.cn"
+        let accessGroup = "group.com.magpie.vaultcell.cn.shared"
         #else
-        let service = "com.magpieapp.vaultgo"
-        let accessGroup = "group.com.magpieapp.vaultgo.shared"
+        let service = "com.magpie.vaultcell"
+        let accessGroup = "group.com.magpie.vaultcell.shared"
         #endif
         keychain = Keychain(service: service, accessGroup: accessGroup)
             .accessibility(.whenUnlockedThisDeviceOnly)
