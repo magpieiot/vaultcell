@@ -12,89 +12,96 @@ struct CustomFieldManager: View {
     @FocusState private var focusedFieldID: UUID?
     @State private var revealedFieldIDs: Set<UUID> = []
 
-
     var body: some View {
         VStack(spacing: 0) {
             if model.isEmpty {
-                Text("No custom fields yet")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 12)
+                // 空状态：图标 + 文案
+                VStack(spacing: 8) {
+                    Image(systemName: "text.badge.plus")
+                        .font(.system(size: 20, weight: .light))
+                        .foregroundColor(.secondary)
+                    Text("No custom fields yet")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
             } else {
-                ForEach($model.customFields) { $field in
-                    fieldRow(field: $field)
-                    if field.id != model.customFields.last?.id {
-                        Divider().padding(.leading, 16)
+                // 字段列表：以留白代替分隔线，每行自带值输入容器
+                VStack(spacing: 16) {
+                    ForEach($model.customFields) { $field in
+                        fieldRow(field: $field)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
+                .animation(.easeInOut(duration: 0.2), value: model.customFields.map(\.id))
             }
         }
     }
 
     /// 单个自定义字段行
     private func fieldRow(field: Binding<CustomField>) -> some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
+            // 名称输入 + 删除操作
+            HStack(spacing: 8) {
                 TextField("Name", text: field.name)
-                    .font(.subheadline)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(.primary)
                     .focused($focusedFieldID, equals: field.id)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
 
+                /*
                 Button {
                     toggleReveal(field.id)
                 } label: {
-                    Image(systemName: field.wrappedValue.isSensitive
-                          ? (revealedFieldIDs.contains(field.id) ? "eye.slash" : "eye")
-                          : "eye.slash")
-                        .font(.system(size: 14))
-                        .foregroundColor(field.wrappedValue.isSensitive ? .accentColor : .secondary)
-                        .frame(width: 24, height: 24)
+                    Image(
+                        systemName: field.wrappedValue.isSensitive
+                            ? (revealedFieldIDs.contains(field.id) ? "eye.slash" : "eye")
+                            : "eye.slash"
+                    )
+                    .font(.system(size: 14))
+                    .foregroundColor(field.wrappedValue.isSensitive ? .accentColor : .secondary)
+                    .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.plain)
                 .opacity(field.wrappedValue.isSensitive ? 1 : 0.3)
-
-                /*
-                Button {
-                    toggleSensitive(field.id)
-                } label: {
-                    Image(systemName: field.wrappedValue.isSensitive ? "lock.fill" : "lock.open")
-                        .font(.system(size: 14))
-                        .foregroundColor(field.wrappedValue.isSensitive ? .orange : .secondary)
-                        .frame(width: 24, height: 24)
-                }
-                .buttonStyle(.plain)
                 */
 
                 Button {
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         model.deleteField(id: field.id)
                     }
                 } label: {
                     Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 16))
-                        .foregroundColor(.red.opacity(0.8))
-                        .frame(width: 24, height: 24)
+                        .font(.system(size: 18))
+                        .foregroundColor(.red.opacity(0.85))
                 }
                 .buttonStyle(.plain)
+                // 扩大点击热区并补充无障碍标签
+                .frame(width: 32, height: 32)
+                .contentShape(Rectangle())
+                .accessibilityLabel("Delete Field")
             }
 
-            // 值输入框
+            // 值输入框：放入浅色圆角容器，与名称行形成主次层级
             Group {
                 if field.wrappedValue.isSensitive && !revealedFieldIDs.contains(field.id) {
                     SecureField("Value", text: field.value)
-                        .font(.subheadline)
                 } else {
                     TextField("Value", text: field.value)
-                        .font(.subheadline)
                 }
             }
+            .font(.subheadline)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+            )
         }
-        //.padding(.vertical, 10)
-        //.padding(.horizontal, 16)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
                 withAnimation {
@@ -136,22 +143,58 @@ struct CustomFieldManager: View {
 
 struct AddNewFieldButton: View {
     @ObservedObject var model: CustomFieldModel
-    
+
     var body: some View {
         Button {
-            model.addField()
+            withAnimation(.easeInOut(duration: 0.2)) {
+                _ = model.addField()
+            }
         } label: {
             HStack(alignment: .center, spacing: 8) {
-                Image(systemName: "plus")
-                    .frame(width: 24, height: 24)
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 18))
                 Text("Add New")
-                    Spacer()
+                    .font(.subheadline.weight(.medium))
+                Spacer()
             }
-            .foregroundColor(.blue)
-            //.padding(.vertical, 12)
-            //.padding(.horizontal, 16)
+            .foregroundColor(.primaryBrandColor)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
         }
-        //.buttonStyle(.plain)
+        .buttonStyle(.plain)
     }
 }
 
+// MARK: - Preview
+
+#Preview("自定义字段 - 空状态") {
+    @Previewable @State var model = CustomFieldModel()
+    Form {
+        Section {
+            CustomFieldManager(model: model)
+                .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+        } header: {
+            Text("Custom Fields")
+        } footer: {
+            AddNewFieldButton(model: model)
+        }
+    }
+}
+
+#Preview("自定义字段 - 有数据") {
+    @Previewable @State var model = CustomFieldModel(customFields: [
+        CustomField(name: "Account", value: "admin@example.com"),
+        CustomField(name: "Security Question", value: "Your first pet's name", isSensitive: true),
+        CustomField(name: "API Key", value: "sk-0123456789abcdef", isSensitive: true)
+    ])
+    Form {
+        Section {
+            CustomFieldManager(model: model)
+                .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+        } header: {
+            Text("Custom Fields")
+        } footer: {
+            AddNewFieldButton(model: model)
+        }
+    }
+}
