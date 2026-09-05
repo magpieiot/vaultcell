@@ -1,5 +1,5 @@
 //
-//  CustomFieldManager.swift
+//  CustomFieldSection.swift
 //  VaultCell
 //
 //  Created by gavanwang on 2026/7/21.
@@ -7,7 +7,7 @@
 import SwiftUI
 
 /// 自定义字段管理器，负责添加、编辑和删除自定义字段
-struct CustomFieldManager: View {
+struct CustomFieldSection: View {
     @ObservedObject var model: CustomFieldModel
     @FocusState private var focusedFieldID: UUID?
     @State private var revealedFieldIDs: Set<UUID> = []
@@ -182,7 +182,7 @@ struct AddNewFieldButton: View {
     @Previewable @State var model = CustomFieldModel()
     Form {
         Section {
-            CustomFieldManager(model: model)
+            CustomFieldSection(model: model)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")
@@ -200,7 +200,7 @@ struct AddNewFieldButton: View {
     ])
     Form {
         Section {
-            CustomFieldManager(model: model)
+            CustomFieldSection(model: model)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")

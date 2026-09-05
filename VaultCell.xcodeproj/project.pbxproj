@@ -21,10 +21,11 @@
 		18776BF70418F7F2BA529124 /* CachedIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6245B0FCF51298163934B114 /* CachedIconView.swift */; };
 		19E1EB7A6DFCE2F7F4E16E7D /* VaultListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D623305DB0D898EF2F2FDD4 /* VaultListViewModel.swift */; };
 		1EED1A85F0CC7261EC7CC72B /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E15485A7B05348A73AB4C8 /* AuthenticationViewModel.swift */; };
-		22D293C4E0ADE0D3E64643AC /* CustomFieldManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 573DF6B8A265CDA7D05B3C3F /* CustomFieldManager.swift */; };
+		22D293C4E0ADE0D3E64643AC /* CustomFieldSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 573DF6B8A265CDA7D05B3C3F /* CustomFieldSection.swift */; };
 		24D77DA61A8DD3F2488B786C /* VaultCellJSONImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694FBF6CCFDD16B42D19115C /* VaultCellJSONImporter.swift */; };
 		2958C6F7F7A36211A088C132 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CE6EC21E64518CC134B16F /* KeychainService.swift */; };
 		2AEC37CE74A4EBE77EC4151F /* VaultImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEBF263FFD7C3647C9421F3 /* VaultImportService.swift */; };
+		2CA7B72CB71F4202C07DFA89 /* NotesSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B09540A8BC5A830DA8B537 /* NotesSectionView.swift */; };
 		309B1B98FBB8E2620D5B5075 /* LanguageBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DE4DC0835142A4F9F7E5E1 /* LanguageBadge.swift */; };
 		31F03F3C01DA14677D18E0F6 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1383ECF0EEBDEB50DBB5E4 /* Tag.swift */; };
 		32C4E79C0FB5487991E90EC0 /* VaultSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 772C07E8D6983D51622F8DBA /* VaultSearchViewModel.swift */; };
@@ -199,6 +200,7 @@
 		3393C8DC257D269679D36067 /* CDPincodeEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDPincodeEntry.swift; sourceTree = "<group>"; };
 		36E8B80003873BE724551B27 /* TagButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagButton.swift; sourceTree = "<group>"; };
 		3EBF3FC3292468D43F7F58C1 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		40B09540A8BC5A830DA8B537 /* NotesSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesSectionView.swift; sourceTree = "<group>"; };
 		41E0C075A35A9AFEA1CFDBA7 /* PasswordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRepository.swift; sourceTree = "<group>"; };
 		448546D60821517C5FF564D2 /* BankcardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankcardDetailView.swift; sourceTree = "<group>"; };
 		4C4EC410A23810FF538C9D99 /* TagSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectionViewModel.swift; sourceTree = "<group>"; };
@@ -208,7 +210,7 @@
 		53D6522B82EB9CCBF1B7CB95 /* CredentialExchangeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialExchangeService.swift; sourceTree = "<group>"; };
 		55A898D31604AB1801FE00B1 /* VaultCell_v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VaultCell_v4.xcdatamodel; sourceTree = "<group>"; };
 		55E1207205D9BBB7E1796907 /* PincodeEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PincodeEntry.swift; sourceTree = "<group>"; };
-		573DF6B8A265CDA7D05B3C3F /* CustomFieldManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFieldManager.swift; sourceTree = "<group>"; };
+		573DF6B8A265CDA7D05B3C3F /* CustomFieldSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFieldSection.swift; sourceTree = "<group>"; };
 		5DB2FB78E8DFA15A5355D79B /* AppCatalogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCatalogService.swift; sourceTree = "<group>"; };
 		61346BB7DA1DC3FA5AB5EEDE /* BankcardFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankcardFormModel.swift; sourceTree = "<group>"; };
 		62416F816625515FA48C3F13 /* CDSafeNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDSafeNote.swift; sourceTree = "<group>"; };
@@ -406,6 +408,7 @@
 				D8F059A60C5668617FC0DB4E /* CardView.swift */,
 				98E4CD1E84C4D27D8281E302 /* CusomLabel.swift */,
 				D857CA579B7801530D83467F /* FormPasswordStrengthIndicator.swift */,
+				40B09540A8BC5A830DA8B537 /* NotesSectionView.swift */,
 				F7EE523B288E9E3F1A289095 /* PasswordEditField.swift */,
 				E2A9D6DD6658F0FACDE6FB3E /* PasswordText.swift */,
 				83B619B34E9DDBC09E8B6789 /* PrivacyOverlayView.swift */,
@@ -423,7 +426,7 @@
 			children = (
 				F0E15485A7B05348A73AB4C8 /* AuthenticationViewModel.swift */,
 				61346BB7DA1DC3FA5AB5EEDE /* BankcardFormModel.swift */,
-				573DF6B8A265CDA7D05B3C3F /* CustomFieldManager.swift */,
+				573DF6B8A265CDA7D05B3C3F /* CustomFieldSection.swift */,
 				A8CC68F84B34F6DE7EB97922 /* CustomFieldModel.swift */,
 				A50773F1E0D2E9BEB781ED66 /* PasswordFormModel.swift */,
 				CB2E776AC710B9CBB9FB9254 /* PincodeFormModel.swift */,
@@ -914,7 +917,7 @@
 				A0BEDA6926054641668D9DE6 /* CreateNewItemView.swift in Sources */,
 				4CB42D4A8326932E3075E9C4 /* CredentialExchangeService.swift in Sources */,
 				9C7D68DBAC6375C2F8440B83 /* CusomLabel.swift in Sources */,
-				22D293C4E0ADE0D3E64643AC /* CustomFieldManager.swift in Sources */,
+				22D293C4E0ADE0D3E64643AC /* CustomFieldSection.swift in Sources */,
 				C6EA2FF6B3F16E165E2033F7 /* CustomFieldModel.swift in Sources */,
 				ECB96EBA6BA0C0EA9EE34E77 /* DataManagementView.swift in Sources */,
 				ED8A917F7CDC372BA41A6AB1 /* EditPasswordView.swift in Sources */,
@@ -931,6 +934,7 @@
 				FA35DD475A64ED057986E636 /* LanguagePickerView.swift in Sources */,
 				DB7B5708D9C237D0591A3211 /* LoginEvent.swift in Sources */,
 				BC4E86D1BFDA346D31BCBC5E /* MainTabView.swift in Sources */,
+				2CA7B72CB71F4202C07DFA89 /* NotesSectionView.swift in Sources */,
 				0E9A5F577ED49C11342E8141 /* OAuthProviderConfig.swift in Sources */,
 				B4AE04FCCA9937F18F791EA9 /* OnboardingView.swift in Sources */,
 				A6E518DC6C0E1D90DA5CEB6B /* PBKDF2.swift in Sources */,

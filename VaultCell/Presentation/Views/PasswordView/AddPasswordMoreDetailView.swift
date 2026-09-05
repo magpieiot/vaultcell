@@ -23,10 +23,8 @@ struct AddPasswordMoreDetailView: View {
     @State private var currentToast: ToastItem?
     @State private var isSaving = false
     @State private var hasSeededSelectedTags = false
-    @State private var isNotesNotEmpty = false
     
     @FocusState private var isFocused: Bool
-    @FocusState private var isNotesFocused: Bool
 
     private let socialColumns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
 
@@ -323,41 +321,14 @@ struct AddPasswordMoreDetailView: View {
     /// 备注输入框
     /// 显示当前密码的备注输入框，用于输入额外信息
     private var notesSection: some View {
-        Section {
-            ZStack(alignment: .topLeading) {
-                if !isNotesNotEmpty && !isNotesFocused {
-                    HStack {
-                        Image(systemName: "note.text")
-                            .foregroundColor(.blue)
-                            .frame(width: 24, height: 24)
-                        Text("Add Notes")
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                TextEditor(
-                    text: Binding(
-                        get: { formModel.notes ?? "" },
-                        set: { formModel.notes = $0.isEmpty ? nil : $0 }
-                    )
-                )
-                    .focused($isNotesFocused)
-                    .multilineTextAlignment(.leading)
-                    .onChange(of: formModel.notes) { oldValue, newValue in
-                        if !(newValue ?? "").isEmpty {
-                            isNotesNotEmpty = true
-                        } else {
-                            isNotesNotEmpty = false
-                        }
-                    }
-                    //.padding(.horizontal, 12)
-            }
-        } header: {
-            Text("Notes")
-        } footer: {
-            Text("Add notes. Click to add new ones.")
-                .font(.caption)
-        }
+        NotesSectionView(
+            text: Binding(
+                get: { formModel.notes ?? "" },
+                set: { formModel.notes = $0.isEmpty ? nil : $0 }
+            ),
+            iconColor: .blue,
+            footer: "Add notes. Click to add new ones."
+        )
     }
 
     /// Tags 区：标签
@@ -380,7 +351,7 @@ struct AddPasswordMoreDetailView: View {
     /// 每个字段包含名称和值
     private var customFieldsSection: some View {
         Section {
-            CustomFieldManager(model: customFieldModel)
+            CustomFieldSection(model: customFieldModel)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
             
         } header: {

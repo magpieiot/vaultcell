@@ -29,10 +29,6 @@ struct EditPasswordView: View {
     @State private var showingScanner = false
     @State private var scanError: String?
     @State private var currentToast: ToastItem?
-    /// 是否备注输入框有内容
-    @State private var isNotesNotEmpty = false
-    /// 是否备注输入框有焦点
-    @FocusState private var isNotesFocused: Bool
     /// 是否已将当前条目的 tags 同步到 SmartTagManager
     @State private var hasSeededSelectedTags = false
     /// OAuth 删除模式：点击 minus 后激活，内容左移并显示 Delete 按钮
@@ -586,28 +582,13 @@ struct EditPasswordView: View {
     }
 
     private var notesSection: some View {
-        Section("Notes") {
-            ZStack(alignment: .topLeading) {
-                if !isNotesNotEmpty && !isNotesFocused {
-                    addNewLable
-                }
-
-                TextEditor(
-                    text: Binding(
-                        get: { formModel.notes ?? "" },
-                        set: { formModel.notes = $0.isEmpty ? nil : $0 }
-                    )
-                )
-                .focused($isNotesFocused)
-                .multilineTextAlignment(.leading)
-                .onChange(of: formModel.notes) { _, newValue in
-                    isNotesNotEmpty = !(newValue ?? "").isEmpty
-                }
-            }
-        }
-        .onAppear {
-            isNotesNotEmpty = !(formModel.notes ?? "").isEmpty
-        }
+        NotesSectionView(
+            text: Binding(
+                get: { formModel.notes ?? "" },
+                set: { formModel.notes = $0.isEmpty ? nil : $0 }
+            ),
+            iconColor: .blue
+        )
     }
 
     private var tagsSection: some View {
@@ -625,7 +606,7 @@ struct EditPasswordView: View {
     // MARK: - Custom Fields
     private var customFieldSection: some View {
         Section {
-            CustomFieldManager(model: customFieldModel)
+            CustomFieldSection(model: customFieldModel)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")

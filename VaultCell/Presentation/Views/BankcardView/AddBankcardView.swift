@@ -346,22 +346,7 @@ struct AddBankcardView: View {
     // MARK: - Notes
 
     private var notesSection: some View {
-        Section("Notes") {
-            ZStack(alignment: .topLeading) {
-                if formModel.notes.isEmpty {
-                    HStack {
-                        Image(systemName: "note.text")
-                            .foregroundColor(.blue)
-                            .frame(width: 24, height: 24)
-                        Text("Add Notes")
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                TextEditor(text: $formModel.notes)
-                    .multilineTextAlignment(.leading)
-            }
-        }
+        NotesSectionView(text: $formModel.notes, iconColor: .blue)
     }
 
     // MARK: - Tags
@@ -382,7 +367,7 @@ struct AddBankcardView: View {
 
     private var customFieldSection: some View {
         Section {
-            CustomFieldManager(model: formModel.customFieldModel)
+            CustomFieldSection(model: formModel.customFieldModel)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")
