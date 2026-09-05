@@ -143,9 +143,15 @@ struct CustomFieldManager: View {
 
 struct AddNewFieldButton: View {
     @ObservedObject var model: CustomFieldModel
+    /// 存在名称为空的字段时，提示用户先补全名称
+    @State private var showUntitledPrompt = false
 
     var body: some View {
         Button {
+            guard !model.hasUntitledField else {
+                showUntitledPrompt = true
+                return
+            }
             withAnimation(.easeInOut(duration: 0.2)) {
                 _ = model.addField()
             }
@@ -162,6 +168,11 @@ struct AddNewFieldButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .alert("Name Required", isPresented: $showUntitledPrompt) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Please fill in the field name before adding a new one.")
+        }
     }
 }
 

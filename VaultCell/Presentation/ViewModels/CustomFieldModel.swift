@@ -13,6 +13,13 @@ final class CustomFieldModel: ObservableObject {
         customFields.isEmpty
     }
 
+    /// 是否存在名称为空（或仅空白字符）的字段
+    var hasUntitledField: Bool {
+        customFields.contains {
+            $0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
     @discardableResult
     func addField(
         name: String = "",
