@@ -89,7 +89,17 @@ struct VaultSecurityAuditService {
             var entryIssueList = issues(
                 entry: entry, duplicateMap: duplicateMap, now: now, inheritsScore: inheritsFromSource)
             if let oauth = entry.oAuthProvider, !inheritsFromSource, !isSelfContainedOAuthEntry(entry) {
-                entryIssueList.append("OAuth source entry for \(oauth.provider ?? "unknown") (\(oauth.boundValue ?? "unknown")) was not found in the vault; scored with fallback rules.")
+                entryIssueList.append(
+                    String(
+                        format:
+                            String(
+                                localized:
+                                    "OAuth source entry for %@ (%@) was not found in the vault; scored with fallback rules."
+                            ),
+                        oauth.provider ?? String(localized: "Unknown"),
+                        oauth.boundValue ?? String(localized: "Unknown")
+                    )
+                )
             }
 
             entryScores[entry.id] = entryScore
@@ -174,50 +184,60 @@ private extension VaultSecurityAuditService {
         // OAuth 衍生条目（已继承源账户分数）没有独立密码，跳过密码类检查。
         if inheritsScore {
             if let oauth = entry.oAuthProvider {
-                items.append("This account signs in via OAuth (\(oauth.provider ?? "unknown") / \(oauth.boundValue ?? "unknown")); its security score is inherited from the source entry.")
+                items.append(
+                    String(
+                        format:
+                            String(
+                                localized:
+                                    "This account signs in via OAuth (%@ / %@); its security score is inherited from the source entry."
+                            ),
+                        oauth.provider ?? String(localized: "Unknown"),
+                        oauth.boundValue ?? String(localized: "Unknown")
+                    )
+                )
             }
             return items
         }
 
         let dupCount = duplicateMap[normalizePassword(entry.password), default: 0]
         if dupCount > 1 {
-            items.append("Password is reused across \(dupCount) entries.")
+            items.append(String(format: String(localized: "Password is reused across %lld entries."), dupCount))
         }
 
         switch entry.breachStatus ?? .unknown {
         case .compromised:
-            items.append("Password is marked as compromised.")
+            items.append(String(localized: "Password is marked as compromised."))
         case .unknown:
-            items.append("Breach status is unknown.")
+            items.append(String(localized: "Breach status is unknown."))
         case .safe:
             break
         }
 
         let enabledConfigs = (entry.twoFactorConfigs ?? []).filter { $0.isEnabled }
         if !entry.has2FA && enabledConfigs.isEmpty {
-            items.append("2FA is not enabled.")
+            items.append(String(localized: "2FA is not enabled."))
         } else if let best = bestTwoFactorConfig(enabledConfigs) {
             if best.type == .sms {
-                items.append("2FA uses SMS, consider switching to an authenticator app.")
+                items.append(String(localized: "2FA uses SMS, consider switching to an authenticator app."))
             }
             if best.lastVerifiedAt == nil {
-                items.append("2FA is not verified yet.")
+                items.append(String(localized: "2FA is not verified yet."))
             }
         }
 
         let changedAt = entry.passwordChangedAt ?? entry.updatedAt ?? now
         let ageDays = daysBetween(changedAt, now)
         if ageDays > 365 {
-            items.append("Password has not been changed for over a year.")
+            items.append(String(localized: "Password has not been changed for over a year."))
         }
 
         if entry.password.count < 12 {
-            items.append("Password is shorter than 12 characters.")
+            items.append(String(localized: "Password is shorter than 12 characters."))
         }
 
         let charset = charsetFlags(entry.password)
         if !(charset.hasLower && charset.hasUpper && charset.hasDigit && charset.hasSymbol) {
-            items.append("Password does not use all character types (upper/lower/digit/symbol).")
+            items.append(String(localized: "Password does not use all character types (upper/lower/digit/symbol)."))
         }
 
         return items
@@ -348,27 +368,57 @@ private extension VaultSecurityAuditService {
         var suggestions: [String] = []
 
         if duplicateEntriesCount > 0 {
-            suggestions.append("\(duplicateEntriesCount) entries reuse a password. Change them to unique passwords.")
+            suggestions.append(
+                String(
+                    format: String(localized: "%lld entries reuse a password. Change them to unique passwords."),
+                    duplicateEntriesCount
+                )
+            )
         }
 
         if compromisedEntriesCount > 0 {
-            suggestions.append("\(compromisedEntriesCount) entries are marked as compromised. Change passwords immediately.")
+            suggestions.append(
+                String(
+                    format: String(localized: "%lld entries are marked as compromised. Change passwords immediately."),
+                    compromisedEntriesCount
+                )
+            )
         }
 
         if no2FACount > 0 {
-            suggestions.append("Enable 2FA on \(no2FACount) entries to reduce takeover risk.")
+            suggestions.append(
+                String(
+                    format: String(localized: "Enable 2FA on %lld entries to reduce takeover risk."),
+                    no2FACount
+                )
+            )
         }
 
         if staleEntriesCount > 0 {
-            suggestions.append("\(staleEntriesCount) entries have not changed passwords for over a year.")
+            suggestions.append(
+                String(
+                    format: String(localized: "%lld entries have not changed passwords for over a year."),
+                    staleEntriesCount
+                )
+            )
         }
 
         if weakEntriesCount > 0 {
-            suggestions.append("\(weakEntriesCount) entries have low scores. Consider upgrading them first.")
+            suggestions.append(
+                String(
+                    format: String(localized: "%lld entries have low scores. Consider upgrading them first."),
+                    weakEntriesCount
+                )
+            )
         }
 
         if oauthEntriesCount > 0 {
-            suggestions.append("\(oauthEntriesCount) entries sign in via OAuth. Their security relies on the source accounts in the vault.")
+            suggestions.append(
+                String(
+                    format: String(localized: "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault."),
+                    oauthEntriesCount
+                )
+            )
         }
 
         return suggestions

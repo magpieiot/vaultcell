@@ -33,7 +33,7 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     title: String(localized: "Reused Passwords"),
-                    countText: "\(audit.duplicateEntriesCount) entries",
+                    countText: String(format: String(localized: "%lld entries"), audit.duplicateEntriesCount),
                     detail: String(localized: "Reusing passwords increases the blast radius of a single leak."),
                     symbol: "arrow.triangle.2.circlepath"
                 )
@@ -44,7 +44,7 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     title: String(localized: "Compromised Entries"),
-                    countText: "\(audit.compromisedEntriesCount) entries",
+                    countText: String(format: String(localized: "%lld entries"), audit.compromisedEntriesCount),
                     detail: String(localized: "Entries marked as compromised cap their own score and lower the vault score."),
                     symbol: "flame.fill"
                 )
@@ -55,7 +55,7 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     title: String(localized: "Missing 2FA"),
-                    countText: "\(audit.no2FACount) entries",
+                    countText: String(format: String(localized: "%lld entries"), audit.no2FACount),
                     detail: String(localized: "Accounts without 2FA are easier to take over even when the password is strong."),
                     symbol: "lock.open.fill"
                 )
@@ -66,7 +66,7 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     title: String(localized: "Old Passwords"),
-                    countText: "\(audit.staleEntriesCount) entries",
+                    countText: String(format: String(localized: "%lld entries"), audit.staleEntriesCount),
                     detail: String(localized: "Passwords that have not changed for over a year lose freshness points."),
                     symbol: "clock.fill"
                 )
@@ -77,7 +77,7 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     title: String(localized: "Low Entry Scores"),
-                    countText: "\(audit.weakEntriesCount) entries",
+                    countText: String(format: String(localized: "%lld entries"), audit.weakEntriesCount),
                     detail: String(localized: "Short, predictable, or poorly protected passwords drag the vault average down."),
                     symbol: "chart.bar.fill"
                 )
@@ -343,15 +343,23 @@ struct SecurityScoreDetailView: View {
     private var heroSubtitle: String {
         switch audit.vaultScore {
         case 90...100:
-            return "Your vault is in excellent shape. Keep monitoring reused and aging passwords."
+            return String(localized: "Your vault is in excellent shape. Keep monitoring reused and aging passwords.")
         case 75...89:
-            return "Your vault is strong overall, but a few weak spots are still dragging the score down."
+            return String(
+                localized: "Your vault is strong overall, but a few weak spots are still dragging the score down."
+            )
         case 60...74:
-            return "Your vault needs attention. Fix the highlighted issues to raise the score quickly."
+            return String(
+                localized: "Your vault needs attention. Fix the highlighted issues to raise the score quickly."
+            )
         case 40...59:
-            return "Your vault has several high-risk patterns. Address the top items as soon as possible."
+            return String(
+                localized: "Your vault has several high-risk patterns. Address the top items as soon as possible."
+            )
         default:
-            return "Your vault is at critical risk. Start with compromised and reused passwords immediately."
+            return String(
+                localized: "Your vault is at critical risk. Start with compromised and reused passwords immediately."
+            )
         }
     }
 }
