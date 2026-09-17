@@ -118,14 +118,15 @@ enum IconCacheService {
         return result
     }
 
-    /// 下载主页 HTML 并解析 favicon 地址（限取头部 2MB，link 标签均在 head 内）
+    /// 下载主页 HTML 并解析 favicon 地址（读取上限 maxDownloadBytes，link 标签均在 head 内）
     static func iconURLsFromHomepage(for urlString: String) async -> [URL] {
         guard let domain = domain(from: urlString),
               let baseURL = URL(string: "https://" + domain) else { return [] }
         for host in [domain, "www." + domain] {
             guard let url = URL(string: "https://" + host) else { continue }
-            guard let (data, _) = try? await URLSession.shared.data(from: url),
-                  let html = String(data: data.prefix(2_000_000), encoding: .utf8) else { continue }
+            guard let data = await downloadData(from: url), !data.isEmpty else { continue }
+            // 超限截断点可能落在多字节字符中间，严格解码失败时退化为容错解码
+            let html = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
             let urls = faviconURLs(fromHTML: html, baseURL: baseURL)
             if !urls.isEmpty { return urls }
         }
@@ -200,6 +201,17 @@ enum IconCacheService {
         }
     }
 
+    // MARK: - 网络
+
+    /// 单次响应读取上限（2MB）：favicon 通常不足 100KB，主页 HTML 的 link 标签都在头部，
+    /// 超出即视为异常响应，直接断开，避免把超大响应读进内存。
+    private static let maxDownloadBytes = 2_000_000
+
+    /// 流式下载并限制响应体字节数（超限返回 nil）
+    private static func downloadData(from url: URL) async -> Data? {
+        await CappedDownloader.shared.data(from: url, limit: maxDownloadBytes)
+    }
+
     // MARK: - 加载
 
     /// 统一加载图标：缓存 → 主 URL → 同源候选 → 主页 HTML 解析 → Google 兜底。
@@ -242,8 +254,7 @@ enum IconCacheService {
     /// SVG 无法被 UIImage 直接解码，净化后交给 SVGKit 离屏渲染。
     private static func downloadImage(_ urlString: String) async -> (data: Data, image: UIImage)? {
         guard let url = URL(string: urlString) else { return nil }
-        guard let (data, _) = try? await URLSession.shared.data(from: url),
-              !data.isEmpty else { return nil }
+        guard let data = await downloadData(from: url), !data.isEmpty else { return nil }
         if let image = UIImage(data: data) {
             return (data, image)
         }
@@ -335,13 +346,86 @@ enum IconCacheService {
             completion?(false)
             return
         }
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            guard error == nil, let data, !data.isEmpty, UIImage(data: data) != nil else {
-                DispatchQueue.main.async { completion?(false) }
+        Task.detached {
+            guard let data = await downloadData(from: url),
+                  !data.isEmpty,
+                  UIImage(data: data) != nil else {
+                await MainActor.run { completion?(false) }
                 return
             }
             let success = saveImageData(data, for: urlString)
-            DispatchQueue.main.async { completion?(success) }
-        }.resume()
+            await MainActor.run { completion?(success) }
+        }
+    }
+}
+
+/// 带上限的流式下载器（全局单例，避免每次请求新建 URLSession）。
+///
+/// 为什么不用 `URLSession.data(from:)` 或 `dataTask(with:completionHandler:)`：
+/// 两者都会先把整个响应体缓存进内存，拿到结果后再判断大小已经晚了
+/// （`data.prefix(n)` 同理，只能截断已经读进内存的数据，起不到保护作用）。
+/// 因此这里实现 `URLSessionDataDelegate`，在流式回调中累计字节，超限立即取消任务。
+private final class CappedDownloader: NSObject, URLSessionDataDelegate {
+    static let shared = CappedDownloader()
+
+    private let lock = NSLock()
+    /// taskIdentifier -> 已接收数据
+    private var received: [Int: Data] = [:]
+    /// taskIdentifier -> 该任务的字节上限
+    private var limits: [Int: Int] = [:]
+    /// taskIdentifier -> 等待中的调用方
+    private var continuations: [Int: CheckedContinuation<Data?, Never>] = [:]
+
+    /// 图标已有自有缓存目录，无需共享 URL 缓存，也避免与浏览行为共享 cookie，故用 ephemeral
+    private lazy var session: URLSession = {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    }()
+
+    func data(from url: URL, limit: Int) async -> Data? {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Data?, Never>) in
+            let task = session.dataTask(with: url)
+            let id = task.taskIdentifier
+            lock.lock()
+            continuations[id] = continuation
+            limits[id] = limit
+            received[id] = Data()
+            lock.unlock()
+            task.resume()
+        }
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        let id = dataTask.taskIdentifier
+        lock.lock()
+        guard var buffer = received[id], let limit = limits[id] else {
+            lock.unlock()
+            return
+        }
+        guard buffer.count + data.count <= limit else {
+            // 超限：先清状态再取消，didCompleteWithError 回来时找不到调用方，不会重复 resume
+            received[id] = nil
+            limits[id] = nil
+            let continuation = continuations.removeValue(forKey: id)
+            lock.unlock()
+            dataTask.cancel()
+            continuation?.resume(returning: nil)
+            return
+        }
+        buffer.append(data)
+        received[id] = buffer
+        lock.unlock()
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        let id = task.taskIdentifier
+        lock.lock()
+        let buffer = received.removeValue(forKey: id)
+        limits[id] = nil
+        let continuation = continuations.removeValue(forKey: id)
+        lock.unlock()
+        guard let continuation else { return }
+        continuation.resume(returning: error == nil && buffer?.isEmpty == false ? buffer : nil)
     }
 }
