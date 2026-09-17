@@ -21,6 +21,13 @@ import SVGKit
 enum IconCacheService {
     // MARK: - Favicon 地址生成
 
+    /// 缓存写入通知：任一视图下载成功并落盘后发出，
+    /// 让正在展示同一图标地址的其他视图（如列表行）能立即刷新，
+    /// 避免详情页已拿到图标、返回列表后列表仍停留在占位图。
+    static let iconCacheDidUpdateNotification = Notification.Name("IconCacheService.iconCacheDidUpdate")
+    /// 通知 userInfo 中携带缓存键（即图源地址）的 key
+    static let cacheKeyUserInfoKey = "cacheKey"
+
     /// 提取标准域名（去除 scheme、www. 前缀与路径）
     /// 例：`https://www.example.com/login` -> `example.com`
     static func domain(from urlString: String) -> String? {
@@ -175,9 +182,21 @@ enum IconCacheService {
         let url = cacheFileURL(for: urlString)
         do {
             try data.write(to: url, options: .atomic)
+            postCacheDidUpdate(for: urlString)
             return true
         } catch {
             return false
+        }
+    }
+
+    /// 在主线程广播“某个图源地址的缓存已更新”，供 CachedIconView 订阅刷新
+    private static func postCacheDidUpdate(for urlString: String) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: iconCacheDidUpdateNotification,
+                object: nil,
+                userInfo: [cacheKeyUserInfoKey: urlString]
+            )
         }
     }
 
@@ -220,7 +239,7 @@ enum IconCacheService {
     }
 
     /// 下载并解码图片（返回可缓存数据 + 图片；HTML 等非图片内容返回 nil）。
-    /// SVG 无法被 UIImage 直接解码，走 WKWebView 离屏渲染。
+    /// SVG 无法被 UIImage 直接解码，净化后交给 SVGKit 离屏渲染。
     private static func downloadImage(_ urlString: String) async -> (data: Data, image: UIImage)? {
         guard let url = URL(string: urlString) else { return nil }
         guard let (data, _) = try? await URLSession.shared.data(from: url),
@@ -228,7 +247,9 @@ enum IconCacheService {
         if let image = UIImage(data: data) {
             return (data, image)
         }
-        if isSVGData(data), let image = await renderSVGData(data) {
+        if isSVGData(data),
+           let sanitized = sanitizedSVGString(from: data),
+           let image = await renderSVGData(Data(sanitized.utf8)) {
             // 缓存渲染后的 PNG，保证离线可复用
             return (image.pngData() ?? data, image)
         }
@@ -239,6 +260,54 @@ enum IconCacheService {
     private static func isSVGData(_ data: Data) -> Bool {
         let head = String(data: data.prefix(1024), encoding: .utf8)?.lowercased() ?? ""
         return head.contains("<svg")
+    }
+
+    // MARK: - SVG 净化
+
+    /// 解析前的 SVG 净化（纵深防御）。
+    ///
+    /// SVGKit 不执行 JavaScript，但会为外链发起**同步**网络请求：
+    /// `<image href="http(s)://…">`（SVGImageElement）与
+    /// `<?xml-stylesheet href="http(s)://…"?>`（SVGKParser）都直接
+    /// `NSData.dataWithContentsOfURL`。恶意 favicon 可借此让 App 访问任意外部主机，
+    /// 且渲染在 @MainActor 上，会一并阻塞主线程。因此：
+    /// - 剥离无视觉影响的构造：DOCTYPE / 内部子集、`<?xml-stylesheet?>`、
+    ///   `<script>` 块、`on*` 事件属性
+    /// - 只要出现不以 `#` 开头的 href / xlink:href 就整体放弃。除 `<image>` 外还覆盖：
+    ///   `<use>` 的非片段引用会触发 SVGKit 的 NSAssert；`data:` 内嵌 SVG 会被递归解析，
+    ///   其内部 href 仍可外链，故不能放行
+    ///
+    /// 通过则返回净化后的 SVG 字符串，否则返回 nil，交由后续候选（PNG / apple-touch-icon / Google）兜底。
+    private static func sanitizedSVGString(from data: Data) -> String? {
+        guard var svg = String(data: data, encoding: .utf8) else { return nil }
+        // 1) 外链引用无法安全改写，整体放弃
+        guard !containsExternalReference(svg) else { return nil }
+        // 2) 去除脚本与事件处理器（SVGKit 不执行，属纵深防御）
+        svg = svg.replacingOccurrences(of: #"(?is)<script\b[^>]*>.*?</script\s*>"#, with: "", options: .regularExpression)
+        svg = svg.replacingOccurrences(of: #"(?is)<script\b[^>]*/>"#, with: "", options: .regularExpression)
+        svg = svg.replacingOccurrences(of: #"(?i)\son[a-z]+\s*=\s*("[^"]*"|'[^']*')"#, with: "", options: .regularExpression)
+        // 3) 去除 DTD 与外部样式表处理指令，避免依赖 libxml2 的默认解析选项
+        //    字符类里的 `[` 必须转义，否则 ICU 会解析异常导致整条正则失配
+        svg = svg.replacingOccurrences(of: #"(?is)<!DOCTYPE\b[^>\[]*(\[[^\]]*\]\s*)?[^>]*>"#, with: "", options: .regularExpression)
+        svg = svg.replacingOccurrences(of: #"(?is)<\?xml-stylesheet\b.*?\?>"#, with: "", options: .regularExpression)
+        return svg
+    }
+
+    /// 是否含外部资源引用：href / xlink:href 的值只要不是页内片段（`#…`）即视为外链。
+    /// 只匹配「属性值」而不绑定标签，避免属性值内的 `>` 让按标签截断的正则漏检。
+    private static func containsExternalReference(_ svg: String) -> Bool {
+        let pattern = #"(?i)\b(?:xlink:href|href)\s*=\s*["']\s*([^"']*)["']"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return true }
+        let ns = svg as NSString
+        var external = false
+        regex.enumerateMatches(in: svg, options: [], range: NSRange(location: 0, length: ns.length)) { match, _, stop in
+            guard let match, match.numberOfRanges > 1 else { return }
+            let value = ns.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespacesAndNewlines)
+            if value.isEmpty || value.hasPrefix("#") { return }
+            external = true
+            stop.pointee = true
+        }
+        return external
     }
 
     /// SVG 数据 → UIImage（SVGKit 渲染；SVG 默认按固有尺寸渲染，
