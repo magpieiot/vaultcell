@@ -55,10 +55,22 @@ enum VaultKey {
     static let recentTags = "vaultcell.recentTags"
     static let searchHistory = "vaultcell.searchHistory"
     static let hasCompletedOnboarding = "vaultcell.hasCompletedOnboarding"
+    /// 是否已展示过首次运行的欢迎启动屏（1#），仅展示一次
+    static let hasSeenWelcomeSplash = "vaultcell.hasSeenWelcomeSplash"
     /// 是否已看过"密码库就绪"首次填充引导页（一次性决策点标记）
     static let hasSeenVaultSetupGuide = "vaultcell.hasSeenVaultSetupGuide"
     static let appLanguage = "vaultcell.appLanguage"
-    static let userID = "vaultcell.userID"
+    /// 是否允许抓取远程网站图标（默认值按 App Store 地区决定，首启落盘一次）
+    static let iconAutoFetch = "vaultcell.iconAutoFetch"
+    /// 地区默认值是否已落盘（只写一次，之后完全尊重用户在设置页的选择）
+    static let iconAutoFetchDefaultRegistered = "vaultcell.iconAutoFetchDefaultRegistered"
+    /// 是否已看过首启的"网站图标抓取"告知
+    static let hasSeenIconDisclosure = "vaultcell.hasSeenIconDisclosure"
+    /// 是否在安全评分的"为何被扣分"中展示"已泄露的条目"分类（默认关闭）
+    /// 泄露检测尚未上线，该类条目不影响评分，默认不占用扣分清单的位置。
+    static let showCompromisedInScoreReasons = "vaultcell.showCompromisedInScoreReasons"
+    /// 外观模式：AppAppearance 的 rawValue（0 浅色 / 1 深色 / 2 跟随系统）
+    static let appearanceMode = "vaultcell.appearanceMode"
 }
 
 struct AppTitle {
@@ -82,87 +94,87 @@ let famousApps: [AppTitle] = [
     // Work：办公协作
     AppTitle(
         icon: "Chatgpt", title: "Chatgpt", url: "https://www.chatgpt.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "Claude", title: "Claude", url: "https://www.claudeai.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "GitHub", title: "GitHub", url: "https://www.github.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "LinkedIn", title: "LinkedIn", url: "https://www.linkedin.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "Notion", title: "Notion", url: "https://www.notionapp.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "Slack", title: "Slack", url: "https://www.slack.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "Webex", title: "Webex", url: "https://www.webex.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     AppTitle(
         icon: "Zoom", title: "Zoom", url: "https://www.zoom.us/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
+        categoryID: PasswordCategory.systemDefaults[3].id),
     // Life：生活社交
     AppTitle(
         icon: "Airbnb", title: "Airbnb", url: "https://www.airbnb.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Amazon", title: "Amazon", url: "https://www.amazon.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Discord", title: "Discord", url: "https://www.discord.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Duolingo", title: "Duolingo", url: "https://www.duolingo.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Facebook", title: "Facebook", url: "https://www.facebook.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Instagram", title: "Instagram", url: "https://www.instagram.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Line", title: "Line", url: "https://www.line.me/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Pinterest", title: "Pinterest", url: "https://www.pinterest.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Reddit", title: "Reddit", url: "https://www.reddit.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Telegram", title: "Telegram", url: "https://www.telegram.org/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "TikTok", title: "TikTok", url: "https://www.tiktok.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "WhatsApp", title: "WhatsApp", url: "https://www.whatsapp.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Wikipedia", title: "Wikipedia", url: "https://www.wikipedia.org/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "X", title: "X", url: "https://www.x.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Yelp", title: "Yelp", url: "https://www.yelp.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     // Media：影音娱乐
     AppTitle(
         icon: "Disney", title: "Disney", url: "https://www.disneyplus.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "Netflix", title: "Netflix", url: "https://www.netflix.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "Spotify", title: "Spotify", url: "https://www.spotify.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "YouTube", title: "YouTube", url: "https://www.youtube.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
 ]
 
 /// 中国版常用应用（图标来自 Assets.xcassets/ChinaAppIcon）
@@ -177,48 +189,48 @@ let famousAppsCn: [AppTitle] = [
     // Finance：金融财务
     AppTitle(
         icon: "Alipay", title: "支付宝", url: "https://www.alipay.com/",
-        categoryID: PasswordCategory.systemDefaults[1].id),
+        categoryID: PasswordCategory.systemDefaults[2].id),
     // Life：生活社交
     AppTitle(
         icon: "Wechat", title: "微信", url: "https://weixin.qq.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Weibo", title: "微博", url: "https://www.weibo.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Taobao", title: "淘宝", url: "https://www.taobao.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Tmall", title: "天猫", url: "https://www.tmall.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Jd", title: "京东", url: "https://www.jd.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Meituan", title: "美团", url: "https://www.meituan.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Ctrip", title: "携程", url: "https://www.ctrip.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Xiaohongshu", title: "小红书", url: "https://www.xiaohongshu.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     AppTitle(
         icon: "Zhihu", title: "知乎", url: "https://www.zhihu.com/",
-        categoryID: PasswordCategory.systemDefaults[3].id),
+        categoryID: PasswordCategory.systemDefaults[4].id),
     // Media：影音娱乐
     AppTitle(
         icon: "Bilibili", title: "哔哩哔哩", url: "https://www.bilibili.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "Iqiyi", title: "爱奇艺", url: "https://www.iqiyi.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "Kuaishou", title: "快手", url: "https://www.kuaishou.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
+        categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "Neteasecloud", title: "网易云音乐", url: "https://music.163.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id)
+        categoryID: PasswordCategory.systemDefaults[5].id),
 ]
 
 let oauthProviders: [String] = [
@@ -227,6 +239,7 @@ let oauthProviders: [String] = [
     "Box",
     "Discord",
     "Facebook",
+    "Github",
     "Google",
     "Instagram",
     "LinkedIn",
@@ -323,13 +336,13 @@ extension UserDefaults {
         }
     }
 
-    /// 用户唯一标识，首次启动时生成并持久化
-    static var userID: String? {
+    /// 是否已展示过首次运行的欢迎启动屏（1#），淡出完成后置为 true
+    static var hasSeenWelcomeSplash: Bool {
         get {
-            standard.string(forKey: VaultKey.userID)
+            standard.bool(forKey: VaultKey.hasSeenWelcomeSplash)
         }
         set {
-            standard.set(newValue, forKey: VaultKey.userID)
+            standard.set(newValue, forKey: VaultKey.hasSeenWelcomeSplash)
         }
     }
 }

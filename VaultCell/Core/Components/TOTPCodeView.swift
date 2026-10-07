@@ -8,8 +8,8 @@
 import SwiftUI
 
 /// TOTP 验证码显示控件
-/// 根据 TwoFactorConfig 中的密钥实时生成 6 位验证码，并显示倒计时进度环。
-/// 验证码每 30 秒刷新一次，最后一 5 秒内进度环变红提醒。
+/// 根据 TwoFactorConfig 中的密钥、算法、位数与周期实时生成验证码，并显示倒计时进度环。
+/// 验证码按配置的 period（默认 30 秒）刷新，最后一 5 秒内进度环变红提醒。
 ///
 /// 用法：
 /// ```swift
@@ -160,7 +160,12 @@ struct TOTPCodeView: View {
             return
         }
 
-        let totpConfig = TOTPConfig(secret: secret)
+        let totpConfig = TOTPConfig(
+            secret: secret,
+            algorithm: TOTPAlgorithm(rawValue: config.algorithm.uppercased()) ?? .sha1,
+            digits: config.digits,
+            period: config.period
+        )
         let newResult = TOTPService.shared.generate(config: totpConfig)
 
         if result?.code != newResult.code {

@@ -7,6 +7,7 @@
 
 import Foundation
 import CryptoKit
+import LocalAuthentication
 import Security
 
 enum KeychainError: Error, LocalizedError {
@@ -159,7 +160,12 @@ class KeychainService: KeychainServiceProtocol {
         var query = baseQuery(for: identifier)
         query[kSecReturnData as String] = kCFBooleanFalse
         query[kSecMatchLimit as String] = kSecMatchLimitOne
-        query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+        // kSecUseAuthenticationUI/kSecUseAuthenticationUIFail 自 iOS 14 废弃：
+        // 改传 interactionNotAllowed 的 LAContext，语义不变——存在性检查绝不弹认证 UI，
+        // 条目存在但需要认证时返回 errSecInteractionNotAllowed（下方按"存在"处理）
+        let context = LAContext()
+        context.interactionNotAllowed = true
+        query[kSecUseAuthenticationContext as String] = context
         
         let status = SecItemCopyMatching(query as CFDictionary, nil)
         if status == errSecSuccess {

@@ -40,22 +40,28 @@ struct PasswordCategory: Identifiable, Codable, Equatable, Hashable {
 }
 
 extension PasswordCategory {
+    /// 系统预置分类：数组顺序即展示顺序，与 sortOrder 保持一致。
+    /// 注意：站内多处通过 `systemDefaults[下标]` 引用，插入新分类会使后续下标整体后移，
+    /// 需同步更新这些引用（按 4→5、3→4、2→3、1→2 顺序替换，避免重复命中）。
     static let systemDefaults: [PasswordCategory] = [
         PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
                         name: "Primary", icon: "star.fill", hexColor: "#007AFF",
                         isSystem: true, sortOrder: 0),
+        PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000006")!,
+                        name: "Social", icon: "person.2.fill", hexColor: "#30B0C7",
+                        isSystem: true, sortOrder: 1),
         PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
                         name: "Finance", icon: "banknote.fill", hexColor: "#34C759",
-                        isSystem: true, sortOrder: 1),
+                        isSystem: true, sortOrder: 2),
         PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
                         name: "Work", icon: "briefcase.fill", hexColor: "#FF9500",
-                        isSystem: true, sortOrder: 2),
+                        isSystem: true, sortOrder: 3),
         PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000004")!,
                         name: "Life", icon: "house.fill", hexColor: "#FF2D55",
-                        isSystem: true, sortOrder: 3),
+                        isSystem: true, sortOrder: 4),
         PasswordCategory(id: UUID(uuidString: "00000000-0000-0000-0000-000000000005")!,
                         name: "Media", icon: "play.rectangle.fill", hexColor: "#AF52DE",
-                        isSystem: true, sortOrder: 4)
+                        isSystem: true, sortOrder: 5)
     ]
 
     /// 删除自定义分类时，关联密码迁移到的目标分类（Life 作为通用兜底）
@@ -67,6 +73,7 @@ extension PasswordCategory {
     var backgroundColor: Color {
         switch name {
         case "Primary": return Color.CategoryBackground.Primary
+        case "Social":  return Color.CategoryBackground.Social
         case "Finance": return Color.CategoryBackground.Finance
         case "Work":    return Color.CategoryBackground.Work
         case "Life":    return Color.CategoryBackground.Life
@@ -79,6 +86,7 @@ extension PasswordCategory {
     var tintColor: Color {
         switch name {
         case "Primary": return Color.CategoryTint.Primary
+        case "Social":  return Color.CategoryTint.Social
         case "Finance": return Color.CategoryTint.Finance
         case "Work":    return Color.CategoryTint.Work
         case "Life":    return Color.CategoryTint.Life

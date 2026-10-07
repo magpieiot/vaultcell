@@ -32,7 +32,7 @@ final class BankcardFormModel: ObservableObject {
     @Published var isFavorite = false
 
     @Published var tagSelection: TagSelectionViewModel
-    @Published var customFieldModel: CustomFieldModel
+    @Published var customFields: [CustomField] = []
 
     var isEnabledNextButton: Bool {
         let trimmedBank = bankName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -71,10 +71,8 @@ final class BankcardFormModel: ObservableObject {
             self.notes = entry.notes ?? ""
             self.selectedCategoryID = entry.categoryID
             self.isFavorite = entry.isFavorite
-            self.customFieldModel = CustomFieldModel(customFields: entry.customFields ?? [])
+            self.customFields = entry.customFields ?? []
             self.tagSelection.seedSelectedTags(with: entry.tags ?? [])
-        } else {
-            self.customFieldModel = CustomFieldModel(customFields: [])
         }
     }
 
@@ -103,7 +101,7 @@ final class BankcardFormModel: ObservableObject {
                 categoryID: selectedCategoryID,
                 tags: tags,
                 isFavorite: isFavorite,
-                customFields: customFieldModel.customFields.isEmpty ? nil : customFieldModel.customFields,
+                customFields: customFields.isEmpty ? nil : customFields,
                 isSynced: false
             )
         case let .edit(entry):
@@ -122,7 +120,7 @@ final class BankcardFormModel: ObservableObject {
             updatedEntry.categoryID = selectedCategoryID
             updatedEntry.isFavorite = isFavorite
             updatedEntry.tags = tags.isEmpty ? nil : tags
-            updatedEntry.customFields = customFieldModel.customFields.isEmpty ? nil : customFieldModel.customFields
+            updatedEntry.customFields = customFields.isEmpty ? nil : customFields
             updatedEntry.updatedAt = Date()
             updatedEntry.isSynced = false
             return updatedEntry

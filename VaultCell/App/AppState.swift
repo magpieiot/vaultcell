@@ -26,11 +26,8 @@ class AppState: ObservableObject {
     /// 最后一次用户活动的时间，用于自动锁定超时计算
     @Published var lastActiveTime: Date?
     
-    /// 当前用户唯一标识，首次启动时生成并持久化
-    @Published var userID: String?
-    
-    /// 应用目录，启动时从 bundle 的 JSON 文件加载到内存
-    @Published var apps: [AppInfo] = []
+    /// 应用目录，启动时从 bundle 的统一目录 JSON 加载到内存
+    @Published var apps: [AppCatalogEntry] = []
 
     /// 是否需要显示快照保护遮罩
     ///
@@ -45,9 +42,6 @@ class AppState: ObservableObject {
     
     /// 钥匙串服务，用于安全存储敏感凭据
     private let keychainService: KeychainServiceProtocol
-    
-    /// CloudKit 登录上报服务，用于记录登录时间、设备及系统信息
-    private let cloudKitLoginService: CloudKitLoginServiceProtocol
     
     /// 应用目录服务，负责从 bundle 加载应用元数据
     private let appCatalogService: AppCatalogServiceProtocol
@@ -64,25 +58,24 @@ class AppState: ObservableObject {
     /// - Parameters:
     ///   - lockService: 锁定服务实例，默认为 AppLockService()
     ///   - keychainService: 钥匙串服务实例，默认为 KeychainService()
-    ///   - cloudKitLoginService: CloudKit 登录上报服务实例，默认为 CloudKitLoginService()
     ///   - appCatalogService: 应用目录服务实例，默认为 AppCatalogService()
     init(
         lockService: AppLockService = AppLockService(),
         keychainService: KeychainServiceProtocol = KeychainService(),
-        cloudKitLoginService: CloudKitLoginServiceProtocol = CloudKitLoginService(),
         appCatalogService: AppCatalogServiceProtocol = AppCatalogService()
     ) {
         self.lockService = lockService
         self.keychainService = keychainService
-        self.cloudKitLoginService = cloudKitLoginService
         self.appCatalogService = appCatalogService
         
         // 启动时检查是否存在已有保险库
         checkExistingVault()
-        // 确保首次启动时已生成用户唯一标识
-        ensureUserID()
+        // 订阅密码条目变更，驱动 AutoFill 凭据身份同步（自动填充建议的前置条件）
+        AutoFillIdentityService.shared.startObservingChanges()
         // 异步加载应用目录到内存
         loadAppCatalog()
+        // 图标抓取的启动准备：清 v2 旧缓存 + 首启按 App Store 地区落盘开关默认值（幂等）
+        Task { await IconPreferences.prepareOnLaunch() }
     }
     
     // MARK: - 计算属性
@@ -94,22 +87,13 @@ class AppState: ObservableObject {
     
     // MARK: - 公开方法 - 认证
     
-    /// 标记用户已认证成功，解除锁定状态，并向 CloudKit 上报登录事件
+    /// 标记用户已认证成功，解除锁定状态
     func authenticate() {
         isAuthenticated = true
         isLocked = false
         lastActiveTime = Date()
-        
-        // 异步上报登录信息；失败不影响登录流程
-        Task {
-            let event = LoginEvent(
-                timestamp: Date(),
-                iosVersion: UIDevice.current.systemVersion,
-                deviceModel: UIDevice.current.modelName,
-                userID: UserDefaults.userID
-            )
-            await cloudKitLoginService.reportLogin(event: event)
-        }
+        // 解锁后刷新系统侧的自动填充身份
+        synchronizeAutoFillIdentities()
     }
     
     // MARK: - 公开方法 - 保险库操作
@@ -264,6 +248,10 @@ class AppState: ObservableObject {
         // 场景切换在此时完成，后续的 .inactive 可正常触发快照遮罩
         isPerformingBiometricAuth = false
         checkAutoLock()
+        // 兜底同步：系统可能在重装、恢复备份或用户切换自动填充开关后清空 identity
+        if isAuthenticated && !isLocked {
+            synchronizeAutoFillIdentities()
+        }
     }
     
     /// 应用即将进入非活跃状态时的处理
@@ -289,6 +277,16 @@ class AppState: ObservableObject {
     }
     
     // MARK: - 私有方法
+
+    /// 触发一次自动填充身份全量同步（幂等；失败由服务内部记录日志，不影响主流程）
+    private func synchronizeAutoFillIdentities() {
+        NSLog("AutoFill: 触发身份同步（已认证=%@ 未锁定=%@）",
+              isAuthenticated ? "Y" : "N",
+              isLocked ? "N" : "Y")
+        Task {
+            await AutoFillIdentityService.shared.synchronize()
+        }
+    }
     
     /// 检查是否已存在保险库
     ///
@@ -299,32 +297,14 @@ class AppState: ObservableObject {
         isLocked = !hasExistingVault
     }
     
-    /// 确保用户唯一标识已生成并持久化
-    ///
-    /// 首次启动时 UserDefaults 中不存在 userID，则生成新的 UUID 并保存；
-    /// 后续启动直接读取已有值。
-    private func ensureUserID() {
-        if let existingID = UserDefaults.userID, !existingID.isEmpty {
-            userID = existingID
-        } else {
-            let newID = UUID().uuidString
-            UserDefaults.userID = newID
-            userID = newID
-        }
-    }
-    
     /// 异步加载应用目录到内存
     ///
-    /// 启动时从 bundle 的 JSON 文件读取应用元数据，加载失败仅打印日志。
+    /// 启动时从 bundle 的统一目录读取应用元数据，供标题联想使用。
     private func loadAppCatalog() {
         Task {
-            do {
-                let loadedApps = try await appCatalogService.loadApps()
-                await MainActor.run {
-                    self.apps = loadedApps
-                }
-            } catch {
-                print("Failed to load app catalog: \(error)")
+            let loadedApps = await appCatalogService.loadApps()
+            await MainActor.run {
+                self.apps = loadedApps
             }
         }
     }

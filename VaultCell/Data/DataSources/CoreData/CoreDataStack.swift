@@ -17,6 +17,9 @@ class CoreDataStack {
     private let lock = NSLock()
     private var _container: NSPersistentContainer?
 
+    /// 最近一次加载持久化存储时的错误（nil 表示加载成功）
+    private(set) var loadError: Error?
+
     /// 持久化容器（线程安全懒加载，避免多线程并发初始化导致 "invalid reuse after initialization failure"）
     var container: NSPersistentContainer {
         lock.lock()
@@ -24,9 +27,19 @@ class CoreDataStack {
         if let container = _container {
             return container
         }
-        let container = createAndLoadContainer()
-        _container = container
-        return container
+        let result = createAndLoadContainer()
+        _container = result.container
+        loadError = result.error
+        return result.container
+    }
+
+    /// 持久化存储是否已成功加载。
+    ///
+    /// 当协调器没有任何持久化存储时，Core Data 的 `save()` 会抛出无法被 Swift
+    /// `catch` 捕获的 ObjC 异常（NSInternalInconsistencyException）并直接闪退，
+    /// 因此所有保存前都必须先校验该状态。
+    var isStoreLoaded: Bool {
+        return !container.persistentStoreCoordinator.persistentStores.isEmpty
     }
 
     var viewContext: NSManagedObjectContext {
@@ -38,6 +51,10 @@ class CoreDataStack {
     }
 
     func saveContext() {
+        guard isStoreLoaded else {
+            print("⚠️ 持久化存储不可用，跳过保存以避免闪退：\(loadError?.localizedDescription ?? "unknown")")
+            return
+        }
         let context = container.viewContext
         if context.hasChanges {
             do {
@@ -49,7 +66,8 @@ class CoreDataStack {
     }
 
     /// 创建并加载持久化容器
-    private func createAndLoadContainer() -> NSPersistentContainer {
+    /// - Returns: 容器本身，以及加载持久化存储时的错误（成功时为 nil）
+    private func createAndLoadContainer() -> (container: NSPersistentContainer, error: Error?) {
         let container = NSPersistentContainer(name: "VaultCell")
 
         // 确定存储位置：优先 App Group 容器，退化到 Application Support
@@ -88,7 +106,7 @@ class CoreDataStack {
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
-        return container
+        return (container, loadError)
     }
 }
 
@@ -100,6 +118,27 @@ final class CoreDataDataSource: @unchecked Sendable {
          encryptionService: EncryptionServiceProtocol = EncryptionService.shared) {
         self.context = context
         self.encryptionService = encryptionService
+    }
+
+    /// 持久化存储是否可用。
+    ///
+    /// 当协调器没有任何持久化存储时（迁移失败等），Core Data 的 `save()`
+    /// 会抛出无法被 Swift `catch` 捕获的 ObjC 异常并直接闪退，因此保存前必须校验。
+    var isStoreAvailable: Bool {
+        !(context.persistentStoreCoordinator?.persistentStores.isEmpty ?? true)
+    }
+
+    /// 统一的保存入口：持久化存储不可用时安全跳过（返回 false），避免闪退
+    @discardableResult
+    func saveIfPossible() throws -> Bool {
+        guard isStoreAvailable else {
+            print("⚠️ 持久化存储不可用，跳过保存以避免闪退")
+            return false
+        }
+        if context.hasChanges {
+            try context.save()
+        }
+        return true
     }
     
     private func optionalBoolNumber(from value: Bool?) -> NSNumber? {
@@ -218,6 +257,9 @@ final class CoreDataDataSource: @unchecked Sendable {
             if let secret = config.secret {
                 cdConfig.encryptedSecret = try encryptionService.encrypt(secret).combined
             }
+            cdConfig.algorithm = config.algorithm
+            cdConfig.digits = Int16(clamping: config.digits)
+            cdConfig.period = Int16(clamping: config.period)
             cdConfig.issuer = config.issuer
             cdConfig.boundValue = config.boundValue
             cdConfig.isEnabled = config.isEnabled
@@ -236,7 +278,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         } else {
             _ = try createPasswordEntry(from: entry)
         }
-        try context.save()
+        try saveIfPossible()
     }
     
     func updatePasswordEntry(_ cdEntry: CDPasswordEntry, from entry: PasswordEntry) throws {
@@ -326,6 +368,9 @@ final class CoreDataDataSource: @unchecked Sendable {
             if let secret = config.secret {
                 cdConfig.encryptedSecret = try encryptionService.encrypt(secret).combined
             }
+            cdConfig.algorithm = config.algorithm
+            cdConfig.digits = Int16(clamping: config.digits)
+            cdConfig.period = Int16(clamping: config.period)
             cdConfig.issuer = config.issuer
             cdConfig.boundValue = config.boundValue
             cdConfig.isEnabled = config.isEnabled
@@ -339,7 +384,7 @@ final class CoreDataDataSource: @unchecked Sendable {
     func deletePasswordEntry(_ id: UUID) throws {
         if let entry = try fetchPassword(by: id) {
             context.delete(entry)
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -408,7 +453,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         } else {
             _ = try createBankcardEntry(from: entry)
         }
-        try context.save()
+        try saveIfPossible()
     }
     
     func updateBankcardEntry(_ cdEntry: CDBankcardEntry, from entry: BankcardEntry) throws {
@@ -460,7 +505,7 @@ final class CoreDataDataSource: @unchecked Sendable {
     func deleteBankcardEntry(_ id: UUID) throws {
         if let entry = try fetchBankcard(by: id) {
             context.delete(entry)
-            try context.save()
+            try saveIfPossible()
         }
     }
     
@@ -521,7 +566,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         } else {
             _ = try createPincodeEntry(from: entry)
         }
-        try context.save()
+        try saveIfPossible()
     }
     
     func updatePincodeEntry(_ cdEntry: CDPincodeEntry, from entry: PincodeEntry) throws {
@@ -560,7 +605,7 @@ final class CoreDataDataSource: @unchecked Sendable {
     func deletePincodeEntry(_ id: UUID) throws {
         if let entry = try fetchPincode(by: id) {
             context.delete(entry)
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -603,7 +648,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         } else {
             _ = try createSafeNote(from: note)
         }
-        try context.save()
+        try saveIfPossible()
     }
 
     func updateSafeNote(_ cdNote: CDSafeNote, from note: SafeNote) throws {
@@ -625,7 +670,7 @@ final class CoreDataDataSource: @unchecked Sendable {
     func deleteSafeNote(_ id: UUID) throws {
         if let note = try fetchSafeNote(by: id) {
             context.delete(note)
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -652,7 +697,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         cdCategory.sortOrder = category.sortOrder
         cdCategory.createdAt = category.createdAt
         cdCategory.updatedAt = category.updatedAt
-        try context.save()
+        try saveIfPossible()
     }
 
     func updateCategory(_ cdCategory: CDPasswordCategory, from category: PasswordCategory) throws {
@@ -661,14 +706,14 @@ final class CoreDataDataSource: @unchecked Sendable {
         cdCategory.hexColor = category.hexColor
         cdCategory.sortOrder = category.sortOrder
         cdCategory.updatedAt = category.updatedAt
-        try context.save()
+        try saveIfPossible()
     }
 
     func deleteCategory(_ id: UUID) throws {
         if let category = try fetchCategory(by: id) {
             if category.isSystem { return }
             context.delete(category)
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -686,20 +731,41 @@ final class CoreDataDataSource: @unchecked Sendable {
     }
 
     func ensureDefaultCategories() throws {
-        if try fetchAllCategories().isEmpty {
+        let existing = try fetchAllCategories()
+
+        if existing.isEmpty {
             for category in PasswordCategory.systemDefaults {
-                let cdCategory = CDPasswordCategory(context: context)
-                cdCategory.id = category.id
-                cdCategory.name = category.name
-                cdCategory.icon = category.icon
-                cdCategory.hexColor = category.hexColor
-                cdCategory.isSystem = category.isSystem
-                cdCategory.sortOrder = category.sortOrder
-                cdCategory.createdAt = category.createdAt
-                cdCategory.updatedAt = category.updatedAt
+                insertCategory(category)
             }
-            try context.save()
+            try saveIfPossible()
+            return
         }
+
+        // 已有分类时补齐后续版本新增的系统分类（系统分类不可删除/重命名，缺失即为新增）：
+        // 先把占位顺序让出来，再插入，保证展示顺序与 systemDefaults 一致。
+        let existingIDs = Set(existing.map(\.id))
+        let missing = PasswordCategory.systemDefaults.filter { !existingIDs.contains($0.id) }
+        guard !missing.isEmpty else { return }
+
+        for category in missing {
+            for cdCategory in existing where cdCategory.sortOrder >= category.sortOrder {
+                cdCategory.sortOrder += 1
+            }
+            insertCategory(category)
+        }
+        try saveIfPossible()
+    }
+
+    private func insertCategory(_ category: PasswordCategory) {
+        let cdCategory = CDPasswordCategory(context: context)
+        cdCategory.id = category.id
+        cdCategory.name = category.name
+        cdCategory.icon = category.icon
+        cdCategory.hexColor = category.hexColor
+        cdCategory.isSystem = category.isSystem
+        cdCategory.sortOrder = category.sortOrder
+        cdCategory.createdAt = category.createdAt
+        cdCategory.updatedAt = category.updatedAt
     }
 
     // MARK: - Tag CRUD
@@ -732,7 +798,7 @@ final class CoreDataDataSource: @unchecked Sendable {
         cdTag.sortOrder = tag.sortOrder
         cdTag.createdAt = tag.createdAt
         cdTag.updatedAt = tag.updatedAt
-        try context.save()
+        try saveIfPossible()
     }
 
     func updateTag(_ cdTag: CDTag, from tag: Tag) throws {
@@ -740,13 +806,13 @@ final class CoreDataDataSource: @unchecked Sendable {
         cdTag.hexColor = tag.hexColor
         cdTag.sortOrder = tag.sortOrder
         cdTag.updatedAt = tag.updatedAt
-        try context.save()
+        try saveIfPossible()
     }
 
     func deleteTag(_ id: UUID) throws {
         if let tag = try fetchTag(by: id) {
             context.delete(tag)
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -802,7 +868,7 @@ final class CoreDataDataSource: @unchecked Sendable {
                 }
             }
 
-            try context.save()
+            try saveIfPossible()
         }
     }
 
@@ -1107,6 +1173,9 @@ final class CoreDataDataSource: @unchecked Sendable {
                     id: cdConfig.id,
                     type: TwoFactorType(rawValue: cdConfig.type)!,
                     secret: secret,
+                    algorithm: cdConfig.algorithm ?? "SHA1",
+                    digits: cdConfig.digits > 0 ? Int(cdConfig.digits) : 6,
+                    period: cdConfig.period > 0 ? Int(cdConfig.period) : 30,
                     issuer: cdConfig.issuer,
                     boundValue: cdConfig.boundValue,
                     isEnabled: cdConfig.isEnabled,

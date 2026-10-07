@@ -82,6 +82,7 @@
       }
     },
     "—" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -200,6 +201,12 @@
           }
         }
       }
+    },
+    "%@ · 2FA is on" : {
+
+    },
+    "%@ · no 2FA" : {
+
     },
     "%@ Detail" : {
       "localizations" : {
@@ -481,6 +488,530 @@
         }
       }
     },
+    "%lld accounts · %lld can’t be recovered" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten · %lld können nicht wiederhergestellt werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld accounts · %2$lld can’t be recovered"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas · %lld no se pueden recuperar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes · %lld impossibles à récupérer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウント · %lld 件は復元不可"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld аккаунтов · %lld нельзя восстановить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个账户 · %lld 个无法找回"
+          }
+        }
+      }
+    },
+    "%lld accounts · %lld need rebinding" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten · %lld müssen neu verknüpft werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld accounts · %2$lld need rebinding"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas · %lld necesitan revincularse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes · %lld à relier de nouveau"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウント · %lld 件は再連携が必要"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld аккаунтов · %lld нужно перепривязать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个账户 · %lld 个需要换绑"
+          }
+        }
+      }
+    },
+    "%lld accounts · %lld protected by 2FA" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld accounts · %2$lld protected by 2FA"
+          }
+        }
+      }
+    },
+    "%lld accounts · none has 2FA" : {
+
+    },
+    "%lld accounts · safe to give up" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten · bedenkenlos aufzugeben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas · se puede renunciar sin problema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes · abandon possible sans risque"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウント · 手放しても安全"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld аккаунтов · можно спокойно отказаться"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个账户 · 可以安全注销"
+          }
+        }
+      }
+    },
+    "%lld accounts depend on it: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten hängen daran: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld accounts depend on it: %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas dependen de ello: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes en dépendent : %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウントが依存しています: %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "От него зависят %lld аккаунтов: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 个账户依赖它：%@"
+          }
+        }
+      }
+    },
+    "%lld accounts keep it on file, but all of them have another way to recover." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten haben es hinterlegt, aber alle haben einen anderen Weg zur Wiederherstellung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas lo tienen registrado, pero todas tienen otra forma de recuperación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes l’ont enregistré, mais tous disposent d’un autre moyen de récupération."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウントが保存していますが、いずれも別の復元手段があります。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld аккаунтов хранят его, но у всех есть другой способ восстановления."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 个账户留存了它，但它们都有其他找回方式。"
+          }
+        }
+      }
+    },
+    "%lld accounts share this password, and none of them has 2FA. One leak opens all of them." : {
+
+    },
+    "%lld accounts share this password. %lld of them still have 2FA as a second lock." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld accounts share this password. %2$lld of them still have 2FA as a second lock."
+          }
+        }
+      }
+    },
+    "%lld accounts use it for verification. Rebind those before you give it up." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Konten nutzen es zur Verifizierung. Verknüpfen Sie diese vorher neu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld cuentas lo usan para la verificación. Vuelve a vincularlas antes de renunciar a él."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld comptes l’utilisent pour la vérification. Reliez-les d’abord à une autre identité."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のアカウントが認証に使用しています。手放す前に再連携してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld аккаунтов используют его для подтверждения. Перепривяжите их перед отказом."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 个账户用它接收验证，请在注销前更换绑定。"
+          }
+        }
+      }
+    },
+    "%lld entries" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目"
+          }
+        }
+      }
+    },
+    "%lld entries are marked as compromised. Change passwords immediately." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge sind als kompromittiert markiert. Ändern Sie die Passwörter sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas están marcadas como comprometidas. Cambia las contraseñas de inmediato."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées sont marquées comme compromises. Changez immédiatement les mots de passe."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目が漏えい済みとマークされています。すぐにパスワードを変更してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей отмечены как скомпрометированные. Немедленно смените пароли."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目被标记为已泄露，请立即更改密码。"
+          }
+        }
+      }
+    },
+    "%lld entries have low scores. Consider upgrading them first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge haben niedrige Scores. Erwägen Sie, diese zuerst zu verbessern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas tienen puntuaciones bajas. Considera mejorarlas primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées ont un score faible. Envisagez de les améliorer en premier."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目はスコアが低いです。まずこれらを改善することを検討してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей имеют низкие оценки. Рассмотрите возможность улучшить их в первую очередь."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目分数偏低，建议优先升级。"
+          }
+        }
+      }
+    },
+    "%lld entries have not changed passwords for over a year." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge haben ihre Passwörter seit über einem Jahr nicht geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas no han cambiado su contraseña en más de un año."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées n'ont pas changé de mot de passe depuis plus d'un an."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目は 1 年以上パスワードを変更していません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей не меняли пароли более года."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目已超过一年未更换密码。"
+          }
+        }
+      }
+    },
+    "%lld entries reuse a password. Change them to unique passwords." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge verwenden dasselbe Passwort. Ändern Sie sie zu eindeutigen Passwörtern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas reutilizan una contraseña. Cámbialas por contraseñas únicas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées réutilisent un mot de passe. Remplacez-les par des mots de passe uniques."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目が同じパスワードを再利用しています。それぞれ固有のパスワードに変更してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей используют один и тот же пароль. Замените их уникальными паролями."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目重复使用了同一密码，请将其改为唯一密码。"
+          }
+        }
+      }
+    },
+    "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Einträge melden sich über OAuth an. Ihre Sicherheit hängt von den Quellenkonten im Tresor ab."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entradas inician sesión con OAuth. Su seguridad depende de las cuentas de origen en la bóveda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld entrées se connectent via OAuth. Leur sécurité repose sur les comptes sources du coffre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目が OAuth でサインインしています。それらの安全性は保管庫内の元アカウントに依存します。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld записей входят через OAuth. Их безопасность зависит от исходных аккаунтов в хранилище."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个条目通过 OAuth 登录，其安全性依赖于保险库中的源账户。"
+          }
+        }
+      }
+    },
     "%lld Items" : {
       "localizations" : {
         "de" : {
@@ -521,6 +1052,17 @@
         }
       }
     },
+    "%lld of %lld checks passed." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已通过 %1$lld / %2$lld 项检查。"
+          }
+        }
+      }
+    },
     "%lld out of 100" : {
       "localizations" : {
         "de" : {
@@ -557,6 +1099,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "满分 100 分，得分 %lld"
+          }
+        }
+      }
+    },
+    "%lld passwords are shared by %lld accounts." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld passwords are shared by %2$lld accounts."
           }
         }
       }
@@ -758,6 +1310,129 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "双重认证"
+          }
+        }
+      }
+    },
+    "2FA is not enabled." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA ist nicht aktiviert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA no está activada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA n'est pas activée."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA が有効になっていません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA не включена."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未启用两步验证（2FA）。"
+          }
+        }
+      }
+    },
+    "2FA is not verified yet." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA wurde noch nicht verifiziert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA aún no se ha verificado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA n'a pas encore été vérifiée."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA はまだ検証されていません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA ещё не проверена."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两步验证尚未完成验证。"
+          }
+        }
+      }
+    },
+    "2FA is on" : {
+
+    },
+    "2FA uses SMS, consider switching to an authenticator app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA nutzt SMS – erwägen Sie den Wechsel zu einer Authenticator-App."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA usa SMS; considera cambiarte a una app de autenticación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La 2FA utilise les SMS ; envisagez de passer à une application d'authentification."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA が SMS を使用しています。認証アプリへの切り替えを検討してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA использует SMS — рассмотрите переход на приложение-аутентификатор."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "两步验证使用短信，建议改用身份验证器应用。"
           }
         }
       }
@@ -1009,6 +1684,9 @@
         }
       }
     },
+    "Accounts using it" : {
+
+    },
     "Accounts with a TOTP key configured will appear here." : {
       "localizations" : {
         "de" : {
@@ -1125,6 +1803,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "活跃"
+          }
+        }
+      }
+    },
+    "Add a mix of capital letters, digits, and symbols." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "混合使用大写字母、数字与符号。"
           }
         }
       }
@@ -1691,6 +2379,17 @@
         }
       }
     },
+    "Already used by" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已被以下条目使用"
+          }
+        }
+      }
+    },
     "App language. Some items will refresh after restart." : {
       "localizations" : {
         "de" : {
@@ -2012,6 +2711,16 @@
         }
       }
     },
+    "At least 12 characters" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "至少 12 个字符"
+          }
+        }
+      }
+    },
     "ATM PIN - ICBC" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2093,6 +2802,9 @@
         }
       }
     },
+    "AutoFill" : {
+
+    },
     "Autofill credentials in Safari and third-party apps, with a built-in strong password generator." : {
       "localizations" : {
         "de" : {
@@ -2172,9 +2884,6 @@
           }
         }
       }
-    },
-    "Backup & Restore" : {
-
     },
     "Backup exported successfully." : {
       "extractionState" : "stale",
@@ -2393,6 +3102,86 @@
         }
       }
     },
+    "Before you cancel a number or close an email, see which accounts still depend on it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevor Sie eine Nummer oder E-Mail aufgeben, prüfen Sie, welche Konten noch davon abhängen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de cancelar un número o cerrar un correo, comprueba qué cuentas siguen dependiendo de él."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant d’abandonner un numéro ou une adresse e-mail, vérifiez quels comptes en dépendent encore."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号やメールアドレスを解約する前に、どのアカウントが依存しているか確認しましょう。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перед тем как отказаться от номера или почты, посмотрите, какие аккаунты от них зависят."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在注销手机号或邮箱之前，先看看哪些账户还依赖它。"
+          }
+        }
+      }
+    },
+    "Before you give it up" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevor Sie es aufgeben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de renunciar a él"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant d’y renoncer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手放す前に"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перед тем как отказаться"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "注销前需要处理"
+          }
+        }
+      }
+    },
     "Bike Lock PIN" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2514,6 +3303,86 @@
         }
       }
     },
+    "Bound contact" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verknüpfter Kontakt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacto vinculado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact associé"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Связанный контакт"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绑定联系方式"
+          }
+        }
+      }
+    },
+    "Bound to third-party sign-in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Drittanbieter-Anmeldung verknüpft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinculado al inicio de sesión de terceros"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lié à une connexion tierce"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティログインに連携"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Привязано к стороннему входу"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已绑定第三方登录"
+          }
+        }
+      }
+    },
     "Bound Value: %@" : {
       "localizations" : {
         "de" : {
@@ -2550,6 +3419,90 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "绑定值：%@"
+          }
+        }
+      }
+    },
+    "Breach detection is not available yet, so compromised entries do not lower your score. Turn this on to list them under Security Score." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prüfung auf Datenlecks ist noch nicht verfügbar, daher senken kompromittierte Einträge deine Bewertung nicht. Aktiviere diese Option, um sie unter Sicherheitsbewertung aufzulisten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La detección de filtraciones aún no está disponible, por lo que las entradas comprometidas no reducen tu puntuación. Actívalo para listarlas en Seguridad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La détection des fuites n'est pas encore disponible : les entrées compromises ne font donc pas baisser votre score. Activez cette option pour les lister sous Score de sécurité."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漏洩検出はまだ利用できないため、流出した項目はスコアを下げません。オンにすると、セキュリティスコアにカテゴリとして表示されます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверка на утечки пока недоступна, поэтому скомпрометированные записи не снижают вашу оценку. Включите этот параметр, чтобы они отображались в разделе «Оценка безопасности»."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "泄露检测功能尚未上线，已泄露的条目暂不会降低你的评分。开启后，它们会作为可查看的分类出现在安全评分中。"
+          }
+        }
+      }
+    },
+    "Breach detection is not available yet, so these entries do not affect the score right now." : {
+
+    },
+    "Breach status is unknown." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Kompromittierungsstatus ist unbekannt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El estado de filtración es desconocido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le statut de compromission est inconnu."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漏えい状況は不明です。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статус утечки неизвестен."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "泄露状态未知。"
           }
         }
       }
@@ -2630,6 +3583,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通过手机"
+          }
+        }
+      }
+    },
+    "Can wait" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kann warten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puede esperar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut attendre"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "後で対応可"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Можно отложить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以稍后处理"
           }
         }
       }
@@ -3035,6 +4028,191 @@
         }
       }
     },
+    "Change these accounts one at a time. Breach detection is not available yet, so reuse is the clearest signal you have." : {
+
+    },
+    "Check" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェック"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查"
+          }
+        }
+      }
+    },
+    "Check a number or email" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nummer oder E-Mail prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar un número o correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier un numéro ou une e-mail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号・メールをチェック"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить номер или почту"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查手机号或邮箱"
+          }
+        }
+      }
+    },
+    "Check an Identity" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identität prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar identidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier une identité"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先をチェック"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить контакт"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查联系方式"
+          }
+        }
+      }
+    },
+    "Check strength and risk" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查强度与风险"
+          }
+        }
+      }
+    },
+    "Checked on demand — this value is not saved as an entry field." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei Bedarf geprüft — dieser Wert ist nicht als Eintragsfeld gespeichert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobado bajo demanda: este valor no está guardado como campo de la entrada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifié à la demande — cette valeur n’est pas enregistrée comme champ d’entrée."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "都度チェック — この値は項目のフィールドとして保存されていません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверено по запросу — это значение не сохранено как поле записи."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "临时检查 —— 该值未保存为条目字段。"
+          }
+        }
+      }
+    },
+    "Checks" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查项"
+          }
+        }
+      }
+    },
     "Choose OAuth Provider" : {
       "localizations" : {
         "de" : {
@@ -3194,6 +4372,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除剪贴板"
+          }
+        }
+      }
+    },
+    "Clear Icon Cache" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbol-Cache löschen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar caché de iconos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effacer le cache des icônes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコンキャッシュを削除"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистить кеш значков"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除图标缓存"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fermer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "閉じる"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрыть"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
           }
         }
       }
@@ -4038,6 +5296,46 @@
         }
       }
     },
+    "Critical" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kritisch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crítica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Critique"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重大"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Критический"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "严重"
+          }
+        }
+      }
+    },
     "CSV" : {
       "localizations" : {
         "de" : {
@@ -4318,6 +5616,16 @@
         }
       }
     },
+    "Data" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据"
+          }
+        }
+      }
+    },
     "Data exported successfully." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4360,6 +5668,7 @@
       }
     },
     "Data Management" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4963,6 +6272,9 @@
         }
       }
     },
+    "Dropped Entries" : {
+
+    },
     "Each item type is grouped in its own block with matching columns. Opens in Numbers / Excel." : {
       "localizations" : {
         "de" : {
@@ -5163,6 +6475,137 @@
         }
       }
     },
+    "Email Address" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección de correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse e-mail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレス"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Адрес электронной почты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮箱地址"
+          }
+        }
+      }
+    },
+    "Email Addresses" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adressen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direcciones de correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresses e-mail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレス"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Адреса электронной почты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮箱地址"
+          }
+        }
+      }
+    },
+    "Email Migration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮箱迁移"
+          }
+        }
+      }
+    },
+    "Email Review" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisión de correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyse des e-mails"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスレビュー"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверка почты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邮箱评审"
+          }
+        }
+      }
+    },
     "Empty" : {
       "localizations" : {
         "de" : {
@@ -5243,6 +6686,46 @@
         }
       }
     },
+    "Enable 2FA on %lld entries to reduce takeover risk." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivieren Sie 2FA für %lld Einträge, um das Risiko der Übernahme zu verringern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa la 2FA en %lld entradas para reducir el riesgo de suplantación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activez la 2FA sur %lld entrées pour réduire le risque de prise de contrôle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の項目で 2FA を有効にして、乗っ取りのリスクを減らしましょう。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Включите 2FA для %lld записей, чтобы снизить риск взлома аккаунта."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为 %lld 个条目启用两步验证，降低账户被接管的风险。"
+          }
+        }
+      }
+    },
     "Enable it again or remove the stale configuration." : {
       "localizations" : {
         "de" : {
@@ -5282,6 +6765,9 @@
           }
         }
       }
+    },
+    "Enabled" : {
+
     },
     "Enabled: %@" : {
       "localizations" : {
@@ -5359,6 +6845,68 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "端到端加密"
+          }
+        }
+      }
+    },
+    "Enter a password" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入密码"
+          }
+        }
+      }
+    },
+    "Enter a password to see its strength and any issues." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入密码后显示强度与存在的问题。"
+          }
+        }
+      }
+    },
+    "Enter a phone number or email address." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte geben Sie eine Telefonnummer oder E-Mail-Adresse ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce un número de teléfono o una dirección de correo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez un numéro de téléphone ou une adresse e-mail."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号またはメールアドレスを入力してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите номер телефона или адрес почты."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入手机号或邮箱地址。"
           }
         }
       }
@@ -5604,6 +7152,7 @@
       }
     },
     "Entries marked as compromised cap their own score and lower the vault score." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5639,6 +7188,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "被标记为已泄露的条目会拉低自身评分并降低保险库总分。"
+          }
+        }
+      }
+    },
+    "Entries Synced" : {
+
+    },
+    "Error" : {
+
+    },
+    "Every saved account has its own password. Nothing is reused." : {
+
+    },
+    "Everything here is checked on your device. The password is never saved, copied, or uploaded. Breach detection is not available yet, so it is not part of this check." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有检查都在本机完成，密码不会被保存、复制或上传。泄露检测尚未上线，因此不在这次检查范围内。"
           }
         }
       }
@@ -6586,7 +8155,6 @@
       }
     },
     "Generate Test Vault" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6788,6 +8356,19 @@
         }
       }
     },
+    "Give each account its own password so one breach cannot unlock the rest." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让每个账号使用独立密码，一次泄露才不会牵连其他账号。"
+          }
+        }
+      }
+    },
+    "Give each one its own password." : {
+
+    },
     "Google" : {
       "localizations" : {
         "de" : {
@@ -6867,6 +8448,49 @@
           }
         }
       }
+    },
+    "Hidden, double tap to reveal" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausgeblendet, doppelt tippen zum Anzeigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oculto, pulsa dos veces para mostrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masqué, appuyez deux fois pour afficher"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非表示、ダブルタップで表示"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скрыто, дважды нажмите, чтобы показать"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已隐藏，轻点两下显示"
+          }
+        }
+      }
+    },
+    "Hide password" : {
+
     },
     "High" : {
       "localizations" : {
@@ -7108,9 +8732,6 @@
           }
         }
       }
-    },
-    "Import & Export" : {
-
     },
     "Import Failed" : {
 
@@ -7658,6 +9279,46 @@
         }
       }
     },
+    "Kept on file as a contact" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als Kontakt hinterlegt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado como contacto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservé comme contact"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連絡先として保存"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хранится как контакт"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作为联系方式留存"
+          }
+        }
+      }
+    },
     "Language" : {
       "localizations" : {
         "de" : {
@@ -7697,6 +9358,9 @@
           }
         }
       }
+    },
+    "Last Sync" : {
+
     },
     "Length" : {
       "localizations" : {
@@ -7938,6 +9602,46 @@
         }
       }
     },
+    "Login name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmeldename"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Identifiant"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログイン名"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Имя входа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录名"
+          }
+        }
+      }
+    },
     "Long press and drag to reorder. System default categories cannot be deleted. Deleting a custom category will reassign its entries to \"Other\"." : {
       "localizations" : {
         "de" : {
@@ -7974,6 +9678,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "长按拖动可调整顺序。系统默认类别无法删除。删除自定义类别后，其条目将重新归入“其他”。"
+          }
+        }
+      }
+    },
+    "Longer passwords take far more effort to crack. Aim for 16 or more." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码越长越难破解，建议 16 位以上。"
           }
         }
       }
@@ -8179,6 +9893,16 @@
         }
       }
     },
+    "Make a strong password" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成高强度密码"
+          }
+        }
+      }
+    },
     "Manual" : {
       "localizations" : {
         "de" : {
@@ -8295,6 +10019,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中"
+          }
+        }
+      }
+    },
+    "Mentioned" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erwähnt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mencionado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentionné"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記載あり"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Упоминается"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文本提及"
+          }
+        }
+      }
+    },
+    "Mentioned in notes or custom fields" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Notizen oder benutzerdefinierten Feldern erwähnt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mencionado en notas o campos personalizados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentionné dans les notes ou les champs personnalisés"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモまたはカスタムフィールドに記載"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Упоминается в заметках или пользовательских полях"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在备注或自定义字段中被提及"
           }
         }
       }
@@ -8783,6 +10587,49 @@
         }
       }
     },
+    "No %@ are saved yet. Add one to an entry and it will show up here." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine %@ gespeichert. Fügen Sie einen zu einem Eintrag hinzu, und er wird hier angezeigt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay %@ guardados. Añade uno a una entrada y aparecerá aquí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun %@ enregistré pour l’instant. Ajoutez-en un à une entrée et il apparaîtra ici."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@はまだ保存されていません。項目に追加するとここに表示されます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока нет сохранённых: %@. Добавьте в запись, и они появятся здесь."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有保存任何%@。把它添加到条目后就会显示在这里。"
+          }
+        }
+      }
+    },
+    "No 2FA" : {
+
+    },
     "No 2FA configuration found. Enable TOTP or hardware keys on important accounts first." : {
       "localizations" : {
         "de" : {
@@ -8983,6 +10830,46 @@
         }
       }
     },
+    "No entries in this category." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Einträge in dieser Kategorie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay entradas en esta categoría."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune entrée dans cette catégorie."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカテゴリに該当する項目はありません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В этой категории нет записей."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该分类下没有条目。"
+          }
+        }
+      }
+    },
     "No Items Yet" : {
       "localizations" : {
         "de" : {
@@ -9019,6 +10906,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂无条目"
+          }
+        }
+      }
+    },
+    "No keyboard or alphabetic runs (abcd, 1234, qwerty)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不含连续序列（abcd、1234、qwerty）"
+          }
+        }
+      }
+    },
+    "No long repeated runs (aaaa, 1111)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不含长重复片段（aaaa、1111）"
           }
         }
       }
@@ -9139,6 +11046,49 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未找到与 OAuth 相关的账户。"
+          }
+        }
+      }
+    },
+    "No password is shared by three or more accounts. Turn off the filter to see every shared password." : {
+
+    },
+    "No phone numbers or email addresses are saved yet. Add one to an entry and this list will show what depends on it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Telefonnummern oder E-Mail-Adressen gespeichert. Fügen Sie eine zu einem Eintrag hinzu, und diese Liste zeigt, was davon abhängt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay números de teléfono ni direcciones de correo guardados. Añade uno a una entrada y esta lista mostrará de qué depende."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun numéro de téléphone ni adresse e-mail enregistré. Ajoutez-en un à une entrée et cette liste affichera ce qui en dépend."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号やメールアドレスはまだ保存されていません。項目に追加すると、依存関係がここに表示されます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пока нет сохранённых номеров телефона или адресов почты. Добавьте их в запись, и здесь появится список зависимостей."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有保存任何手机号或邮箱。把它们添加到条目后，这里会显示依赖关系。"
           }
         }
       }
@@ -9299,6 +11249,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂无安全笔记"
+          }
+        }
+      }
+    },
+    "No saved account depends on this. If you still use it somewhere, add it to an entry first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein gespeichertes Konto hängt daran. Wenn Sie es noch irgendwo verwenden, fügen Sie es zuerst einem Eintrag hinzu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna cuenta guardada depende de esto. Si todavía lo usas en algún sitio, añádelo primero a una entrada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun compte enregistré n’en dépend. Si vous l’utilisez encore ailleurs, ajoutez-le d’abord à une entrée."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのアカウントはこれに依存していません。他の場所で使っている場合は、先に項目へ追加してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ни один сохранённый аккаунт от него не зависит. Если вы всё ещё где-то его используете, сначала добавьте его в запись."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有已保存的账户依赖它。如果你仍在别处使用，请先补录到条目中。"
+          }
+        }
+      }
+    },
+    "No saved account uses this. If you still use it somewhere, add it to an entry first and check again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein gespeichertes Konto verwendet dies. Wenn Sie es noch irgendwo verwenden, fügen Sie es zuerst einem Eintrag hinzu und prüfen Sie erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna cuenta guardada lo usa. Si todavía lo usas en algún sitio, añádelo primero a una entrada y vuelve a comprobarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun compte enregistré ne l’utilise. Si vous l’utilisez encore ailleurs, ajoutez-le d’abord à une entrée et vérifiez à nouveau."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのアカウントはこれを使用していません。他の場所で使っている場合は、先に項目へ追加してから再確認してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ни один сохранённый аккаунт его не использует. Если вы всё ещё где-то его используете, сначала добавьте его в запись и проверьте снова."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有已保存的账户使用它。如果你仍在别处使用，请先补录到条目中再检查。"
           }
         }
       }
@@ -9467,6 +11497,29 @@
         }
       }
     },
+    "Not a commonly used password" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不是常见弱口令"
+          }
+        }
+      }
+    },
+    "Not already used by another saved entry" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有被其他已保存条目重复使用"
+          }
+        }
+      }
+    },
+    "Not Enabled" : {
+
+    },
     "Note Details" : {
       "localizations" : {
         "de" : {
@@ -9583,6 +11636,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "备注：%@"
+          }
+        }
+      }
+    },
+    "Nothing blocks you. No saved account depends on this to get back in." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts steht dem entgegen. Kein gespeichertes Konto braucht dies, um wieder Zugang zu erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada te lo impide. Ninguna cuenta guardada depende de esto para recuperar el acceso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien ne vous bloque. Aucun compte enregistré n’en dépend pour être récupéré."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "妨げるものはありません。この連絡先に依存して復元するアカウントはありません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничто не мешает: ни один сохранённый аккаунт не зависит от него для восстановления доступа."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有阻碍项：没有已保存的账户需要靠它找回。"
+          }
+        }
+      }
+    },
+    "Nothing here needs action. Turn off the filter to see every saved identity." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier ist nichts zu tun. Deaktivieren Sie den Filter, um alle gespeicherten Identitäten zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquí no hay nada que requiera acción. Desactiva el filtro para ver todas las identidades guardadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien à faire ici. Désactivez le filtre pour voir toutes les identités enregistrées."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "対応が必要なものはありません。フィルタをオフにすると保存済みのすべての連絡先が表示されます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Здесь ничего не требует действий. Отключите фильтр, чтобы увидеть все сохранённые контакты."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这里没有需要处理的项目。关闭筛选可查看全部已保存的联系方式。"
+          }
+        }
+      }
+    },
+    "Nothing is saved. This only checks the entry you typed against your vault." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wird nichts gespeichert. Hiermit wird nur Ihre Eingabe mit dem Tresor abgeglichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se guarda nada. Solo se compara lo que escribiste con tu bóveda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’est enregistré. Ceci vérifie uniquement votre saisie par rapport au coffre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存は行われません。入力内容とボールトを照合するだけです。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничего не сохраняется. Здесь только проверка введённого значения по вашему хранилищу."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不会保存任何内容。这里只是把你输入的内容与密码库做比对。"
           }
         }
       }
@@ -9827,6 +12000,46 @@
         }
       }
     },
+    "OAuth source entry for %@ (%@) was not found in the vault; scored with fallback rules." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der OAuth-Quelleneintrag für %@ (%@) wurde im Tresor nicht gefunden; Bewertung mit Fallback-Regeln."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró la entrada de origen OAuth para %@ (%@) en la bóveda; se puntuó con reglas de respaldo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'entrée source OAuth pour %@ (%@) est introuvable dans le coffre ; score calculé avec des règles de repli."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（%@）の OAuth 元項目が保管庫に見つかりませんでした。フォールバック規則で採点しました。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Исходная запись OAuth для %@ (%@) не найдена в хранилище; оценка выполнена по резервным правилам."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未在保险库中找到 %@（%@）的 OAuth 源条目，已按降级规则评分。"
+          }
+        }
+      }
+    },
     "Office Door PIN" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -9948,6 +12161,9 @@
         }
       }
     },
+    "One password, many accounts" : {
+
+    },
     "One-Tap Autofill & Generate" : {
       "localizations" : {
         "de" : {
@@ -10024,6 +12240,92 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "网银密码"
+          }
+        }
+      }
+    },
+    "Only show identities that need action" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Identitäten anzeigen, die Handlungsbedarf haben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar solo las identidades que requieren acción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher uniquement les identités nécessitant une action"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "対応が必要な連絡先のみ表示"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывать только контакты, требующие действий"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只显示需要处理的联系方式"
+          }
+        }
+      }
+    },
+    "Only show passwords shared by 3 or more accounts" : {
+
+    },
+    "Only the first and last two characters are shown. Open a group to see the full password — it never touches the clipboard." : {
+
+    },
+    "Only way to get back into this account" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einziger Weg zurück in dieses Konto"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Única forma de recuperar esta cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seul moyen de récupérer ce compte"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアカウントに戻る唯一の手段"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Единственный способ вернуть доступ к аккаунту"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找回该账户的唯一方式"
           }
         }
       }
@@ -10476,6 +12778,261 @@
         }
       }
     },
+    "Password Checker" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码校验"
+          }
+        }
+      }
+    },
+    "Password does not use all character types (upper/lower/digit/symbol)." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Passwort verwendet nicht alle Zeichentypen (Groß-/Kleinbuchstaben, Ziffern, Sonderzeichen)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La contraseña no usa todos los tipos de caracteres (mayúsculas/minúsculas/dígitos/símbolos)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mot de passe n'utilise pas tous les types de caractères (majuscules/minuscules/chiffres/symboles)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードがすべての文字種（英大文字・英小文字・数字・記号）を使用していません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль не использует все типы символов (заглавные/строчные/цифры/символы)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码未包含全部字符类型（大写/小写/数字/符号）。"
+          }
+        }
+      }
+    },
+    "Password Generator" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwort-Generator"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generador de contraseñas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Générateur de mots de passe"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードジェネレーター"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Генератор паролей"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码生成器"
+          }
+        }
+      }
+    },
+    "Password has not been changed for over a year." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Passwort wurde seit über einem Jahr nicht geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La contraseña no se ha cambiado en más de un año."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mot de passe n'a pas été changé depuis plus d'un an."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスワードは 1 年以上変更されていません。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль не менялся более года."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该密码已超过一年未更换。"
+          }
+        }
+      }
+    },
+    "Password hidden" : {
+
+    },
+    "Password is marked as compromised." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Passwort ist als kompromittiert markiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La contraseña está marcada como comprometida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mot de passe est marqué comme compromis."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスワードは漏えい済みとマークされています。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль отмечен как скомпрометированный."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该密码已被标记为已泄露。"
+          }
+        }
+      }
+    },
+    "Password is reused across %lld entries." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Passwort wird in %lld Einträgen wiederverwendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La contraseña se reutiliza en %lld entradas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mot de passe est réutilisé dans %lld entrées."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このパスワードは %lld 件の項目で再利用されています。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль повторно используется в %lld записях."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该密码在 %lld 个条目中被重复使用。"
+          }
+        }
+      }
+    },
+    "Password is shorter than 12 characters." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Passwort ist kürzer als 12 Zeichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La contraseña tiene menos de 12 caracteres."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mot de passe fait moins de 12 caractères."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードが 12 文字未満です。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароль короче 12 символов."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码长度不足 12 位。"
+          }
+        }
+      }
+    },
     "Password Length" : {
       "localizations" : {
         "de" : {
@@ -10556,6 +13113,46 @@
         }
       }
     },
+    "Password reset" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwortzurücksetzung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer contraseña"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialisation du mot de passe"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードリセット"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сброс пароля"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码重置"
+          }
+        }
+      }
+    },
     "Password Reset" : {
       "localizations" : {
         "de" : {
@@ -10595,6 +13192,49 @@
           }
         }
       }
+    },
+    "Password reset, with another way in" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwortzurücksetzung, mit einem anderen Weg hinein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer contraseña, con otra forma de acceso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialisation du mot de passe, avec un autre moyen d’accès"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワードリセット（別の復元手段あり）"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сброс пароля, есть другой способ входа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用于密码重置，另有其他找回方式"
+          }
+        }
+      }
+    },
+    "Password revealed" : {
+
     },
     "Password saved locally!" : {
       "extractionState" : "stale",
@@ -10915,6 +13555,177 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "手机锁 PIN"
+          }
+        }
+      }
+    },
+    "Phone Migration" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号迁移"
+          }
+        }
+      }
+    },
+    "Phone Number" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Telefonnummer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número de teléfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numéro de téléphone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Номер телефона"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号"
+          }
+        }
+      }
+    },
+    "Phone number or email address" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Telefonnummer oder E-Mail-Adresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número de teléfono o dirección de correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numéro de téléphone ou adresse e-mail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号またはメールアドレス"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Номер телефона или адрес почты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号或邮箱地址"
+          }
+        }
+      }
+    },
+    "Phone Numbers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Telefonnummern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Números de teléfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numéros de téléphone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Номера телефонов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号"
+          }
+        }
+      }
+    },
+    "Phone Review" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Telefonnummern-Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisión de teléfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analyse du téléphone"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号レビュー"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверка телефона"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号评审"
           }
         }
       }
@@ -11283,7 +14094,6 @@
       }
     },
     "Privacy" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11643,6 +14453,166 @@
         }
       }
     },
+    "Rebind these accounts first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verknüpfen Sie diese Konten zuerst neu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero vuelve a vincular estas cuentas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reliez d’abord ces comptes à une autre identité."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まずこれらのアカウントを再連携してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сначала перепривяжите эти аккаунты."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先为这些账户更换绑定。"
+          }
+        }
+      }
+    },
+    "Receives email sign-in codes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empfängt Anmeldecodes per E-Mail"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibe códigos de inicio de sesión por correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reçoit les codes de connexion par e-mail"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールでログインコードを受信"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Получает коды для входа по почте"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收邮件登录验证码"
+          }
+        }
+      }
+    },
+    "Receives sign-in codes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empfängt Anmeldecodes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibe códigos de inicio de sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reçoit les codes de connexion"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログインコードを受信"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Получает коды для входа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收登录验证码"
+          }
+        }
+      }
+    },
+    "Receives SMS sign-in codes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empfängt SMS-Anmeldecodes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibe códigos de inicio de sesión por SMS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reçoit les codes de connexion par SMS"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SMS のログインコードを受信"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Получает SMS-коды для входа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接收短信登录验证码"
+          }
+        }
+      }
+    },
     "Recommended next steps" : {
       "localizations" : {
         "de" : {
@@ -11723,6 +14693,9 @@
         }
       }
     },
+    "Registered Identities" : {
+
+    },
     "Remove disabled 2FA entries or re-enable the ones still in use." : {
       "localizations" : {
         "de" : {
@@ -11799,6 +14772,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除收藏"
+          }
+        }
+      }
+    },
+    "Repeated characters add length without adding strength." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重复字符只增加长度，不增加强度。"
           }
         }
       }
@@ -12349,6 +15332,46 @@
         }
       }
     },
+    "Result" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ergebnis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultat"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結果"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Результат"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结果"
+          }
+        }
+      }
+    },
     "Reused Passwords" : {
       "localizations" : {
         "de" : {
@@ -12389,6 +15412,16 @@
         }
       }
     },
+    "Reusing a password lets one breach unlock every account that shares it." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重复使用密码会让一次泄露打开所有共用它的账号。"
+          }
+        }
+      }
+    },
     "Reusing passwords increases the blast radius of a single leak." : {
       "localizations" : {
         "de" : {
@@ -12425,6 +15458,19 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "重复使用密码会放大单次泄露的影响范围。"
+          }
+        }
+      }
+    },
+    "Reveal password" : {
+
+    },
+    "Runs of neighbouring keys are guessed early by attackers." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相邻按键组成的序列会被优先猜到。"
           }
         }
       }
@@ -13271,6 +16317,7 @@
       }
     },
     "Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -13310,6 +16357,15 @@
         }
       }
     },
+    "Shared by" : {
+
+    },
+    "Shared Password" : {
+
+    },
+    "Shared passwords" : {
+
+    },
     "Short, predictable, or poorly protected passwords drag the vault average down." : {
       "localizations" : {
         "de" : {
@@ -13346,6 +16402,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "短小、可预测或保护不足的密码会拉低保险库平均分。"
+          }
+        }
+      }
+    },
+    "Show Compromised Entries" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompromittierte Einträge anzeigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar entradas comprometidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher les entrées compromises"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "流出した項目を表示"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывать скомпрометированные записи"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示已泄露的条目"
           }
         }
       }
@@ -13426,6 +16522,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示成功提示"
+          }
+        }
+      }
+    },
+    "Shows the entries in this category" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt die Einträge in dieser Kategorie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra las entradas de esta categoría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche les entrées de cette catégorie"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このカテゴリの項目を表示します"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывает записи в этой категории"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看该分类下的条目"
           }
         }
       }
@@ -13713,6 +16849,9 @@
           }
         }
       }
+    },
+    "Status" : {
+
     },
     "Strength" : {
       "localizations" : {
@@ -14194,6 +17333,46 @@
         }
       }
     },
+    "That does not look like a phone number or email address." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das sieht nicht nach einer Telefonnummer oder E-Mail-Adresse aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No parece un número de teléfono ni una dirección de correo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cela ne ressemble pas à un numéro de téléphone ou à une adresse e-mail."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "電話番号またはメールアドレスの形式ではないようです。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Похоже, это не номер телефона и не адрес почты."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这看起来不是手机号或邮箱地址。"
+          }
+        }
+      }
+    },
     "The category \"%@\" contains %lld entries. Deleting it will reassign them to \"Other\". This action cannot be undone." : {
       "localizations" : {
         "de" : {
@@ -14276,6 +17455,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所选条目类型不包含任何条目。"
+          }
+        }
+      }
+    },
+    "These accounts have another way to recover." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Konten haben einen anderen Weg zur Wiederherstellung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estas cuentas tienen otra forma de recuperación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces comptes disposent d’un autre moyen de récupération."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらのアカウントには別の復元手段があります。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У этих аккаунтов есть другой способ восстановления."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这些账户还有其他找回方式。"
           }
         }
       }
@@ -14396,6 +17615,56 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "第三方登录"
+          }
+        }
+      }
+    },
+    "This account signs in via OAuth (%@ / %@); its security score is inherited from the source entry." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Konto meldet sich über OAuth (%@ / %@) an; sein Sicherheitswert wird vom Quelleneintrag übernommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta cuenta inicia sesión con OAuth (%@ / %@); su puntuación de seguridad se hereda de la entrada de origen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce compte se connecte via OAuth (%@ / %@) ; son score de sécurité est hérité de l'entrée source."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このアカウントは OAuth（%@ / %@）でサインインしており、セキュリティスコアは元の項目から引き継がれています。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Этот аккаунт входит через OAuth (%@ / %@); его оценка безопасности наследуется от исходной записи."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该账户通过 OAuth（%@ / %@）登录，其安全分继承自源条目。"
+          }
+        }
+      }
+    },
+    "This appears on public breach word lists. Pick something less predictable." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它出现在公开泄露词表中，请换一个更难猜的。"
           }
         }
       }
@@ -14562,6 +17831,17 @@
     },
     "This JSON file is not a valid VaultCell export." : {
 
+    },
+    "This password passes every check." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个密码通过了全部检查。"
+          }
+        }
+      }
     },
     "This will clear Keychain and local vault data. This action cannot be undone." : {
       "localizations" : {
@@ -14760,6 +18040,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操作过于频繁，请稍后再试。"
+          }
+        }
+      }
+    },
+    "Tools" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Werkzeuge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outils"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツール"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Инструменты"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
           }
         }
       }
@@ -15164,6 +18484,46 @@
         }
       }
     },
+    "Turn Off Icons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbole ausschalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar iconos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactiver les icônes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコンをオフにする"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отключить значки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭网站图标"
+          }
+        }
+      }
+    },
     "Two-Factor Authentication" : {
       "localizations" : {
         "de" : {
@@ -15200,6 +18560,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "双重身份验证"
+          }
+        }
+      }
+    },
+    "Type any password to see how it holds up. It does not need to be saved in your vault." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入任意密码即可查看强度，不需要它已保存在密码库中。"
           }
         }
       }
@@ -15770,6 +19141,46 @@
         }
       }
     },
+    "Used as the login name" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird als Anmeldename verwendet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se usa como nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisé comme identifiant"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログイン名として使用"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используется как имя входа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用作登录名"
+          }
+        }
+      }
+    },
     "User Agreetment" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -15887,6 +19298,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用户名 / 邮箱"
+          }
+        }
+      }
+    },
+    "Uses at least three of: upper, lower, digit, symbol" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "至少包含大写、小写、数字、符号中的三类"
           }
         }
       }
@@ -16139,6 +19560,46 @@
     },
     "VaultCell JSON" : {
 
+    },
+    "VaultCell shows a site icon by requesting apple-touch-icon.png or favicon.ico directly from that site. That request reveals your IP address and the site you are visiting. Built-in icons for common apps send no request, and you can turn this off anytime in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VaultCell zeigt ein Website-Symbol an, indem es apple-touch-icon.png oder favicon.ico direkt von der Website anfordert. Diese Anfrage übermittelt Ihre IP-Adresse und die besuchte Website an diese Website. Eingebaute Symbole für gängige Apps senden keine Anfrage; Sie können dies jederzeit in den Einstellungen deaktivieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VaultCell muestra el icono de un sitio solicitando apple-touch-icon.png o favicon.ico directamente a ese sitio. Esa solicitud revela tu dirección IP y el sitio que visitas. Los iconos integrados de las apps más comunes no envían ninguna solicitud, y puedes desactivarlo en cualquier momento en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VaultCell affiche l'icône d'un site en demandant apple-touch-icon.png ou favicon.ico directement à ce site. Cette requête révèle votre adresse IP et le site consulté. Les icônes intégrées des applications courantes n'envoient aucune requête, et vous pouvez désactiver ceci à tout moment dans Réglages."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VaultCell は apple-touch-icon.png または favicon.ico をサイトから直接取得してアイコンを表示します。この通信により、あなたの IP アドレスとアクセス先のサイトがそのサイトに伝わります。よく使うアプリの内蔵アイコンは通信を行いません。この機能は設定でいつでもオフにできます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VaultCell показывает значок сайта, запрашивая apple-touch-icon.png или favicon.ico напрямую у этого сайта. Такой запрос раскрывает сайту ваш IP-адрес и факт посещения. Встроенные значки популярных приложений не отправляют запросов, и эту функцию можно отключить в настройках в любое время."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示网站图标时，VaultCell 会直接向该网站请求 apple-touch-icon.png 或 favicon.ico，该请求会把你的 IP 地址与所访问的网站告知对方。常用应用的内置图标不会发起任何请求，你也可以随时在设置中关闭该功能。"
+          }
+        }
+      }
     },
     "Verification Codes & Security Audit" : {
       "localizations" : {
@@ -16460,6 +19921,46 @@
         }
       }
     },
+    "Website Icons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website-Symbole"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iconos de sitios web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icônes des sites web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウェブサイトのアイコン"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Значки сайтов"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网站图标"
+          }
+        }
+      }
+    },
     "Welcome to VaultCell" : {
       "localizations" : {
         "de" : {
@@ -16496,6 +19997,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "欢迎使用 VaultCell"
+          }
+        }
+      }
+    },
+    "What depends on a number" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "哪些账号在用这个号码"
+          }
+        }
+      }
+    },
+    "What depends on an address" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "哪些账号在用这个邮箱"
           }
         }
       }
@@ -16576,6 +20097,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wifi"
+          }
+        }
+      }
+    },
+    "Without it, %lld accounts can’t be recovered. Rebind them before you give it up." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne sie können %lld Konten nicht wiederhergestellt werden. Verknüpfen Sie diese zuerst neu."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin él, %lld cuentas no se pueden recuperar. Vuelve a vincularlas antes de renunciar a él."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans lui, %lld comptes ne pourront pas être récupérés. Reliez-les d’abord à une autre identité."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これを失うと %lld 件のアカウントが復元できなくなります。手放す前に再連携してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Без него %lld аккаунтов будет невозможно восстановить. Перепривяжите их перед отказом."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失去它后有 %lld 个账户将无法找回，请先更换绑定再注销。"
           }
         }
       }
@@ -16780,122 +20341,82 @@
         }
       }
     },
-    "Your vault is ready" : {
+    "Your vault has several high-risk patterns. Address the top items as soon as possible." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Tresor ist bereit"
+            "value" : "Ihr Tresor weist mehrere risikoreiche Muster auf. Beheben Sie die wichtigsten Punkte so bald wie möglich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu bóveda está lista"
+            "value" : "Tu bóveda tiene varios patrones de alto riesgo. Atiende los puntos principales lo antes posible."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre coffre est prêt"
+            "value" : "Votre coffre présente plusieurs schémas à haut risque. Traitez les points principaux dès que possible."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保管庫の準備ができました"
+            "value" : "保管庫には高リスクのパターンがいくつかあります。優先項目にできるだけ早く対応してください。"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ваше хранилище готово"
+            "value" : "В хранилище есть несколько шаблонов высокого риска. Устраните главные проблемы как можно скорее."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保险库已就绪"
+            "value" : "您的保险库存在多个高风险模式。请尽快处理最优先项。"
           }
         }
       }
     },
-    "Zero-Knowledge · Local First" : {
+    "Your vault is at critical risk. Start with compromised and reused passwords immediately." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zero-Knowledge · Lokal zuerst"
+            "value" : "Ihr Tresor ist kritisch gefährdet. Beginnen Sie sofort mit kompromittierten und wiederverwendeten Passwörtern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zero-Knowledge · Local primero"
+            "value" : "Tu bóveda corre un riesgo crítico. Empieza de inmediato con las contraseñas comprometidas y reutilizadas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zero-Knowledge · Local d'abord"
+            "value" : "Votre coffre est en danger critique. Commencez immédiatement par les mots de passe compromis et réutilisés."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ゼロ知識 · ローカル優先"
+            "value" : "保管庫は重大なリスクにさらされています。漏えい済み・再利用されたパスワードからすぐに対処してください。"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zero-Knowledge · Сначала локально"
+            "value" : "Хранилище находится в критической опасности. Немедленно начните с скомпрометированных и повторно используемых паролей."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "零知识 · 本地优先"
-          }
-        }
-      }
-    },
-    "%lld entries" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目"
+            "value" : "您的保险库处于严重风险中。请立即从已泄露与重复使用的密码入手。"
           }
         }
       }
@@ -16936,6 +20457,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "您的保险库状态极佳。请继续关注重复使用与长期未更换的密码。"
+          }
+        }
+      }
+    },
+    "Your vault is ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Tresor ist bereit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu bóveda está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre coffre est prêt"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保管庫の準備ができました"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваше хранилище готово"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保险库已就绪"
           }
         }
       }
@@ -17020,762 +20581,42 @@
         }
       }
     },
-    "Your vault has several high-risk patterns. Address the top items as soon as possible." : {
+    "Zero-Knowledge · Local First" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihr Tresor weist mehrere risikoreiche Muster auf. Beheben Sie die wichtigsten Punkte so bald wie möglich."
+            "value" : "Zero-Knowledge · Lokal zuerst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu bóveda tiene varios patrones de alto riesgo. Atiende los puntos principales lo antes posible."
+            "value" : "Zero-Knowledge · Local primero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre coffre présente plusieurs schémas à haut risque. Traitez les points principaux dès que possible."
+            "value" : "Zero-Knowledge · Local d'abord"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保管庫には高リスクのパターンがいくつかあります。優先項目にできるだけ早く対応してください。"
+            "value" : "ゼロ知識 · ローカル優先"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "В хранилище есть несколько шаблонов высокого риска. Устраните главные проблемы как можно скорее."
+            "value" : "Zero-Knowledge · Сначала локально"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库存在多个高风险模式。请尽快处理最优先项。"
-          }
-        }
-      }
-    },
-    "Your vault is at critical risk. Start with compromised and reused passwords immediately." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ihr Tresor ist kritisch gefährdet. Beginnen Sie sofort mit kompromittierten und wiederverwendeten Passwörtern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu bóveda corre un riesgo crítico. Empieza de inmediato con las contraseñas comprometidas y reutilizadas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre coffre est en danger critique. Commencez immédiatement par les mots de passe compromis et réutilisés."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保管庫は重大なリスクにさらされています。漏えい済み・再利用されたパスワードからすぐに対処してください。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Хранилище находится в критической опасности. Немедленно начните с скомпрометированных и повторно используемых паролей."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "您的保险库处于严重风险中。请立即从已泄露与重复使用的密码入手。"
-          }
-        }
-      }
-    },
-    "Password is reused across %lld entries." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Passwort wird in %lld Einträgen wiederverwendet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La contraseña se reutiliza en %lld entradas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mot de passe est réutilisé dans %lld entrées."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このパスワードは %lld 件の項目で再利用されています。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пароль повторно используется в %lld записях."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该密码在 %lld 个条目中被重复使用。"
-          }
-        }
-      }
-    },
-    "Password is marked as compromised." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Passwort ist als kompromittiert markiert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La contraseña está marcada como comprometida."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mot de passe est marqué comme compromis."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このパスワードは漏えい済みとマークされています。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пароль отмечен как скомпрометированный."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该密码已被标记为已泄露。"
-          }
-        }
-      }
-    },
-    "Breach status is unknown." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Kompromittierungsstatus ist unbekannt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El estado de filtración es desconocido."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le statut de compromission est inconnu."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "漏えい状況は不明です。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Статус утечки неизвестен."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "泄露状态未知。"
-          }
-        }
-      }
-    },
-    "2FA is not enabled." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA ist nicht aktiviert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA no está activada."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA n'est pas activée."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA が有効になっていません。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA не включена."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未启用两步验证（2FA）。"
-          }
-        }
-      }
-    },
-    "2FA uses SMS, consider switching to an authenticator app." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA nutzt SMS – erwägen Sie den Wechsel zu einer Authenticator-App."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA usa SMS; considera cambiarte a una app de autenticación."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA utilise les SMS ; envisagez de passer à une application d'authentification."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA が SMS を使用しています。認証アプリへの切り替えを検討してください。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA использует SMS — рассмотрите переход на приложение-аутентификатор."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "两步验证使用短信，建议改用身份验证器应用。"
-          }
-        }
-      }
-    },
-    "2FA is not verified yet." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA wurde noch nicht verifiziert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA aún no se ha verificado."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La 2FA n'a pas encore été vérifiée."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA はまだ検証されていません。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FA ещё не проверена."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "两步验证尚未完成验证。"
-          }
-        }
-      }
-    },
-    "Password has not been changed for over a year." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Passwort wurde seit über einem Jahr nicht geändert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La contraseña no se ha cambiado en más de un año."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mot de passe n'a pas été changé depuis plus d'un an."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このパスワードは 1 年以上変更されていません。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пароль не менялся более года."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该密码已超过一年未更换。"
-          }
-        }
-      }
-    },
-    "Password is shorter than 12 characters." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Passwort ist kürzer als 12 Zeichen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La contraseña tiene menos de 12 caracteres."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mot de passe fait moins de 12 caractères."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パスワードが 12 文字未満です。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пароль короче 12 символов."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "密码长度不足 12 位。"
-          }
-        }
-      }
-    },
-    "Password does not use all character types (upper/lower/digit/symbol)." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Passwort verwendet nicht alle Zeichentypen (Groß-/Kleinbuchstaben, Ziffern, Sonderzeichen)."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La contraseña no usa todos los tipos de caracteres (mayúsculas/minúsculas/dígitos/símbolos)."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mot de passe n'utilise pas tous les types de caractères (majuscules/minuscules/chiffres/symboles)."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "パスワードがすべての文字種（英大文字・英小文字・数字・記号）を使用していません。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пароль не использует все типы символов (заглавные/строчные/цифры/символы)."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "密码未包含全部字符类型（大写/小写/数字/符号）。"
-          }
-        }
-      }
-    },
-    "This account signs in via OAuth (%@ / %@); its security score is inherited from the source entry." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses Konto meldet sich über OAuth (%@ / %@) an; sein Sicherheitswert wird vom Quelleneintrag übernommen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta cuenta inicia sesión con OAuth (%@ / %@); su puntuación de seguridad se hereda de la entrada de origen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce compte se connecte via OAuth (%@ / %@) ; son score de sécurité est hérité de l'entrée source."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このアカウントは OAuth（%@ / %@）でサインインしており、セキュリティスコアは元の項目から引き継がれています。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Этот аккаунт входит через OAuth (%@ / %@); его оценка безопасности наследуется от исходной записи."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "该账户通过 OAuth（%@ / %@）登录，其安全分继承自源条目。"
-          }
-        }
-      }
-    },
-    "OAuth source entry for %@ (%@) was not found in the vault; scored with fallback rules." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der OAuth-Quelleneintrag für %@ (%@) wurde im Tresor nicht gefunden; Bewertung mit Fallback-Regeln."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se encontró la entrada de origen OAuth para %@ (%@) en la bóveda; se puntuó con reglas de respaldo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L'entrée source OAuth pour %@ (%@) est introuvable dans le coffre ; score calculé avec des règles de repli."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@（%@）の OAuth 元項目が保管庫に見つかりませんでした。フォールバック規則で採点しました。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Исходная запись OAuth для %@ (%@) не найдена в хранилище; оценка выполнена по резервным правилам."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未在保险库中找到 %@（%@）的 OAuth 源条目，已按降级规则评分。"
-          }
-        }
-      }
-    },
-    "%lld entries reuse a password. Change them to unique passwords." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge verwenden dasselbe Passwort. Ändern Sie sie zu eindeutigen Passwörtern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas reutilizan una contraseña. Cámbialas por contraseñas únicas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées réutilisent un mot de passe. Remplacez-les par des mots de passe uniques."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目が同じパスワードを再利用しています。それぞれ固有のパスワードに変更してください。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей используют один и тот же пароль. Замените их уникальными паролями."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目重复使用了同一密码，请将其改为唯一密码。"
-          }
-        }
-      }
-    },
-    "%lld entries are marked as compromised. Change passwords immediately." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge sind als kompromittiert markiert. Ändern Sie die Passwörter sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas están marcadas como comprometidas. Cambia las contraseñas de inmediato."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées sont marquées comme compromises. Changez immédiatement les mots de passe."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目が漏えい済みとマークされています。すぐにパスワードを変更してください。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей отмечены как скомпрометированные. Немедленно смените пароли."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目被标记为已泄露，请立即更改密码。"
-          }
-        }
-      }
-    },
-    "Enable 2FA on %lld entries to reduce takeover risk." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktivieren Sie 2FA für %lld Einträge, um das Risiko der Übernahme zu verringern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activa la 2FA en %lld entradas para reducir el riesgo de suplantación."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activez la 2FA sur %lld entrées pour réduire le risque de prise de contrôle."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目で 2FA を有効にして、乗っ取りのリスクを減らしましょう。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Включите 2FA для %lld записей, чтобы снизить риск взлома аккаунта."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "为 %lld 个条目启用两步验证，降低账户被接管的风险。"
-          }
-        }
-      }
-    },
-    "%lld entries have not changed passwords for over a year." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge haben ihre Passwörter seit über einem Jahr nicht geändert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas no han cambiado su contraseña en más de un año."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées n'ont pas changé de mot de passe depuis plus d'un an."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目は 1 年以上パスワードを変更していません。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей не меняли пароли более года."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目已超过一年未更换密码。"
-          }
-        }
-      }
-    },
-    "%lld entries have low scores. Consider upgrading them first." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge haben niedrige Scores. Erwägen Sie, diese zuerst zu verbessern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas tienen puntuaciones bajas. Considera mejorarlas primero."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées ont un score faible. Envisagez de les améliorer en premier."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目はスコアが低いです。まずこれらを改善することを検討してください。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей имеют низкие оценки. Рассмотрите возможность улучшить их в первую очередь."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目分数偏低，建议优先升级。"
-          }
-        }
-      }
-    },
-    "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Einträge melden sich über OAuth an. Ihre Sicherheit hängt von den Quellenkonten im Tresor ab."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entradas inician sesión con OAuth. Su seguridad depende de las cuentas de origen en la bóveda."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld entrées se connectent via OAuth. Leur sécurité repose sur les comptes sources du coffre."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 件の項目が OAuth でサインインしています。それらの安全性は保管庫内の元アカウントに依存します。"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld записей входят через OAuth. Их безопасность зависит от исходных аккаунтов в хранилище."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld 个条目通过 OAuth 登录，其安全性依赖于保险库中的源账户。"
+            "value" : "零知识 · 本地优先"
           }
         }
       }

@@ -5,7 +5,7 @@
 /// ------------------------------------------------------------------
 ///
 /// AutoFill 扩展侧的 Core Data 实体声明，与主 App 共享的
-/// `VaultCell.xcdatamodeld`（当前版本 VaultCell_v5）保持一致。
+/// `VaultCell.xcdatamodeld`（当前版本 VaultCell_v6）保持一致。
 ///
 /// 扩展进程与主 App 进程相互独立，各自注册一套 `@objc(CDxxx)` 类，
 /// Objective-C 运行时不会冲突。

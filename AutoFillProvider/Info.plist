@@ -30,6 +30,11 @@
 		<dict>
 			<key>ASCredentialProviderExtensionCapabilities</key>
 			<dict>
+				<!-- 关键：声明本扩展提供"密码"。Apple 官方模板默认即写 true。
+				     缺失时系统不把它当作密码填充提供者：QuickType 不出现建议，
+				     credential identity 读回也会被过滤为空（实测主 App / 扩展进程均读 0 条）。 -->
+				<key>ProvidesPasswords</key>
+				<true/>
 				<key>SupportsAutoFill</key>
 				<true/>
 				<key>SupportsCredentialExchange</key>

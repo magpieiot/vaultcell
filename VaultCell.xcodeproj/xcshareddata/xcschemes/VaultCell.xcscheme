@@ -54,6 +54,16 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "841FD9539747B3172218760F"
+               BuildableName = "VaultCellTests.xctest"
+               BlueprintName = "VaultCellTests"
+               ReferencedContainer = "container:VaultCell.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

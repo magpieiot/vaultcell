@@ -22,6 +22,7 @@
 import CoreData
 import CryptoKit
 import Foundation
+import LocalAuthentication
 import Security
 
 /// AutoFill 扩展读取共享密码库时的错误类型
@@ -40,17 +41,26 @@ enum AutoFillCredentialStoreError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .vaultNotConfigured:
-            return "尚未设置密码库，请先打开 VaultCell 创建密码库并保存密码"
+            return String(localized: "Vault is not set up yet. Open VaultCell to create a vault and save passwords first")
         case .vaultLocked:
-            return "密码库已锁定"
+            return String(localized: "Vault is locked")
         case .authenticationFailed:
-            return "身份验证失败"
+            return String(localized: "Authentication failed")
         case .databaseUnavailable:
-            return "无法访问密码库数据"
+            return String(localized: "Vault data is unavailable")
         case .invalidData:
-            return "密码数据格式错误"
+            return String(localized: "Password data is malformed")
         }
     }
+}
+
+/// 自动填充列表展示用的条目元数据。
+/// 刻意不含密码：密码在用户选中某条时按 ID 单条解密，避免列表加载时解密整库。
+struct CredentialSummary: Identifiable, Hashable {
+    let id: UUID
+    let siteName: String
+    let siteURL: String
+    let username: String
 }
 
 /// AutoFill 扩展的凭据读取器（单例）
@@ -96,17 +106,45 @@ final class AutoFillCredentialStore {
     func unlock() throws {
         if isUnlocked { return }
 
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(dekQuery(authenticationContext: nil) as CFDictionary, &result)
+        try handleUnlockResult(status: status, result: result)
+    }
+
+    /// 免交互路径专用解锁：**绝不弹出任何认证界面**。
+    ///
+    /// 为什么不能用 `unlock()`：免交互入口（`provideCredentialWithoutUserInteraction`）运行在
+    /// 扩展 UI 还没上屏的上下文里，此时读 userPresence 条目会让系统弹出的 Face ID 被立即取消。
+    /// 这一次"失败的认证"会占用尝试次数并让随后的交互路径第一次也失败，最终表现为
+    /// "每次都报错、必须点一次重试才能填"。带 `interactionNotAllowed` 的上下文只会复用
+    /// 近期已有的认证结果，取不到就立刻报错，由调用方干净地回落到交互流程。
+    func unlockWithoutUserInteraction() throws {
+        if isUnlocked { return }
+
+        let context = LAContext()
+        context.interactionNotAllowed = true
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(dekQuery(authenticationContext: context) as CFDictionary, &result)
+        try handleUnlockResult(status: status, result: result)
+    }
+
+    /// 读取 DEK 的 Keychain 查询；传入已认证的 `LAContext` 可复用该次认证、避免二次弹窗。
+    private func dekQuery(authenticationContext: LAContext?) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainServiceName,
             kSecAttrAccount as String: keychainDEKAccount,
-            kSecReturnData as String: kCFBooleanTrue,
+            kSecReturnData as String: kCFBooleanTrue ?? "",
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
+        if let authenticationContext {
+            query[kSecUseAuthenticationContext as String] = authenticationContext
+        }
+        return query
+    }
 
-        var result: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-
+    private func handleUnlockResult(status: OSStatus, result: CFTypeRef?) throws {
         switch status {
         case errSecSuccess:
             guard let data = result as? Data, !data.isEmpty else {
@@ -119,7 +157,9 @@ final class AutoFillCredentialStore {
             // 主 App 从未创建过密码库（DEK 不存在）
             throw AutoFillCredentialStoreError.vaultNotConfigured
         default:
-            // 含 errSecUserCanceled（用户取消认证）、errSecInteractionNotAllowed 等
+            // 含 errSecUserCanceled(-128)、errSecAuthFailed(-25293)、errSecInteractionNotAllowed(-25308)
+            // 打出 OSStatus 便于区分"系统取消"与"用户取消"
+            NSLog("AutoFill: Keychain 解锁失败 status=%d", status)
             throw AutoFillCredentialStoreError.authenticationFailed(status)
         }
     }
@@ -131,105 +171,119 @@ final class AutoFillCredentialStore {
         lock.unlock()
     }
 
+    // MARK: - 预热
+
+    /// 在后台线程提前打开共享数据库（幂等，失败静默）。
+    ///
+    /// 首次填充的耗时大头之一是扩展进程内第一次打开共享 SQLite
+    /// （模型加载 + 迁移兼容性检查 + WAL 恢复）。放在入口立刻触发，
+    /// 与"系统呈现扩展面板 + 生物识别认证"并行执行，
+    /// 让解锁成功后的单条读取直接命中已就绪的容器。
+    func warmUpDatabase() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            _ = try? self?.persistentContainer()
+        }
+    }
+
     // MARK: - 凭据读取
 
-    /// 读取全部未被软删除的密码条目（解密后的明文仅存在于内存）。
-    /// 需先成功调用 unlock()；Core Data 的 viewContext 绑定主线程，
-    /// 因此本方法应在主线程调用。
-    func fetchCredentials() throws -> [CredentialItem] {
-        lock.lock()
-        let dek = _dek
-        lock.unlock()
-        guard let dek else {
+    /// 读取列表所需的元数据：**不解密任何密文**，也不读取 `encryptedPassword` 大字段。
+    /// 在私有队列上下文执行，不占用主线程；需先成功调用 unlock()。
+    func fetchCredentialSummaries() throws -> [CredentialSummary] {
+        guard currentDek() != nil else {
             throw AutoFillCredentialStoreError.vaultLocked
         }
 
-        let container = try persistentContainer()
-        let context = container.viewContext
-
-        let request = NSFetchRequest<CDPasswordEntry>(entityName: "CDPasswordEntry")
-        request.returnsObjectsAsFaults = false
-
-        let cdEntries = try context.fetch(request)
-
-        var items: [CredentialItem] = []
-        items.reserveCapacity(cdEntries.count)
-
-        for cdEntry in cdEntries {
-            // 过滤回收站中的软删除条目（与主 App 列表一致）
-            guard cdEntry.deletedAt == nil else { continue }
-            guard let password = Self.decryptPassword(cdEntry.encryptedPassword, using: dek) else {
-                // 单条解密失败不阻断整体列表（可能为损坏数据）
-                continue
-            }
-            items.append(CredentialItem(
-                id: cdEntry.id,
-                siteName: cdEntry.siteName,
-                siteURL: cdEntry.siteURL ?? "",
-                username: cdEntry.username,
-                password: password
-            ))
+        let rows: [[String: Any]] = try perform { context in
+            let request = NSFetchRequest<NSDictionary>(entityName: "CDPasswordEntry")
+            request.resultType = .dictionaryResultType
+            // 与主 App 列表一致：回收站中的条目不出现在自动填充里
+            request.predicate = NSPredicate(format: "deletedAt == nil")
+            // 只取展示字段，避免把整库密文读进内存再逐条解密（大库下即秒级卡顿的来源）
+            request.propertiesToFetch = ["id", "siteName", "siteURL", "username"]
+            return try context.fetch(request).compactMap { $0 as? [String: Any] }
         }
 
-        return items.sorted {
+        let summaries: [CredentialSummary] = rows.compactMap { row in
+            // 字典结果里 UUID 属性可能桥接为 NSUUID，两种都接受，避免列表整体变空
+            let id = (row["id"] as? UUID) ?? (row["id"] as? NSUUID).map { $0 as UUID }
+            guard let id,
+                  let siteName = row["siteName"] as? String,
+                  let username = row["username"] as? String else {
+                return nil
+            }
+            return CredentialSummary(
+                id: id,
+                siteName: siteName,
+                siteURL: row["siteURL"] as? String ?? "",
+                username: username
+            )
+        }
+
+        return summaries.sorted {
             $0.siteName.localizedCaseInsensitiveCompare($1.siteName) == .orderedAscending
         }
     }
 
-    // MARK: - 匹配辅助
-
-    /// 判断系统传入的 serviceIdentifier（域名或 URL）与条目站点 URL 是否匹配
-    static func matches(service: String, siteURL: String) -> Bool {
-        let serviceTrimmed = service.trimmingCharacters(in: .whitespacesAndNewlines)
-        let siteTrimmed = siteURL.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !serviceTrimmed.isEmpty, !siteTrimmed.isEmpty else {
-            return false
+    /// 按条目 ID 取「用户名 + 解密后的密码」：单行查询，只解密这一条。
+    /// 所有填充路径都走这里，因此代价与库大小无关。
+    func credential(for id: UUID) throws -> (username: String, password: String)? {
+        guard let dek = currentDek() else {
+            throw AutoFillCredentialStoreError.vaultLocked
         }
 
-        let serviceHost = Self.hostname(from: serviceTrimmed)
-        let siteHost = Self.hostname(from: siteTrimmed)
+        return try perform { context in
+            let request = NSFetchRequest<CDPasswordEntry>(entityName: "CDPasswordEntry")
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.fetchLimit = 1
 
-        if let serviceHost, let siteHost {
-            return serviceHost == siteHost
-                || serviceHost.hasSuffix("." + siteHost)
-                || siteHost.hasSuffix("." + serviceHost)
+            guard let entry = try context.fetch(request).first,
+                  let password = Self.decryptPassword(entry.encryptedPassword, using: dek) else {
+                // 条目已被删除或密文损坏
+                return nil
+            }
+            return (username: entry.username, password: password)
         }
-
-        // 无法解析 host 时退化为子串包含匹配
-        return siteTrimmed.localizedCaseInsensitiveContains(serviceTrimmed)
-            || serviceTrimmed.localizedCaseInsensitiveContains(siteTrimmed)
-    }
-
-    /// 从任意 URL/域名文本中提取 hostname（小写、去 www）
-    private static func hostname(from text: String) -> String? {
-        let candidate: String
-        if text.contains("://"), let url = URL(string: text), let host = url.host {
-            candidate = host
-        } else {
-            // 去掉 scheme 与路径后取第一段
-            let withoutScheme = text.replacingOccurrences(of: ".*://", with: "", options: .regularExpression)
-            candidate = withoutScheme.split(separator: "/").first.map(String.init) ?? withoutScheme
-        }
-        let trimmed = candidate.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard !trimmed.isEmpty else { return nil }
-        // 剥离常见前缀
-        let prefixes = ["www.", "m."]
-        for prefix in prefixes where trimmed.hasPrefix(prefix) {
-            return String(trimmed.dropFirst(prefix.count))
-        }
-        return trimmed
     }
 
     // MARK: - Private
 
-    /// 打开主 App 在 App Group 容器中的 Core Data 数据库
+    /// 取当前内存中的 DEK（未解锁时为 nil）
+    private func currentDek() -> SymmetricKey? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _dek
+    }
+
+    /// 在私有队列上下文执行读取。
+    /// 扩展进程内没有主线程 UI 需求，用 backgroundContext 同步执行可避免
+    /// 之前把整库读取压在主线程（viewContext）上造成的界面卡顿。
+    private func perform<T>(_ body: (NSManagedObjectContext) throws -> T) throws -> T {
+        let container = try persistentContainer()
+        let context = container.newBackgroundContext()
+
+        var outcome: Result<T, Error>?
+        context.performAndWait {
+            outcome = Result { try body(context) }
+        }
+
+        guard let outcome else {
+            throw AutoFillCredentialStoreError.databaseUnavailable
+        }
+        return try outcome.get()
+    }
+
+    /// 打开主 App 在 App Group 容器中的 Core Data 数据库。
+    ///
+    /// 加载全程持锁：`loadPersistentStores` 在 `shouldAddStoreAsynchronously`
+    /// 为默认 false 时同步完成，持锁期间其它调用方最多等待、不会重复加载；
+    /// 这也是 `warmUpDatabase()` 能与正式读取并发调用的前提。
     private func persistentContainer() throws -> NSPersistentContainer {
         lock.lock()
+        defer { lock.unlock() }
         if let container = _container {
-            lock.unlock()
             return container
         }
-        lock.unlock()
 
         guard let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: appGroupIdentifier
@@ -245,23 +299,23 @@ final class AutoFillCredentialStore {
         description.shouldInferMappingModelAutomatically = true
         container.persistentStoreDescriptions = [description]
 
+        let loadStart = Date()
         var loadError: Error?
         container.loadPersistentStores { _, error in
             loadError = error
         }
+        NSLog("AutoFill: 共享数据库打开完成（%.2fs）", Date().timeIntervalSince(loadStart))
 
         if let loadError {
             // 主 App 从未启动过（数据库文件不存在）时给出更友好的提示
             if !FileManager.default.fileExists(atPath: storeURL.path) {
                 throw AutoFillCredentialStoreError.vaultNotConfigured
             }
-            print("AutoFill: Core Data load failed: \(loadError.localizedDescription)")
+            NSLog("AutoFill: Core Data load failed: %@", loadError.localizedDescription)
             throw AutoFillCredentialStoreError.databaseUnavailable
         }
 
-        lock.lock()
         _container = container
-        lock.unlock()
         return container
     }
 

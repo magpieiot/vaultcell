@@ -29,6 +29,22 @@ struct OnboardingPage: Identifiable {
 struct OnboardingView: View {
     /// 引导完成回调，由父视图持久化标记并切换到认证页
     let onComplete: () -> Void
+    /// 冷启动接力：welcome=首启长停留（含欢迎语），brief=短停留；nil=无接力直接显示引导
+    var launchRelay: LaunchRelayKind? = nil
+    /// 接力换场完成回调（父级据此消耗一次性接力标记）
+    var onRelayFinished: (() -> Void)? = nil
+
+    /// 接力阶段：0=启动屏姿态（纯色底 + 居中 Logo），1=正常引导内容
+    @State private var relayStage: Int
+    @State private var relayScheduled: Bool = false
+    @State private var welcomeVisible: Bool = false
+
+    init(launchRelay: LaunchRelayKind? = nil, onRelayFinished: (() -> Void)? = nil, onComplete: @escaping () -> Void) {
+        self.launchRelay = launchRelay
+        self.onRelayFinished = onRelayFinished
+        self.onComplete = onComplete
+        _relayStage = State(initialValue: launchRelay == nil ? 1 : 0)
+    }
 
     private let pages: [OnboardingPage] = [
         OnboardingPage(
@@ -125,8 +141,63 @@ struct OnboardingView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 28)
             }
+            // 接力姿态下引导内容保持布局但不可见，换场后淡入
+            .opacity(relayStage == 1 ? 1 : 0)
+            .allowsHitTesting(relayStage == 1)
+
+            // 接力首帧：与系统启动屏一致的画面，welcome 模式追加欢迎语
+            if relayStage == 0 {
+                launchCard
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
         }
         .animation(.easeInOut(duration: 0.3), value: currentIndex)
+        .onAppear(perform: scheduleRelayIfNeeded)
+    }
+
+    /// 接力首帧：与系统启动屏逐像素一致（纯色底 + 居中 180pt Logo），
+    /// welcome 模式下 Logo 下方淡入欢迎语与 Slogan；停留后整体溶解换场到引导内容
+    private var launchCard: some View {
+        ZStack {
+            Color("LaunchBackground").ignoresSafeArea()
+            VStack(spacing: 20) {
+                Image("LaunchIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 180, height: 180)
+                if launchRelay == .welcome {
+                    VStack(spacing: 8) {
+                        Text("Welcome to VaultCell")
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .foregroundColor(.primary)
+                        Text("Securely store all your passwords")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .opacity(welcomeVisible ? 1 : 0)
+                }
+            }
+        }
+    }
+
+    private func scheduleRelayIfNeeded() {
+        guard launchRelay != nil, !relayScheduled else { return }
+        relayScheduled = true
+        let holdNanoseconds: UInt64 = launchRelay == .welcome ? 2_000_000_000 : 120_000_000
+        if launchRelay == .welcome {
+            withAnimation(.easeIn(duration: 0.5).delay(0.2)) {
+                welcomeVisible = true
+            }
+        }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: holdNanoseconds)
+            withAnimation(.easeInOut(duration: 0.5)) {
+                relayStage = 1
+            }
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            onRelayFinished?()
+        }
     }
 
     private func complete() {

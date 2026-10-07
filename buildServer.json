@@ -13,8 +13,8 @@
 		"/opt/homebrew/bin/xcode-build-server"
 	],
 	"workspace": "/Users/gavanwang/applecode/vaultcell/VaultCell.xcodeproj/project.xcworkspace",
-	"build_root": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-efhmkkfrkzsgkuekgyhxqezdodjl",
+	"build_root": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-gtqqdaitswxvyzethlliehlxhdjf",
 	"scheme": "VaultCell",
-	"kind": "manual",
-	"indexStorePath": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-efhmkkfrkzsgkuekgyhxqezdodjl/Index.noindex/DataStore"
+	"kind": "xcode",
+	"indexStorePath": "/Users/gavanwang/Library/Developer/Xcode/DerivedData/VaultCell-gtqqdaitswxvyzethlliehlxhdjf/Index.noindex/DataStore"
 }

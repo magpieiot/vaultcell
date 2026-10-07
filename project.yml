@@ -38,29 +38,40 @@ packages:
   KeychainAccess:
     url: https://github.com/kishikawakatsumi/KeychainAccess.git
     from: "4.2.2"
-  SVGKit:
-    url: https://github.com/SVGKit/SVGKit.git
-    from: "3.0.0"
 
 targets:
   VaultCell:
     type: application
     platform: iOS
     sources:
+      # Icon Composer 图标包（Xcode 26 的 icon stack）：必须整体交给 actool 当输入目录。
+      # 要点（xcodegen 2.43 实测）：
+      # 1. 必须写在 sources 里 —— resources 中带 type 的条目会被静默丢弃；
+      # 2. 不能用 type: folder —— 会写成 lastKnownFileType = folder，Xcode 只把它当普通
+      #    资源目录拷贝，actool 收不到，报 "None of the input catalogs ... named VaultCell"；
+      # 3. type: file 时不写 lastKnownFileType，Xcode 按扩展名推断为 folder.iconcomposer.icon。
+      - path: VaultCell/Resources/VaultCell.icon
+        type: file
+        buildPhase: resources
       - path: VaultCell
         excludes:
           - "**/.DS_Store"
+          # VaultCell.icon 不能被展开成内部的 icon.json / svg 拷进 bundle
+          - "Resources/VaultCell.icon/**"
+      # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
+      - path: Shared/AutoFillDomainMatcher.swift
     resources:
       - path: VaultCell/Resources
         excludes:
           - "**/.DS_Store"
+          - "VaultCell.icon/**"
     settings:
       base:
         INFOPLIST_FILE: VaultCell/Resources/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell
         APP_GROUP_ID: com.magpie.vaultcell.shared
         PRODUCT_NAME: VaultCell
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_APPICON_NAME: VaultCell
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: "YES"
@@ -82,8 +93,6 @@ targets:
     dependencies:
       - package: SnapKit
       - package: KeychainAccess
-      - package: SVGKit
-      - sdk: CloudKit.framework
       - target: AutoFillProvider
         embed: true
     entitlements:
@@ -97,10 +106,31 @@ targets:
           - group.$(APP_GROUP_ID)
         keychain-access-groups:
           - $(AppIdentifierPrefix)$(APP_GROUP_ID)
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)
-        com.apple.developer.icloud-services:
-          - CloudKit
+
+  VaultCellTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: VaultCellTests
+        excludes:
+          - "**/.DS_Store"
+      # 纯逻辑测试（无 host app）：直接编译被测服务及其领域模型源码，
+      # 避免以 CODE_SIGNING_ALLOWED=NO 启动 host app 时 CloudKit 崩溃。
+      - path: VaultCell/Domain/Services/IdentityUsageAuditService.swift
+      - path: VaultCell/Domain/Models/PasswordEntry.swift
+      - path: VaultCell/Domain/Models/TwoFactorConfig.swift
+      - path: VaultCell/Domain/Models/OAuthProviderConfig.swift
+      - path: VaultCell/Data/Repositories/PasswordCategory.swift
+      - path: VaultCell/Core/Utils/Colors.swift
+      - path: VaultCell/Domain/Models/Tag.swift
+      # 图标链路的纯逻辑（Foundation / CryptoKit / CoreGraphics，无 UIKit，可脱离 host app 编译）
+      - path: VaultCell/Core/Services/Icons/DomainKey.swift
+      - path: VaultCell/Core/Services/Icons/IconSafety.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.tests
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        SWIFT_EMIT_LOC_STRINGS: "NO"
 
   AutoFillProvider:
     type: app-extension
@@ -112,6 +142,8 @@ targets:
       # 共享主 App 的 Core Data 模型：编译为 VaultCell.momd 打进扩展 Bundle，
       # 扩展据此打开 App Group 中的同一份 SQLite（模型必须与主 App 同步升级）
       - path: VaultCell/Resources/VaultCell.xcdatamodeld
+      # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
+      - path: Shared/AutoFillDomainMatcher.swift
     settings:
       base:
         INFOPLIST_FILE: AutoFillProvider/Info.plist
@@ -136,8 +168,9 @@ targets:
           APP_GROUP_ID: com.magpie.vaultcell.cn.shared
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: CN
     dependencies:
+      # 扩展侧无 KeychainAccess 使用方（凭据读取走共享 Core Data + Security 框架），
+      # AutoFillKeychainService 删除后不再链接该包
       - package: SnapKit
-      - package: KeychainAccess
     entitlements:
       path: AutoFillProvider/AutoFillProvider.entitlements
       properties:
@@ -160,6 +193,8 @@ schemes:
       config: Debug
     test:
       config: Debug
+      targets:
+        - VaultCellTests
     profile:
       config: Release
     analyze:
@@ -175,6 +210,8 @@ schemes:
       config: Debug-CN
     test:
       config: Debug-CN
+      targets:
+        - VaultCellTests
     profile:
       config: Release-CN
     analyze:

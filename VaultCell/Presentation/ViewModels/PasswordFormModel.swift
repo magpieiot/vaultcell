@@ -25,7 +25,8 @@ final class PasswordFormModel: ObservableObject {
     @Published var oAuthProvider: OAuthProviderConfig?
     @Published var customFields: [CustomField]?
     @Published var tagSelection: [String]?
-    // 图标远程地址（来自建议列表的 App Store 应用图标），保存后写入 PasswordEntry.icon
+    // 用户手动指定的图源地址，保存后写入 PasswordEntry.icon
+    // （不再由建议列表自动写入：图标优先命中内置图标表，未命中时按域名抓取）
     @Published var icon: String?
     @Published var isEnabledNextButton = false
 

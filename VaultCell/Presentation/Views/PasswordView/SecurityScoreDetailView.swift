@@ -20,19 +20,25 @@ struct SecurityScoreDetailView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var animatedScore: Double = 0
 
+    /// 是否在"为何被扣分"中展示"已泄露的条目"分类（设置页开关，默认关闭）
+    @AppStorage(VaultKey.showCompromisedInScoreReasons) private var showCompromisedReason = false
+
     private var passwordEntries: [PasswordEntry] {
         viewModel.passwordEntriesForAudit
     }
 
     /// 当前 vault 的失分原因列表
     /// 根据审计结果统计：重复密码、已泄露条目、未启用 2FA、超过一年未修改的弱密码等。
+    /// 每一条都带 `kind`，点击可下钻查看该分类命中的具体条目。
     private var scoreReasons: [VaultScoreReason] {
         var reasons: [VaultScoreReason] = []
 
         if audit.duplicateEntriesCount > 0 {
             reasons.append(
                 VaultScoreReason(
+                    kind: .reusedPasswords,
                     title: String(localized: "Reused Passwords"),
+                    count: audit.duplicateEntriesCount,
                     countText: String(format: String(localized: "%lld entries"), audit.duplicateEntriesCount),
                     detail: String(localized: "Reusing passwords increases the blast radius of a single leak."),
                     symbol: "arrow.triangle.2.circlepath"
@@ -40,12 +46,15 @@ struct SecurityScoreDetailView: View {
             )
         }
 
-        if audit.compromisedEntriesCount > 0 {
+        // 泄露检测尚未上线，该类条目不影响评分，默认不在扣分清单中展示
+        if audit.compromisedEntriesCount > 0 && showCompromisedReason {
             reasons.append(
                 VaultScoreReason(
+                    kind: .compromised,
                     title: String(localized: "Compromised Entries"),
+                    count: audit.compromisedEntriesCount,
                     countText: String(format: String(localized: "%lld entries"), audit.compromisedEntriesCount),
-                    detail: String(localized: "Entries marked as compromised cap their own score and lower the vault score."),
+                    detail: String(localized: "Breach detection is not available yet, so these entries do not affect the score right now."),
                     symbol: "flame.fill"
                 )
             )
@@ -54,7 +63,9 @@ struct SecurityScoreDetailView: View {
         if audit.no2FACount > 0 {
             reasons.append(
                 VaultScoreReason(
+                    kind: .missing2FA,
                     title: String(localized: "Missing 2FA"),
+                    count: audit.no2FACount,
                     countText: String(format: String(localized: "%lld entries"), audit.no2FACount),
                     detail: String(localized: "Accounts without 2FA are easier to take over even when the password is strong."),
                     symbol: "lock.open.fill"
@@ -65,7 +76,9 @@ struct SecurityScoreDetailView: View {
         if audit.staleEntriesCount > 0 {
             reasons.append(
                 VaultScoreReason(
+                    kind: .stalePassword,
                     title: String(localized: "Old Passwords"),
+                    count: audit.staleEntriesCount,
                     countText: String(format: String(localized: "%lld entries"), audit.staleEntriesCount),
                     detail: String(localized: "Passwords that have not changed for over a year lose freshness points."),
                     symbol: "clock.fill"
@@ -76,7 +89,9 @@ struct SecurityScoreDetailView: View {
         if audit.weakEntriesCount > 0 {
             reasons.append(
                 VaultScoreReason(
+                    kind: .lowScore,
                     title: String(localized: "Low Entry Scores"),
+                    count: audit.weakEntriesCount,
                     countText: String(format: String(localized: "%lld entries"), audit.weakEntriesCount),
                     detail: String(localized: "Short, predictable, or poorly protected passwords drag the vault average down."),
                     symbol: "chart.bar.fill"
@@ -85,6 +100,12 @@ struct SecurityScoreDetailView: View {
         }
 
         return reasons
+    }
+
+    /// 实际展示的建议列表
+    /// "已泄露"相关建议与顶部指标、扣分清单共用同一个展示开关。
+    private var visibleSuggestions: [VaultSecuritySuggestion] {
+        audit.suggestions.filter { $0.kind != .compromised || showCompromisedReason }
     }
 
     /// 存在安全问题的密码条目，按分数从低到高排序
@@ -118,6 +139,8 @@ struct SecurityScoreDetailView: View {
         .navigationTitle("Security Score")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: startScoreAnimation)
+        // 二级页面隐藏底部 TabBar；下级的分类列表页与条目详情页各自单独设置
+        .preference(key: TabBarVisibilityKey.self, value: true)
     }
 
     private func startScoreAnimation() {
@@ -133,14 +156,9 @@ struct SecurityScoreDetailView: View {
     // MARK: - 色彩
 
     /// 分数色：绿 → 黄 → 红，随分数线性过渡
-    private var scoreHue: Double { 0.33 * (Double(audit.vaultScore) / 100) }
-    private var scoreColor: Color {
-        Color(hue: scoreHue, saturation: 0.72, brightness: 0.62)
-    }
+    private var scoreColor: Color { SecurityScorePalette.color(forScore: audit.vaultScore) }
     /// 用于深色填充面（分数胶囊、图标底），保证白色前景文字对比度
-    private var scoreColorDeep: Color {
-        Color(hue: scoreHue, saturation: 0.78, brightness: 0.50)
-    }
+    private var scoreColorDeep: Color { SecurityScorePalette.deepColor(forScore: audit.vaultScore) }
 
     private var backgroundGradient: some View {
         ZStack {
@@ -224,7 +242,10 @@ struct SecurityScoreDetailView: View {
         VStack(alignment: .leading, spacing: 10) {
             MetricPill(icon: "tray.full", title: String(localized: "Total Entries"), value: "\(passwordEntries.count)", tint: scoreColor)
             MetricPill(icon: "exclamationmark.triangle.fill", title: String(localized: "Low Scores"), value: "\(audit.weakEntriesCount)", tint: scoreColor)
-            MetricPill(icon: "shield.slash.fill", title: String(localized: "Compromised"), value: "\(audit.compromisedEntriesCount)", tint: scoreColor)
+            // 与"为何被扣分"里的"已泄露"卡片共用同一个开关
+            if audit.compromisedEntriesCount > 0 && showCompromisedReason {
+                MetricPill(icon: "shield.slash.fill", title: String(localized: "Compromised"), value: "\(audit.compromisedEntriesCount)", tint: scoreColor)
+            }
             if audit.oauthEntriesCount > 0 {
                 MetricPill(icon: "person.2.fill", title: String(localized: "OAuth Sign-ins"), value: "\(audit.oauthEntriesCount)", tint: scoreColor)
             }
@@ -253,9 +274,16 @@ struct SecurityScoreDetailView: View {
             } else {
                 Panel {
                     VStack(spacing: 0) {
-                        ForEach(scoreReasons.indices, id: \.self) { index in
-                            ImpactReasonRow(reason: scoreReasons[index], tint: scoreColor)
-                                .padding(.vertical, 12)
+                        ForEach(Array(scoreReasons.enumerated()), id: \.element.id) { index, reason in
+                            NavigationLink {
+                                SecurityIssueEntriesView(
+                                    viewModel: viewModel, audit: audit, reason: reason
+                                )
+                            } label: {
+                                ImpactReasonRow(reason: reason, tint: scoreColor)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.vertical, 12)
                             if index != scoreReasons.count - 1 {
                                 Divider()
                                     .padding(.leading, 56)
@@ -280,7 +308,7 @@ struct SecurityScoreDetailView: View {
                 tint: scoreColor
             )
 
-            if audit.suggestions.isEmpty {
+            if visibleSuggestions.isEmpty {
                 EmptyPanel(
                     icon: "checkmark.circle.fill",
                     text: String(localized: "No recommendations right now."),
@@ -289,10 +317,10 @@ struct SecurityScoreDetailView: View {
             } else {
                 Panel {
                     VStack(spacing: 0) {
-                        ForEach(Array(audit.suggestions.enumerated()), id: \.offset) { index, suggestion in
-                            RecommendationRow(index: index + 1, text: suggestion, tint: scoreColorDeep)
+                        ForEach(Array(visibleSuggestions.enumerated()), id: \.offset) { index, suggestion in
+                            RecommendationRow(index: index + 1, text: suggestion.text, tint: scoreColorDeep)
                                 .padding(.vertical, 12)
-                            if index != audit.suggestions.count - 1 {
+                            if index != visibleSuggestions.count - 1 {
                                 Divider()
                                     .padding(.leading, 44)
                             }
@@ -442,17 +470,21 @@ private struct SectionHeaderView: View {
 // MARK: - 单条失分原因
 
 /// 单条失分原因的模型
-private struct VaultScoreReason: Identifiable {
-    let id = UUID()
+/// `kind` 同时充当身份标识：它决定了点击卡片后下钻到哪一类条目。
+struct VaultScoreReason: Identifiable {
+    let kind: VaultScoreIssueKind
     let title: String
+    let count: Int
     let countText: String
     let detail: String
     let symbol: String
+
+    var id: VaultScoreIssueKind { kind }
 }
 
 /// 单条失分原因的展示行
-/// 左侧渐变图标胶囊，右侧标题、数量胶囊与详细说明。
-private struct ImpactReasonRow: View {
+/// 左侧渐变图标胶囊，右侧标题、数量胶囊与详细说明，行尾 chevron 提示可下钻。
+struct ImpactReasonRow: View {
     let reason: VaultScoreReason
     let tint: Color
 
@@ -497,7 +529,16 @@ private struct ImpactReasonRow: View {
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(.secondary)
+                .padding(.top, 6)
+                .accessibilityHidden(true)
         }
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(String(localized: "Shows the entries in this category"))
     }
 }
 
@@ -540,9 +581,9 @@ private struct RecommendationRow: View {
 
 // MARK: - 高风险账户摘要
 
-/// 高风险账户的摘要行
+/// 有问题条目的摘要行（安全评分页与分类下钻列表共用）
 /// 展示站点名、用户名、渐变分数胶囊以及前几条问题描述。
-private struct EntryIssueSummaryRow: View {
+struct EntryIssueSummaryRow: View {
     let entry: PasswordEntry
     let score: Int
     let issues: [String]
@@ -734,7 +775,7 @@ private struct MetricPill: View {
 
 /// 空状态面板
 /// 当某个区域没有数据时展示友好提示。
-private struct EmptyPanel: View {
+struct EmptyPanel: View {
     let icon: String
     let text: String
     let tint: Color
@@ -770,7 +811,7 @@ private struct EmptyPanel: View {
 
 /// 通用卡片容器
 /// 为内部内容提供圆角背景、细边框与柔和阴影。
-private struct Panel<Content: View>: View {
+struct Panel<Content: View>: View {
     let content: Content
 
     init(@ViewBuilder content: () -> Content) {

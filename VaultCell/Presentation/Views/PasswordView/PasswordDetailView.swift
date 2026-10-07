@@ -579,25 +579,19 @@ struct PasswordDetailView: View {
     }
 
     /// 站点图标视图
-    /// 显示优先级：
-    /// 1. 本地预制资源（通过站点名做大小写不敏感匹配）
-    /// 2. 远程 URL 加载（entry.icon 指向的图片地址）
-    /// 3. 分类默认 SF Symbol 图标
+    /// 显示优先级统一由 IconResolver 决定：内置图标 → 缓存 → 字母图块 → 远程抓取
+    /// （entry.icon 非空时视为"用户手动指定的图源"，按该地址精确抓取）
     private var iconView: some View {
-        Group {
-            if let bundledIconName = bundledIconName {
-                // 命中本地预制图标资源
-                Image(bundledIconName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                // 缓存优先：本地缓存 → 远程加载并落盘 → 分类图标占位
-                CachedIconView(
-                    urlString: entry.icon ?? entry.siteURL,
-                    placeholderSystemName: viewModel.category(for: entry.categoryID)?.icon ?? "folder.fill"
-                )
-            }
-        }
+        CachedIconView(
+            request: IconRequest(
+                title: entry.siteName,
+                siteURL: entry.siteURL,
+                manualIconURL: entry.icon
+            ),
+            fallbackSystemName: viewModel.category(for: entry.categoryID)?.icon ?? "folder.fill",
+            placeholderColor: viewModel.category(for: entry.categoryID)?.tintColor ?? .blue,
+            placeholderFont: .largeTitle
+        )
     }
 
     /// 复制文本到系统剪贴板
@@ -615,20 +609,6 @@ struct PasswordDetailView: View {
         // 轻量触觉反馈
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
-    }
-
-    /// 本地预制图标名称
-    /// 通过站点名和内置资源列表做大小写不敏感匹配，
-    /// 例如 "GitHub" / "github" 都可以命中同一个图标资源
-    /// 先在 international 列表匹配，未命中再回退到中国版列表，
-    /// 例如 "微信" / "支付宝" 也能显示内置图标
-    private var bundledIconName: String? {
-        famousApps.first(where: { $0.title.caseInsensitiveCompare(entry.siteName) == .orderedSame })?
-            .icon
-            ?? famousAppsCn.first(where: {
-                $0.title.caseInsensitiveCompare(entry.siteName) == .orderedSame
-            })?
-            .icon
     }
 
     /// OAuth 信息视图

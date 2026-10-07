@@ -170,6 +170,15 @@ extension CDTwoFactorConfig {
     /// 加密后的密钥（可选；例如 TOTP secret，出于安全不保存明文）
     @NSManaged public var encryptedSecret: Data?
 
+    /// TOTP 哈希算法（可选；"SHA1" / "SHA256" / "SHA512"）
+    @NSManaged public var algorithm: String?
+
+    /// TOTP 验证码位数（默认 6）
+    @NSManaged public var digits: Int16
+
+    /// TOTP 时间步长（秒，默认 30）
+    @NSManaged public var period: Int16
+
     /// 发行方（可选；例如 Google、GitHub）
     @NSManaged public var issuer: String?
 

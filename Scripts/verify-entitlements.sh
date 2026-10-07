@@ -47,6 +47,10 @@ check "$ROOT/AutoFillProvider/AutoFillProvider.entitlements" \
   "keychain-access-groups"
 
 # --- 扩展 Info.plist 的能力声明（自动填充 + 凭据交换）---
+# ⚠️ ProvidesPasswords 缺失时系统不把扩展当作密码填充提供者：
+# QuickType 不出现建议、credential identity 读回为空（Apple 官方模板默认写 true）
+check "$ROOT/AutoFillProvider/Info.plist" \
+  "NSExtension:NSExtensionAttributes:ASCredentialProviderExtensionCapabilities:ProvidesPasswords"
 check "$ROOT/AutoFillProvider/Info.plist" \
   "NSExtension:NSExtensionAttributes:ASCredentialProviderExtensionCapabilities:SupportsAutoFill"
 check "$ROOT/AutoFillProvider/Info.plist" \

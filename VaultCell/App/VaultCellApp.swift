@@ -11,6 +11,8 @@ import SwiftUI
 struct VaultCellApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var languageManager = AppLanguageManager.shared
+    /// 外观模式：设置页写入，这里应用到整棵视图树（.system 时 colorScheme 为 nil，回退系统设置）
+    @AppStorage(VaultKey.appearanceMode) private var appearanceMode: AppAppearance = .system
 
     init() {
         // 启动时安装 Bundle swizzling
@@ -21,6 +23,8 @@ struct VaultCellApp: App {
         WindowGroup {
             MainEntranceView()
                 .applyAppLanguage()
+                // 外观模式在根视图统一施加：切换浅色 / 深色 / 跟随系统时整窗即时刷新
+                .preferredColorScheme(appearanceMode.colorScheme)
                 .environmentObject(appState)
                 .environmentObject(languageManager)
                 .onContinueUserActivity("ASCredentialExchangeActivity") { activity in
@@ -70,16 +74,26 @@ struct VaultCellApp: App {
     }
 }
 
+/// 冷启动接力类型：welcome=首次运行（1#，欢迎语长停留），brief=之后运行（2#，Logo 快速归位）
+enum LaunchRelayKind {
+    case welcome
+    case brief
+}
+
+
 struct MainEntranceView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var languageManager: AppLanguageManager
     @AppStorage(VaultKey.hasCompletedOnboarding) private var hasCompletedOnboarding: Bool = false
     @AppStorage(VaultKey.hasSeenVaultSetupGuide) private var hasSeenVaultSetupGuide: Bool = false
+    @AppStorage(VaultKey.hasSeenIconDisclosure) private var hasSeenIconDisclosure: Bool = false
+    /// 冷启动一次性接力标记，由真实首屏（引导页/认证页）消费；接力完成后置 nil 防重复触发
+    @State private var launchRelay: LaunchRelayKind? = UserDefaults.hasSeenWelcomeSplash ? .brief : .welcome
 
     var body: some View {
         Group {
             if !hasCompletedOnboarding {
-                OnboardingView {
+                OnboardingView(launchRelay: launchRelay, onRelayFinished: finishLaunchRelay) {
                     hasCompletedOnboarding = true
                 }
                 .transition(.opacity)
@@ -94,7 +108,7 @@ struct MainEntranceView: View {
                     MainTabView()
                 }
             } else {
-                AuthenticationView()
+                AuthenticationView(launchRelay: launchRelay != nil, onRelayFinished: finishLaunchRelay)
             }
         }
         // 快照保护：App 进入非活跃状态时覆盖半透明遮罩，防止后台快照泄露敏感信息
@@ -105,7 +119,41 @@ struct MainEntranceView: View {
                 EmptyView()
             }
         }
+        // 冷启动接力由真实首屏自行呈现（单视图接力，无双份渲染，几何天然正确）
+        // 首启一次性告知：远程图标会直连目标站点，先把事实讲清楚
+        // 开关已关闭时不再打扰——不抓取就没有请求，也就没有告知的必要
+        .alert(
+            String(localized: "Website Icons"),
+            isPresented: Binding(
+                get: { !hasSeenIconDisclosure && IconPreferences.isAutoFetchEnabled },
+                set: { presented in
+                    if !presented { hasSeenIconDisclosure = true }
+                }
+            )
+        ) {
+            Button(String(localized: "OK")) {
+                hasSeenIconDisclosure = true
+            }
+            Button(String(localized: "Turn Off Icons"), role: .destructive) {
+                IconPreferences.isAutoFetchEnabled = false
+                hasSeenIconDisclosure = true
+            }
+        } message: {
+            Text(
+                String(
+                    localized:
+                        "VaultCell shows a site icon by requesting apple-touch-icon.png or favicon.ico directly from that site. That request reveals your IP address and the site you are visiting. Built-in icons for common apps send no request, and you can turn this off anytime in Settings."
+                ))
+        }
         .animation(.easeInOut(duration: 0.2), value: appState.shouldShowPrivacyOverlay)
+    }
+
+    /// 接力完成回调：欢迎接力（1#）落盘一次性标记，并消耗接力状态防止后续页面重复触发
+    private func finishLaunchRelay() {
+        if launchRelay == .welcome {
+            UserDefaults.hasSeenWelcomeSplash = true
+        }
+        launchRelay = nil
     }
 }
 

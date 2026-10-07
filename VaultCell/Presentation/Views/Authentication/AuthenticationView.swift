@@ -10,11 +10,25 @@ import SwiftUI
 /// 认证页
 ///
 /// 设计语言：清新、优雅 —— 与 Onboarding 共享浅色 airy 背景、渐变品牌图标与
-/// 错峰入场动效；表单采用可见 label + 聚焦描边 + 内联错误；生物识别按钮以
-/// 呼吸光效作为本页的 signature 元素，呼应"安全且鲜活"的品牌感受。
+/// 错峰入场动效；表单采用可见 label + 聚焦描边 + 内联错误；生物识别按钮改用品牌色线性
+/// 图标 + 淡呼吸光效，避免与上方的品牌图标同构，呼应"安全且鲜活"的品牌感受。
 struct AuthenticationView: View {
     @EnvironmentObject var appState: AppState
     @State private var viewModel: AuthenticationViewModel?
+
+    /// 冷启动接力：true 时品牌 Logo 先以系统启动屏姿态（180pt、屏幕居中）呈现，随后原地归位
+    var launchRelay: Bool = false
+    /// 接力归位完成回调（父级据此消耗一次性接力标记）
+    var onRelayFinished: (() -> Void)? = nil
+
+    /// 接力是否已归位；非接力模式恒为 true（不影响原有呈现）
+    @State private var relaySettled: Bool
+
+    init(launchRelay: Bool = false, onRelayFinished: (() -> Void)? = nil) {
+        self.launchRelay = launchRelay
+        self.onRelayFinished = onRelayFinished
+        _relaySettled = State(initialValue: !launchRelay)
+    }
 
     var body: some View {
         NavigationStack {
@@ -24,18 +38,23 @@ struct AuthenticationView: View {
                         VStack(spacing: 0) {
                             Spacer(minLength: 24)
 
-                            AuthLogo(animate: true)
+                            AuthLogo(animate: true, relaySettled: launchRelay ? $relaySettled : nil)
 
-                            if let viewModel {
-                                if viewModel.hasExistingVault {
-                                    UnlockView(viewModel: viewModel)
+                            Group {
+                                if let viewModel {
+                                    if viewModel.hasExistingVault {
+                                        UnlockView(viewModel: viewModel)
+                                    } else {
+                                        CreateVaultView(viewModel: viewModel)
+                                    }
                                 } else {
-                                    CreateVaultView(viewModel: viewModel)
+                                    // 占位，避免首帧高度跳变
+                                    Color.clear.frame(height: 280)
                                 }
-                            } else {
-                                // 占位，避免首帧高度跳变
-                                Color.clear.frame(height: 280)
                             }
+                            // 接力姿态下表单区保持布局但不可见，归位后淡入
+                            .opacity(relaySettled ? 1 : 0)
+                            .allowsHitTesting(relaySettled)
 
                             Spacer(minLength: 24)
                         }
@@ -51,6 +70,9 @@ struct AuthenticationView: View {
             if viewModel == nil {
                 viewModel = AuthenticationViewModel(appState: appState)
             }
+        }
+        .onChange(of: relaySettled) { _, settled in
+            if settled { onRelayFinished?() }
         }
     }
 }
@@ -78,63 +100,102 @@ struct AuthBackground: View {
 /// 渐变圆 + 高光 + 柔光晕 + 浮动动画，复用 Onboarding 图标语言
 struct AuthLogo: View {
     let animate: Bool
+    /// 冷启动接力绑定：非 nil 时 Logo 先以系统启动屏姿态（180pt、屏幕居中、无光晕与文字）
+    /// 呈现，绑定翻转为 true 后归位，光晕与文字淡入；nil 时行为与原先一致
+    var relaySettled: Binding<Bool>? = nil
 
     @State private var floating: Bool = false
     @State private var appeared: Bool = false
+    /// 接力模式下 Logo 布局中心的屏幕 y 坐标（用于计算平移到屏幕正中的偏移量）
+    /// 初值取约 0.3 屏高（认证页 Logo 的典型位置），避免首帧大跳变
+    @State private var logoMidY: CGFloat = UIScreen.main.bounds.height * 0.3
+    @State private var relayScheduled: Bool = false
 
     private let accent = Color.primaryBrandColor
     private let accent2 = Color.secondaryBrandColor
 
+    /// 系统启动屏 LaunchIcon 的固有尺寸
+    private let launchLogoSide: CGFloat = 180
+    private let logoSide: CGFloat = 108
+
+    /// 是否处于接力姿态（Logo 居中放大、无光晕、无文字）
+    private var isRelaying: Bool {
+        guard let relaySettled else { return false }
+        return !relaySettled.wrappedValue
+    }
+
     var body: some View {
         VStack(spacing: 14) {
-            ZStack {
-                // 外层柔光晕
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [accent.opacity(0.35), accent.opacity(0)]),
-                            center: .center,
-                            startRadius: 50,
-                            endRadius: 120
-                        )
-                    )
-                    .frame(width: 180, height: 180)
-                    .scaleEffect(floating ? 1.06 : 0.94)
+            // 测量替身：占据布局位置但自身不做任何变换。
+            // 对被 offset 的视图直接做 frame(in: .global) 测量会把偏移量计入结果，
+            // 形成"偏移→测量→再偏移"的逐帧反馈循环，必须用替身隔离
+            Color.clear
+                .frame(width: 240, height: 240)
+                .onGeometryChange(for: CGFloat.self, of: { proxy in
+                    proxy.frame(in: .global).midY
+                }, action: { newValue in
+                    logoMidY = newValue
+                })
+                .overlay {
+                    ZStack {
+                        // 外层柔光晕
 
-                // 渐变主圆
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [accent, accent2]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 108, height: 108)
-                    .shadow(color: accent.opacity(0.35), radius: 18, y: 12)
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [accent.opacity(0.35), accent.opacity(0)]),
+                                    center: .center,
+                                    startRadius: 50,
+                                    endRadius: 120
+                                )
+                            )
+                            .frame(width: 240, height: 240)
+                            .scaleEffect(floating ? 1.06 : 0.94)
+                            // 接力姿态下隐藏光晕，与系统启动屏保持一致
+                            .opacity(isRelaying ? 0 : 1)
 
-                // 顶部高光
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.white.opacity(0.45), Color.white.opacity(0)]),
-                            startPoint: .top,
-                            endPoint: .center
-                        )
-                    )
-                    .frame(width: 108, height: 108)
-                    .mask(Circle().frame(width: 108, height: 108))
+                        // 渐变主圆
+                        /*
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [accent, accent2]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 108, height: 108)
+                            .shadow(color: accent.opacity(0.35), radius: 18, y: 12)
+                         */
 
-                Image("AppLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 64, height: 64)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    .shadow(color: .black.opacity(0.15), radius: 3, y: 2)
-            }
-            .scaleEffect(appeared ? 1.0 : 0.85)
-            .opacity(appeared ? 1.0 : 0.0)
-            .offset(y: floating ? -5 : 5)
+                        Image("AppLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 108, height: 108)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .shadow(color: .black.opacity(0.15), radius: 3, y: 2)
+
+                        // 顶部高光
+                        /*
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.white.opacity(0.45), Color.white.opacity(0),
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .center
+                                )
+                            )
+                            .frame(width: 128, height: 128)
+                            .mask(Circle().frame(width: 128, height: 128))
+                         */
+
+                    }
+                    .scaleEffect(isRelaying ? launchLogoSide / logoSide : (appeared ? 1.0 : 0.85))
+                    .opacity(appeared ? 1.0 : 0.0)
+                    .offset(y: (isRelaying ? UIScreen.main.bounds.height / 2 - logoMidY : 0) + (floating ? -5 : 5))
+                }
 
             VStack(spacing: 6) {
                 Text("VaultCell")
@@ -145,17 +206,35 @@ struct AuthLogo: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            .opacity(appeared ? 1.0 : 0.0)
+            .opacity(isRelaying ? 0 : (appeared ? 1.0 : 0.0))
             .offset(y: appeared ? 0 : 8)
         }
-        .onAppear {
-            guard animate else { return }
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
-                appeared = true
+        .onAppear(perform: handleAppear)
+    }
+
+    private func handleAppear() {
+        // 接力模式：Logo 直接以可见态出现（衔接系统启动屏），短暂停留后归位
+        if relaySettled != nil {
+            appeared = true
+            guard !relayScheduled else { return }
+            relayScheduled = true
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 150_000_000)
+                withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
+                    relaySettled?.wrappedValue = true
+                }
+                withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
+                    floating = true
+                }
             }
-            withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
-                floating = true
-            }
+            return
+        }
+        guard animate else { return }
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
+            appeared = true
+        }
+        withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
+            floating = true
         }
     }
 }
@@ -229,9 +308,14 @@ struct CreateVaultView: View {
             // 安抚文案 + 不可找回提示
             VStack(alignment: .leading, spacing: 10) {
                 Label {
-                    Text(String(localized: "Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."))
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
+                    Text(
+                        String(
+                            localized:
+                                "Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."
+                        )
+                    )
+                    .font(.subheadline)
+                    .foregroundColor(.primary)
                 } icon: {
                     Image(systemName: "exclamationmark.shield.fill")
                         .foregroundColor(.warningColor)
@@ -328,22 +412,24 @@ struct AuthSecureField: View {
     let hasError: Bool
 
     var body: some View {
-        SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(.secondary.opacity(0.6)))
-            .font(.body)
-            .padding(.vertical, 16)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(Color(.secondarySystemBackground))
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(borderColor, lineWidth: isFocused ? 2 : 1)
-            }
-            .foregroundStyle(.primary)
-            .tint(.primaryBrandColor)
-            .animation(.easeInOut(duration: 0.2), value: isFocused)
-            .animation(.easeInOut(duration: 0.2), value: hasError)
+        SecureField(
+            "", text: $text, prompt: Text(placeholder).foregroundColor(.secondary.opacity(0.6))
+        )
+        .font(.body)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(borderColor, lineWidth: isFocused ? 2 : 1)
+        }
+        .foregroundStyle(.primary)
+        .tint(.primaryBrandColor)
+        .animation(.easeInOut(duration: 0.2), value: isFocused)
+        .animation(.easeInOut(duration: 0.2), value: hasError)
     }
 
     private var borderColor: Color {
@@ -396,6 +482,10 @@ struct PrimaryActionButton: View {
 
 // MARK: - 生物识别按钮（signature：呼吸光效）
 
+/// 线性图标按钮：与品牌图标（蓝色填充块）形成层级区分
+///
+/// 页面里唯一的大面积品牌色应属于 `AuthLogo`，因此这里不再使用填充圆 + 白色图形，
+/// 而是直接以品牌色渲染 SF Symbol，呼吸光效也压到极淡，只作为身份提示的 signature。
 struct BiometricButton: View {
     let biometricType: BiometricType
     let action: () -> Void
@@ -406,52 +496,55 @@ struct BiometricButton: View {
         Button(action: action) {
             VStack(spacing: 10) {
                 ZStack {
-                    // 呼吸柔光晕
+                    // 极淡的呼吸氛围光（保留 signature，不与 Logo 的光晕抢戏）
                     Circle()
                         .fill(
                             RadialGradient(
                                 gradient: Gradient(colors: [
-                                    .primaryBrandColor.opacity(0.35),
-                                    .primaryBrandColor.opacity(0)
+                                    .primaryBrandColor.opacity(0.18),
+                                    .primaryBrandColor.opacity(0),
                                 ]),
                                 center: .center,
-                                startRadius: 24,
-                                endRadius: 56
+                                startRadius: 20,
+                                endRadius: 62
                             )
                         )
-                        .frame(width: 112, height: 112)
-                        .scaleEffect(breathing ? 1.12 : 0.92)
-                        .opacity(breathing ? 0.9 : 0.4)
+                        .frame(width: 124, height: 124)
+                        .scaleEffect(breathing ? 1.08 : 0.94)
+                        .opacity(breathing ? 0.9 : 0.45)
 
-                    // 主圆
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.primaryBrandColor, .secondaryBrandColor]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 76, height: 76)
-                        .shadow(color: .primaryBrandColor.opacity(0.35), radius: 12, y: 8)
-
+                    // 品牌色线性图形：与 Logo 的"填充 + 白色图形"明确区分
                     Image(systemName: biometricType.iconName)
-                        .font(.system(size: 34, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 48, weight: .regular))
+                        .foregroundColor(.primaryBrandColor)
+                        .scaleEffect(breathing ? 1.04 : 1.0)
                 }
+                // 保证最小可点击区域不小于 44pt
+                .frame(minWidth: 76, minHeight: 76)
 
                 Text("Use \(biometricType.displayName)")
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(.primary)
             }
+            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(BiometricButtonStyle())
         .onAppear {
             withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) {
                 breathing = true
             }
         }
         .accessibilityLabel("Unlock with \(biometricType.displayName)")
+    }
+}
+
+/// 按下时轻微缩放，提供可感知的点击反馈
+private struct BiometricButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -517,7 +610,12 @@ struct PasswordStrengthIndicator: View {
             HStack(alignment: .center, spacing: 4) {
                 ForEach(0..<5) { index in
                     Capsule()
-                        .fill(isEnabled ? (index <= strength.rawValue ? strengthColor : Color.secondary.opacity(0.2)) : Color.secondary.opacity(0.2))
+                        .fill(
+                            isEnabled
+                                ? (index <= strength.rawValue
+                                    ? strengthColor : Color.secondary.opacity(0.2))
+                                : Color.secondary.opacity(0.2)
+                        )
                         .frame(height: 6)
                 }
             }
@@ -543,8 +641,8 @@ struct PasswordStrengthIndicator: View {
 
 // MARK: - PasswordStrength 本地化
 
-private extension PasswordStrength {
-    var localizedName: String {
+extension PasswordStrength {
+    fileprivate var localizedName: String {
         switch self {
         case .veryWeak: return String(localized: "Very Weak")
         case .weak: return String(localized: "Weak")

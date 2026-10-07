@@ -40,7 +40,7 @@ enum BankCardNetwork: String, CaseIterable {
     var cardFaceColor: Color {
         switch self {
             case .visa, .mastercard, .amex, .discover, .jcb, .unionPay: return .white
-            default: return .black
+            //default: return .black
         }
     }
 
@@ -122,6 +122,8 @@ struct AddBankcardView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isSaving = false
     @State private var showDeleteConfirmation = false
+    /// 自定义字段「有值但缺名称」时是否显示阻止保存提示
+    @State private var showFieldNameRequiredPrompt = false
 
     private var isEditMode: Bool {
         if case .edit = formModel.mode { return true }
@@ -141,6 +143,7 @@ struct AddBankcardView: View {
                 formContent
             }
         }
+        .customFieldNameRequiredAlert(isPresented: $showFieldNameRequiredPrompt)
     }
 
     private var formContent: some View {
@@ -367,12 +370,12 @@ struct AddBankcardView: View {
 
     private var customFieldSection: some View {
         Section {
-            CustomFieldSection(model: formModel.customFieldModel)
+            CustomFieldSection(customFields: $formModel.customFields)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")
         } footer: {
-            AddNewFieldButton(model: formModel.customFieldModel)
+            AddNewFieldButton(customFields: $formModel.customFields)
         }
     }
 
@@ -425,6 +428,12 @@ struct AddBankcardView: View {
 
     private func save() async {
         guard formModel.isEnabledNextButton else { return }
+        // 自定义字段：丢弃 name/value 均为空的新增行；
+        // 若存在「有值但缺名称」的字段，提示并阻止保存
+        if formModel.customFields.sanitizeForSave() {
+            showFieldNameRequiredPrompt = true
+            return
+        }
         isSaving = true
         defer { isSaving = false }
 
@@ -471,7 +480,7 @@ struct AddBankcardView: View {
         cardType: .debit,
         cardNetworks: ["UnionPay"],
         notes: "工商银行储蓄卡",
-        categoryID: PasswordCategory.systemDefaults[1].id,
+        categoryID: PasswordCategory.systemDefaults[2].id,
         tags: ["bank", "finance"],
         isFavorite: true
     )

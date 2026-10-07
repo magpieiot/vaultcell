@@ -1,5 +1,31 @@
 import Foundation
 
+/// 失分分类
+///
+/// 与“为何被扣分”里的每一张卡片一一对应。分类标识有两个用途：
+/// 1. 作为卡片下钻到具体条目的查询键（见 `VaultSecurityAudit.entryIDs(for:)`）；
+/// 2. 作为展示开关的判断依据（例如“已泄露”默认不展示，见 `VaultKey.showCompromisedInScoreReasons`）。
+enum VaultScoreIssueKind: String, CaseIterable, Hashable, Identifiable {
+    case reusedPasswords
+    case compromised
+    case missing2FA
+    case stalePassword
+    case lowScore
+
+    var id: String { rawValue }
+}
+
+/// 安全建议
+///
+/// `kind` 把建议与失分分类绑定，View 可据此按展示开关过滤（如"已泄露"默认不展示），
+/// 也为后续"点击建议下钻到该分类的条目列表"留出入口。没有对应分类的建议 `kind` 为 nil。
+struct VaultSecuritySuggestion: Identifiable, Hashable {
+    let kind: VaultScoreIssueKind?
+    let text: String
+
+    var id: String { text }
+}
+
 struct VaultSecurityAudit: Equatable {
     let vaultScore: Int
     let entryScores: [UUID: Int]
@@ -11,7 +37,15 @@ struct VaultSecurityAudit: Equatable {
     let staleEntriesCount: Int
     /// 通过 OAuth 登录、安全分继承自源账户条目的条目数
     let oauthEntriesCount: Int
-    let suggestions: [String]
+    /// 各失分分类命中的条目 ID
+    /// 与上面的计数在 Pass 2 的同一分支内收集，保证卡片上的数量与下钻列表条数永远一致。
+    let issueEntryIDs: [VaultScoreIssueKind: [UUID]]
+    let suggestions: [VaultSecuritySuggestion]
+
+    /// 某一失分分类命中的条目 ID
+    func entryIDs(for kind: VaultScoreIssueKind) -> [UUID] {
+        issueEntryIDs[kind] ?? []
+    }
 }
 
 struct VaultSecurityAuditService {
@@ -27,6 +61,7 @@ struct VaultSecurityAuditService {
                 no2FACount: 0,
                 staleEntriesCount: 0,
                 oauthEntriesCount: 0,
+                issueEntryIDs: [:],
                 suggestions: []
             )
         }
@@ -56,6 +91,7 @@ struct VaultSecurityAuditService {
         var no2FACount = 0
         var oauthEntriesCount = 0
         var verifiedRecommended2FACount = 0
+        var issueEntryIDs: [VaultScoreIssueKind: [UUID]] = [:]
 
         // Pass 2：确定最终得分与问题清单。判定顺序：
         // 1) OAuth 条目优先在库中查找源账户条目（排除自身）→ 继承其安全分；
@@ -82,8 +118,14 @@ struct VaultSecurityAuditService {
             if isDerivedOAuth {
                 oauthEntriesCount += 1
             } else {
-                if duplicateMap[normalizePassword(entry.password), default: 0] > 1 { duplicateEntriesCount += 1 }
-                if daysBetween(entry.passwordChangedAt ?? entry.updatedAt ?? now, now) > 365 { staleEntriesCount += 1 }
+                if duplicateMap[normalizePassword(entry.password), default: 0] > 1 {
+                    duplicateEntriesCount += 1
+                    issueEntryIDs[.reusedPasswords, default: []].append(entry.id)
+                }
+                if daysBetween(entry.passwordChangedAt ?? entry.updatedAt ?? now, now) > 365 {
+                    staleEntriesCount += 1
+                    issueEntryIDs[.stalePassword, default: []].append(entry.id)
+                }
             }
 
             var entryIssueList = issues(
@@ -105,10 +147,17 @@ struct VaultSecurityAuditService {
             entryScores[entry.id] = entryScore
             entryIssues[entry.id] = entryIssueList
 
-            if entryScore < 50 { weakEntriesCount += 1 }
-            if entry.breachStatus == .compromised { compromisedEntriesCount += 1 }
+            if entryScore < 50 {
+                weakEntriesCount += 1
+                issueEntryIDs[.lowScore, default: []].append(entry.id)
+            }
+            if entry.breachStatus == .compromised {
+                compromisedEntriesCount += 1
+                issueEntryIDs[.compromised, default: []].append(entry.id)
+            }
             if !entry.has2FA && !(entry.twoFactorConfigs ?? []).contains(where: { $0.isEnabled }) {
                 no2FACount += 1
+                issueEntryIDs[.missing2FA, default: []].append(entry.id)
             }
             if (entry.twoFactorConfigs ?? []).contains(where: { $0.isEnabled && $0.lastVerifiedAt != nil && $0.type.isRecommended }) {
                 verifiedRecommended2FACount += 1
@@ -135,6 +184,7 @@ struct VaultSecurityAuditService {
             no2FACount: no2FACount,
             staleEntriesCount: staleEntriesCount,
             oauthEntriesCount: oauthEntriesCount,
+            issueEntryIDs: issueEntryIDs,
             suggestions: buildSuggestions(
                 duplicateEntriesCount: duplicateEntriesCount,
                 compromisedEntriesCount: compromisedEntriesCount,
@@ -161,13 +211,13 @@ private extension VaultSecurityAuditService {
             score = min(score, 40)
         }
 
-        if entry.breachStatus == .compromised {
-            score = min(score, 25)
-        }
+        // 泄露检测功能尚未完成，暂不参与评分：不设泄露封顶
+        // if entry.breachStatus == .compromised { score = min(score, 25) }
 
+        // 多处复用（≥3 条）时的封顶值从 55 放宽到 70，避免长随机密码因复用被一次性打成不及格
         let dupCount = duplicateMap[normalizePassword(entry.password), default: 0]
         if dupCount >= 3 {
-            score = min(score, 55)
+            score = min(score, 70)
         }
 
         return clamp(score, 0, 100)
@@ -204,14 +254,8 @@ private extension VaultSecurityAuditService {
             items.append(String(format: String(localized: "Password is reused across %lld entries."), dupCount))
         }
 
-        switch entry.breachStatus ?? .unknown {
-        case .compromised:
-            items.append(String(localized: "Password is marked as compromised."))
-        case .unknown:
-            items.append(String(localized: "Breach status is unknown."))
-        case .safe:
-            break
-        }
+        // 泄露检测功能尚未完成，暂不输出泄露类问题
+        //（原 "Password is marked as compromised." / "Breach status is unknown."）
 
         let enabledConfigs = (entry.twoFactorConfigs ?? []).filter { $0.isEnabled }
         if !entry.has2FA && enabledConfigs.isEmpty {
@@ -257,26 +301,35 @@ private extension VaultSecurityAuditService {
         let normalized = normalizePassword(entry.password)
         let count = duplicateMap[normalized, default: 1]
 
+        // 重复密码扣分已放宽：仅复用一次影响很小，多处复用也不再扣光该维度
         let duplicateScore: Int
         switch count {
         case 1: duplicateScore = 8
-        case 2: duplicateScore = 3
-        default: duplicateScore = 0
+        case 2: duplicateScore = 5
+        default: duplicateScore = 2
         }
 
-        let breachScore: Int
-        switch entry.breachStatus ?? .unknown {
-        case .safe: breachScore = 12
-        case .unknown: breachScore = 4
-        case .compromised: breachScore = 0
-        }
+        // 泄露检测功能尚未完成：该维度暂按满分计入，不随 breachStatus 变化，
+        // 待泄露检测上线后恢复下面的分级逻辑。
+        // let breachScore: Int
+        // switch entry.breachStatus ?? .unknown {
+        // case .safe: breachScore = 12
+        // case .unknown: breachScore = 4
+        // case .compromised: breachScore = 0
+        // }
+        let breachScore = 12
 
         return duplicateScore + breachScore
     }
 
+    /// 未启用 2FA 时的基础分。
+    /// 之前直接归零（满分 20 全扣），惩罚过重；现在保留一部分，
+    /// 使“未启用 2FA”相对“已验证 TOTP”的差距从 20 分收敛到 14 分。
+    private static let noTwoFactorBasePoints = 6
+
     func protectionScore(entry: PasswordEntry) -> Int {
         let enabledConfigs = (entry.twoFactorConfigs ?? []).filter { $0.isEnabled }
-        guard !enabledConfigs.isEmpty || entry.has2FA else { return 0 }
+        guard !enabledConfigs.isEmpty || entry.has2FA else { return Self.noTwoFactorBasePoints }
 
         var base = 8
 
@@ -344,12 +397,14 @@ private extension VaultSecurityAuditService {
         guard total > 0 else { return 100 }
 
         let duplicateEntryRatio = Double(duplicateEntriesCount) / total
-        let compromisedEntryRatio = Double(compromisedEntriesCount) / total
         let staleEntryRatio = Double(staleEntriesCount) / total
         let verifiedRecommended2FARatio = Double(verifiedRecommended2FACount) / total
 
-        let duplicatePenalty = min(12.0, duplicateEntryRatio * 20.0)
-        let compromisedPenalty = min(20.0, compromisedEntryRatio * 35.0)
+        // 库级重复惩罚同样放宽：系数 20→14，上限 12→8
+        let duplicatePenalty = min(8.0, duplicateEntryRatio * 14.0)
+        // 泄露检测功能尚未完成：库级泄露惩罚暂置 0
+        // let compromisedPenalty = min(20.0, Double(compromisedEntriesCount) / total * 35.0)
+        let compromisedPenalty = 0.0
         let stalePenalty = min(8.0, staleEntryRatio * 12.0)
         let good2FABonus = min(5.0, verifiedRecommended2FARatio * 5.0)
 
@@ -364,59 +419,77 @@ private extension VaultSecurityAuditService {
         staleEntriesCount: Int,
         weakEntriesCount: Int,
         oauthEntriesCount: Int
-    ) -> [String] {
-        var suggestions: [String] = []
+    ) -> [VaultSecuritySuggestion] {
+        var suggestions: [VaultSecuritySuggestion] = []
 
         if duplicateEntriesCount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "%lld entries reuse a password. Change them to unique passwords."),
-                    duplicateEntriesCount
+                VaultSecuritySuggestion(
+                    kind: .reusedPasswords,
+                    text: String(
+                        format: String(localized: "%lld entries reuse a password. Change them to unique passwords."),
+                        duplicateEntriesCount
+                    )
                 )
             )
         }
 
         if compromisedEntriesCount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "%lld entries are marked as compromised. Change passwords immediately."),
-                    compromisedEntriesCount
+                VaultSecuritySuggestion(
+                    kind: .compromised,
+                    text: String(
+                        format: String(localized: "%lld entries are marked as compromised. Change passwords immediately."),
+                        compromisedEntriesCount
+                    )
                 )
             )
         }
 
         if no2FACount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "Enable 2FA on %lld entries to reduce takeover risk."),
-                    no2FACount
+                VaultSecuritySuggestion(
+                    kind: .missing2FA,
+                    text: String(
+                        format: String(localized: "Enable 2FA on %lld entries to reduce takeover risk."),
+                        no2FACount
+                    )
                 )
             )
         }
 
         if staleEntriesCount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "%lld entries have not changed passwords for over a year."),
-                    staleEntriesCount
+                VaultSecuritySuggestion(
+                    kind: .stalePassword,
+                    text: String(
+                        format: String(localized: "%lld entries have not changed passwords for over a year."),
+                        staleEntriesCount
+                    )
                 )
             )
         }
 
         if weakEntriesCount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "%lld entries have low scores. Consider upgrading them first."),
-                    weakEntriesCount
+                VaultSecuritySuggestion(
+                    kind: .lowScore,
+                    text: String(
+                        format: String(localized: "%lld entries have low scores. Consider upgrading them first."),
+                        weakEntriesCount
+                    )
                 )
             )
         }
 
         if oauthEntriesCount > 0 {
             suggestions.append(
-                String(
-                    format: String(localized: "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault."),
-                    oauthEntriesCount
+                VaultSecuritySuggestion(
+                    kind: nil,
+                    text: String(
+                        format: String(localized: "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault."),
+                        oauthEntriesCount
+                    )
                 )
             )
         }

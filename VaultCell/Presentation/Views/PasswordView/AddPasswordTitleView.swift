@@ -101,13 +101,13 @@ struct AddPasswordTitleView: View {
         var seen = Set<String>()
         var results: [SuggestionItem] = []
 
-        func append(title: String, url: String?, icon: String?, iconURL: String?, categoryID: UUID?)
+        func append(title: String, url: String?, manualIconURL: String? = nil, categoryID: UUID?)
         {
             let key = title.lowercased()
             guard seen.insert(key).inserted else { return }
             results.append(
                 SuggestionItem(
-                    id: key, title: title, url: url ?? "", icon: icon, iconURL: iconURL,
+                    id: key, title: title, url: url ?? "", manualIconURL: manualIconURL,
                     categoryID: categoryID)
             )
         }
@@ -115,25 +115,21 @@ struct AddPasswordTitleView: View {
         if query.isEmpty {
             // 输入为空：仅展示内置常用应用（保持原有顺序）
             // 根据 BundleID 区分国内外版本：VaultCell → famousApps，VaultCellCn → famousAppsCn
+            // 图标不在这里指定：由内置图标表按域名/标题命中，命中不了就显示字母图块
             let builtinApps = AppEdition.isChina ? famousAppsCn : famousApps
             for app in builtinApps {
-                append(
-                    title: app.title, url: app.url, icon: app.icon, iconURL: nil,
-                    categoryID: app.categoryID)
+                append(title: app.title, url: app.url, categoryID: app.categoryID)
             }
             return results
         }
 
-        // 输入后：主要来自 App Store 应用库（AppState.apps）
+        // 输入后：来自统一应用目录（AppState.apps），命中标题 / 英文名 / 拼音 / 首字母 / 域名
         for app in appState.apps {
-            let displayTitle = app.title.isEmpty ? app.trackName : app.title
-            guard displayTitle.localizedCaseInsensitiveContains(query) else { continue }
+            guard app.matches(query) else { continue }
             append(
-                title: displayTitle,
+                title: app.title,
                 url: app.url,
-                icon: nil,
-                iconURL: IconCacheService.faviconURL(for: app.url)?.absoluteString,
-                categoryID: appCategoryID(for: displayTitle)
+                categoryID: appCategoryID(for: app)
             )
         }
 
@@ -143,7 +139,7 @@ struct AddPasswordTitleView: View {
                 entry.siteName.localizedCaseInsensitiveContains(query)
             else { continue }
             append(
-                title: entry.siteName, url: entry.siteURL, icon: entry.icon, iconURL: nil,
+                title: entry.siteName, url: entry.siteURL, manualIconURL: entry.icon,
                 categoryID: entry.categoryID)
         }
 
@@ -456,36 +452,28 @@ struct AddPasswordTitleView: View {
         }
     }
 
-    /// 建议条目的图标：优先展示远程应用图标，其次本地资源图标，缺失时回退到 SF Symbol
+    /// 建议条目的图标：内置图标 → 缓存 → 字母图块
+    ///
+    /// 这里**不允许**远程抓取：建议列表随输入高频重建，若每行都联网，
+    /// 既浪费流量、又等于「开关只管显示不管请求」。图标抓取统一留到条目保存之后，
+    /// 由列表与详情页触发一次。
     private func suggestionIcon(_ suggestion: SuggestionItem) -> some View {
-        Group {
-            if let iconURL = suggestion.iconURL, let url = URL(string: iconURL) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image.resizable().scaledToFit()
-                    default:
-                        Image(systemName: "globe")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.blue)
-                    }
-                }
-            } else if let icon = suggestion.icon, !icon.isEmpty {
-                Image(icon)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(systemName: "globe")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.blue)
-            }
-        }
+        CachedIconView(
+            request: IconRequest(
+                title: suggestion.title,
+                siteURL: suggestion.url,
+                manualIconURL: suggestion.manualIconURL
+            ),
+            allowsRemoteFetch: false,
+            fallbackSystemName: "globe",
+            placeholderColor: .blue,
+            placeholderFont: .footnote
+        )
         .frame(width: 28, height: 28)
+        .cornerRadius(6)
     }
 
-    /// 点击建议条目：回填标题 / URL / 分类 / 图标，退出建议模式
+    /// 点击建议条目：回填标题 / URL / 分类，退出建议模式
     private func selectSuggestion(_ suggestion: SuggestionItem) {
         formModel.siteName = suggestion.title
         if !suggestion.url.isEmpty {
@@ -494,11 +482,9 @@ struct AddPasswordTitleView: View {
         if let categoryID = suggestion.categoryID {
             formModel.categoryID = categoryID
         }
-        // 记录远程图标地址到表单（保存时写入 PasswordEntry.icon），并提前下载缓存
-        if let iconURL = suggestion.iconURL, !iconURL.isEmpty {
-            formModel.icon = iconURL
-            IconCacheService.cache(remoteURL: iconURL)
-        }
+        // 不再记录远程图标地址：图标改由内置图标表按域名命中，未命中时按域名抓取。
+        // PasswordEntry.icon 只保留「用户手动指定的图源」，这里同步建议条目的手动画源。
+        formModel.icon = suggestion.manualIconURL
         isEnabledNextButton = !formModel.siteName.isEmpty
         // 退出建议模式，让用户确认回填结果（URL 输入框恢复显示）
         exitSuggestionMode()
@@ -515,24 +501,24 @@ struct AddPasswordTitleView: View {
     ///
     /// systemDefaults 索引：0=Primary, 1=Finance, 2=Work, 3=Life, 4=Media
     /// 未匹配的应用统一归入 Primary 作为兜底。
-    private func appCategoryID(for appTitle: String) -> UUID {
-        switch appTitle.lowercased() {
+    private func appCategoryID(for entry: AppCatalogEntry) -> UUID {
+        switch entry.id {
         // 工作应用 → Work（索引 2）
-        case "github", "linkedin", "microsoft", "slack", "webex", "zoom", "notion":
-            return PasswordCategory.systemDefaults[2].id
+        case "github", "linkedin", "microsoft", "slack", "ciscowebex", "webex", "zoom", "notion":
+            return PasswordCategory.systemDefaults[3].id
         // 社交应用 → Life（索引 3）
         case "facebook", "instagram", "reddit", "telegram", "whatsapp", "line", "tiktok", "discord",
-            "pinterest", "x":
-            return PasswordCategory.systemDefaults[3].id
+            "pinterest", "x", "xtwitter":
+            return PasswordCategory.systemDefaults[4].id
         // 娱乐/媒体应用 → Media（索引 4）
         case "netflix", "disney", "spotify", "youtube", "wikipedia":
-            return PasswordCategory.systemDefaults[4].id
+            return PasswordCategory.systemDefaults[5].id
         // AI 工具 → Work（索引 2）
         case "chatgpt", "claude":
-            return PasswordCategory.systemDefaults[2].id
+            return PasswordCategory.systemDefaults[3].id
         // 商务/生活应用 → Life（索引 3）
         case "amazon", "airbnb":
-            return PasswordCategory.systemDefaults[3].id
+            return PasswordCategory.systemDefaults[4].id
         // 未匹配的应用兜底归入 Primary（索引 0），修复此前 systemDefaults[5] 越界崩溃
         default:
             return PasswordCategory.systemDefaults[0].id
@@ -547,8 +533,7 @@ private struct SuggestionItem: Identifiable {
     let id: String  // 标题小写去重后的标识，保证列表稳定
     let title: String
     let url: String
-    let icon: String?  // 本地资源图标名（famousApps / 已保存条目）
-    let iconURL: String?  // 远程应用图标地址（App Store 应用库）
+    let manualIconURL: String?  // 用户手动指定的图源（已保存条目回填）
     let categoryID: UUID?
 }
 

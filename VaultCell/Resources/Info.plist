@@ -18,6 +18,19 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>vaultcell</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -39,12 +52,38 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-	<key>UILaunchScreen</key>
+	<key>UILaunchScreens</key>
 	<dict>
-		<key>UIColorName</key>
-		<string>LaunchBackground</string>
-		<key>UIImageName</key>
-		<string>LaunchIcon</string>
+		<key>UIDefaultLaunchScreen</key>
+		<string>Default</string>
+		<key>UILaunchScreenDefinitions</key>
+		<array>
+			<dict>
+				<key>UIColorName</key>
+				<string>LaunchBackground</string>
+				<key>UIImageName</key>
+				<string>LaunchIcon</string>
+				<key>UIImageRespectsSafeAreaInsets</key>
+				<true/>
+				<key>UILaunchScreenIdentifier</key>
+				<string>Default</string>
+			</dict>
+			<dict>
+				<key>UIColorName</key>
+				<string>LaunchBackground</string>
+				<key>UIImageName</key>
+				<string>LaunchIcon</string>
+				<key>UIImageRespectsSafeAreaInsets</key>
+				<true/>
+				<key>UILaunchScreenIdentifier</key>
+				<string>Brand</string>
+			</dict>
+		</array>
+		<key>UIURLToLaunchScreenAssociations</key>
+		<dict>
+			<key>vaultcell</key>
+			<string>Brand</string>
+		</dict>
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

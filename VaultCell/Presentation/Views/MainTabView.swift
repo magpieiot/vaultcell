@@ -22,14 +22,14 @@ enum MainTab: String, CaseIterable {
     case totp = "totp"
     case vault = "vault"
     case notes = "notes"
-    case people = "people"
+    case tools = "tools"
 
     var icon: String {
         switch self {
         case .totp: return "key.viewfinder"
         case .vault: return "lock.shield"
         case .notes: return "document"
-        case .people: return "gearshape"
+        case .tools: return "square.grid.2x2"
         }
     }
 
@@ -38,7 +38,7 @@ enum MainTab: String, CaseIterable {
         case .totp: return nil
         case .vault: return "Vault"
         case .notes: return "Notes"
-        case .people: return nil
+        case .tools: return nil
         }
     }
 }
@@ -47,7 +47,6 @@ struct MainTabView: View {
     @EnvironmentObject private var appState: AppState
     @StateObject private var referenceData: ReferenceDataService
     @StateObject private var vaultListViewModel: VaultListViewModel
-    @StateObject private var passwordGeneratorService = PasswordGeneratorService()
     @StateObject private var twoFactorService = TwoFactorService()
     @StateObject private var toastCenter = ToastCenter()
     @StateObject private var safeNoteService = SafeNoteVaultService()
@@ -94,13 +93,13 @@ struct MainTabView: View {
                 .toolbar(.hidden, for: .tabBar)
 
             //CustomDrawerView(hidesTabBar: false)
-            SettingsView()
+            ToolsView()
                 /*
                 .tabItem {
                     Label("Generator", systemImage: "sparkles")
                 }
                 */
-            .tag(MainTab.people)
+            .tag(MainTab.tools)
                 .toolbar(.hidden, for: .tabBar)
         }
         .safeAreaInset(edge: .bottom) {
@@ -108,7 +107,7 @@ struct MainTabView: View {
                 CustomTabBar(activeTab: $activeTab) {
                     // Add 按钮点击：根据当前 tab 跳转对应的新增页面
                     switch activeTab {
-                    case .totp, .vault, .people:
+                    case .totp, .vault, .tools:
                         vaultListViewModel.isPresentingAddFlow = true
                     case .notes:
                         isPresentingNoteEditor = true
@@ -191,10 +190,10 @@ struct CustomTabBar: View {
             }
             .disabled(!isAddButtonVisible)
             .opacity(isAddButtonVisible ? 1 : 0.6)
-            .animation(.easeInOut(duration: 0.2), value: activeTab)
+            .animation(.spring(duration: 0.25), value: activeTab)
 
             tabButton(for: MainTab.notes)
-            tabButton(for: MainTab.people)
+            tabButton(for: MainTab.tools)
 
         }
         .padding(.horizontal, 12)
@@ -215,7 +214,7 @@ struct CustomTabBar: View {
     private func tabButton(for tab: MainTab) -> some View {
         let isActive = activeTab == tab
         Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(.spring(duration: 0.25)) {
                 activeTab = tab
             }
         } label: {
@@ -224,7 +223,7 @@ struct CustomTabBar: View {
                     Image(systemName: tab.icon)
                         .font(.system(size: 20, weight: isActive ? .semibold : .regular))
                         .frame(width: 24, height: 24)
-                        .scaleEffect(isActive ? 1.1 : 1.0)
+                        .scaleEffect(isActive ? 1.06 : 1.0)
 
                     Text(title)
                         .font(.system(size: 12))
@@ -235,20 +234,20 @@ struct CustomTabBar: View {
                 .background(
                     Capsule()
                         .fill(isActive ? Color.blue : Color.clear)
-                        .animation(.easeInOut(duration: 0.2), value: isActive)
+                        .animation(.spring(duration: 0.25), value: isActive)
                 )
             } else {
                 Image(systemName: tab.icon)
                     .foregroundColor(isActive ? .white : .secondary)
                     .font(.system(size: 20, weight: isActive ? .semibold : .regular))
                     .frame(width: 24, height: 24)
-                    .scaleEffect(isActive ? 1.1 : 1.0)
+                    .scaleEffect(isActive ? 1.06 : 1.0)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 8)
                     .background(
                         Capsule()
                             .fill(isActive ? Color.blue : Color.clear)
-                            .animation(.easeInOut(duration: 0.2), value: isActive)
+                            .animation(.spring(duration: 0.25), value: isActive)
                     )
             }
         }

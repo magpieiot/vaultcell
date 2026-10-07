@@ -13,6 +13,12 @@ struct TwoFactorConfig: Identifiable, Codable, Equatable {
     let id: UUID
     var type: TwoFactorType  // 2FA 类型
     var secret: String?  // 2FA 密钥
+    /// TOTP 哈希算法（"SHA1" / "SHA256" / "SHA512"），仅 TOTP 有效
+    var algorithm: String  // TOTP 哈希算法
+    /// TOTP 验证码位数，仅 TOTP 有效
+    var digits: Int  // TOTP 验证码位数
+    /// TOTP 时间步长（秒），仅 TOTP 有效
+    var period: Int  // TOTP 时间步长
     var issuer: String?  // 发行方
     var boundValue: String?  // 绑定值（如手机号、邮箱等）
     var isEnabled: Bool  // 是否启用该 2FA 配置
@@ -25,6 +31,9 @@ struct TwoFactorConfig: Identifiable, Codable, Equatable {
         id: UUID = UUID(),
         type: TwoFactorType,
         secret: String? = nil,
+        algorithm: String = "SHA1",
+        digits: Int = 6,
+        period: Int = 30,
         issuer: String? = nil,
         boundValue: String? = nil,
         isEnabled: Bool = true,
@@ -36,6 +45,9 @@ struct TwoFactorConfig: Identifiable, Codable, Equatable {
         self.id = id
         self.type = type
         self.secret = secret
+        self.algorithm = algorithm
+        self.digits = digits
+        self.period = period
         self.issuer = issuer
         self.boundValue = boundValue
         self.isEnabled = isEnabled
@@ -43,6 +55,30 @@ struct TwoFactorConfig: Identifiable, Codable, Equatable {
         self.lastVerifiedAt = lastVerifiedAt
         self.expiresAt = expiresAt
         self.notes = notes
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, type, secret, algorithm, digits, period
+        case issuer, boundValue, isEnabled
+        case createdAt, lastVerifiedAt, expiresAt, notes
+    }
+
+    /// 自定义解码：兼容旧备份/导出文件（缺少 algorithm / digits / period 时使用默认值）
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        type = try container.decode(TwoFactorType.self, forKey: .type)
+        secret = try container.decodeIfPresent(String.self, forKey: .secret)
+        algorithm = try container.decodeIfPresent(String.self, forKey: .algorithm) ?? "SHA1"
+        digits = try container.decodeIfPresent(Int.self, forKey: .digits) ?? 6
+        period = try container.decodeIfPresent(Int.self, forKey: .period) ?? 30
+        issuer = try container.decodeIfPresent(String.self, forKey: .issuer)
+        boundValue = try container.decodeIfPresent(String.self, forKey: .boundValue)
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        lastVerifiedAt = try container.decodeIfPresent(Date.self, forKey: .lastVerifiedAt)
+        expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
+        notes = try container.decodeIfPresent(String.self, forKey: .notes)
     }
 }
 

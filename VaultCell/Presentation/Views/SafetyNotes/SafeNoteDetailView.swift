@@ -237,13 +237,16 @@ private struct FullImageSheet: View {
     let assets: [SafeNoteAsset]
     let onDismiss: () -> Void
 
+    /// 当前页是否处于放大状态；放大时禁用外层分页滑动，让单指拖动用于平移图片
+    @State private var isZoomed: Bool = false
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color.black.ignoresSafeArea()
 
             TabView(selection: $viewModel.currentFullImageIndex) {
                 ForEach(Array(assets.enumerated()), id: \.element.id) { index, asset in
-                    fullImagePage(for: asset)
+                    fullImagePage(for: asset, at: index)
                         .tag(index)
                         .task {
                             await viewModel.loadFullImage(for: asset)
@@ -278,23 +281,233 @@ private struct FullImageSheet: View {
                     .padding(.bottom, 40)
             }
         }
+        .onChange(of: viewModel.currentFullImageIndex) { _, _ in
+            // 翻页后清除缩放状态，保证新页面从原始比例开始展示
+            isZoomed = false
+        }
     }
 
-    private func fullImagePage(for asset: SafeNoteAsset) -> some View {
+    /// 单页大图：支持捏合缩放与双击放大/还原。
+    /// 放大时通过 PagingScrollViewBridge 关闭外层分页滑动，避免单指拖动平移与翻页抢手势。
+    private func fullImagePage(for asset: SafeNoteAsset, at index: Int) -> some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
             if let image = viewModel.decryptedFullImages[asset.id] {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+                ZoomableImageView(
+                    image: image,
+                    isActive: index == viewModel.currentFullImageIndex,
+                    onZoomChanged: { isZoomed = $0 }
+                )
             } else {
                 ProgressView()
             }
         }
+        .background(PagingScrollViewBridge(isPagingEnabled: !isZoomed))
     }
 }
 
+
+/// 可缩放大图：基于 UIScrollView 实现捏合缩放与拖动平移，双击在原始比例与放大比例之间切换。
+private struct ZoomableImageView: UIViewRepresentable {
+    /// 原始比例下双击放大的目标倍数（受 maximumZoomScale 约束）
+    private static let doubleTapZoomScale: CGFloat = 2.5
+    private static let maximumZoomScale: CGFloat = 5
+
+    let image: UIImage
+    /// 是否为当前展示页；离开当前页时重置缩放
+    let isActive: Bool
+    /// 缩放状态变化回调，供外层控制分页滚动
+    let onZoomChanged: (Bool) -> Void
+
+    func makeUIView(context: Context) -> ZoomingScrollView {
+        let scrollView = ZoomingScrollView()
+        scrollView.maximumZoomScale = Self.maximumZoomScale
+        scrollView.imageView.image = image
+        scrollView.delegate = context.coordinator
+
+        let doubleTap = UITapGestureRecognizer(
+            target: context.coordinator,
+            action: #selector(Coordinator.handleDoubleTap(_:))
+        )
+        doubleTap.numberOfTapsRequired = 2
+        scrollView.addGestureRecognizer(doubleTap)
+
+        return scrollView
+    }
+
+    func updateUIView(_ scrollView: ZoomingScrollView, context: Context) {
+        context.coordinator.onZoomChanged = onZoomChanged
+        if scrollView.imageView.image !== image {
+            scrollView.imageView.image = image
+            scrollView.setNeedsLayout()
+        }
+        context.coordinator.setActive(isActive, in: scrollView)
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(isActive: isActive, onZoomChanged: onZoomChanged)
+    }
+
+    final class Coordinator: NSObject, UIScrollViewDelegate {
+        private var isActive: Bool
+        var onZoomChanged: (Bool) -> Void
+
+        init(isActive: Bool, onZoomChanged: @escaping (Bool) -> Void) {
+            self.isActive = isActive
+            self.onZoomChanged = onZoomChanged
+        }
+
+        /// 更新当前页状态；离开当前页时异步重置缩放，避免在视图更新期间写入状态
+        func setActive(_ active: Bool, in scrollView: ZoomingScrollView) {
+            guard active != isActive else { return }
+            isActive = active
+            guard !active else { return }
+            DispatchQueue.main.async { [weak scrollView] in
+                scrollView?.resetZoom()
+            }
+        }
+
+        /// 指定参与缩放的子视图。
+        /// UIScrollView 的缩放完全依赖该回调，缺少实现时捏合与 zoom(to:) 都不会生效。
+        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            (scrollView as? ZoomingScrollView)?.imageView
+        }
+
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            guard let zoomingScrollView = scrollView as? ZoomingScrollView else { return }
+            zoomingScrollView.centerContent()
+            // 仅当前页上报，避免离屏页面覆盖缩放状态
+            guard isActive else { return }
+            onZoomChanged(zoomingScrollView.zoomScale > zoomingScrollView.minimumZoomScale + 0.01)
+        }
+
+        @objc func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+            guard let scrollView = gesture.view as? ZoomingScrollView else { return }
+
+            // 已放大则还原
+            if scrollView.zoomScale > scrollView.minimumZoomScale + 0.01 {
+                scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
+                return
+            }
+
+            // 以双击位置为中心放大
+            let targetScale = min(scrollView.maximumZoomScale, ZoomableImageView.doubleTapZoomScale)
+            let location = gesture.location(in: scrollView.imageView)
+            let size = CGSize(
+                width: scrollView.bounds.width / targetScale,
+                height: scrollView.bounds.height / targetScale
+            )
+            let rect = CGRect(
+                x: location.x - size.width / 2,
+                y: location.y - size.height / 2,
+                width: size.width,
+                height: size.height
+            )
+            scrollView.zoom(to: rect, animated: true)
+        }
+    }
+}
+
+/// 可缩放的图片容器：图片按 aspect-fit 尺寸放入 content，缩放上限内允许自由平移。
+private final class ZoomingScrollView: UIScrollView {
+    let imageView = UIImageView()
+    private var lastLayoutSize: CGSize = .zero
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        minimumZoomScale = 1
+        showsHorizontalScrollIndicator = false
+        showsVerticalScrollIndicator = false
+        bouncesZoom = true
+        decelerationRate = .fast
+        backgroundColor = .black
+        contentInsetAdjustmentBehavior = .never
+        imageView.contentMode = .scaleAspectFit
+        addSubview(imageView)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard let imageSize = imageView.image?.size,
+              imageSize.width > 0,
+              imageSize.height > 0 else { return }
+
+        // 尺寸变化（首次布局 / 旋转）时重算内容尺寸并重置缩放
+        if bounds.size != lastLayoutSize {
+            lastLayoutSize = bounds.size
+            resetContentLayout(for: imageSize)
+        }
+        centerContent()
+    }
+
+    /// 还原到原始比例
+    func resetZoom() {
+        setZoomScale(minimumZoomScale, animated: false)
+        centerContent()
+    }
+
+    /// contentSize 小于可视区域时，通过对称 contentInset 让内容保持居中
+    func centerContent() {
+        let horizontalInset = max((bounds.width - contentSize.width) / 2, 0)
+        let verticalInset = max((bounds.height - contentSize.height) / 2, 0)
+        let insets = UIEdgeInsets(
+            top: verticalInset,
+            left: horizontalInset,
+            bottom: verticalInset,
+            right: horizontalInset
+        )
+        guard contentInset != insets else { return }
+        contentInset = insets
+    }
+
+    private func resetContentLayout(for imageSize: CGSize) {
+        let scale = min(bounds.width / imageSize.width, bounds.height / imageSize.height)
+        let fittedSize = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+
+        imageView.frame = CGRect(origin: .zero, size: fittedSize)
+        contentSize = fittedSize
+        zoomScale = minimumZoomScale
+        contentOffset = .zero
+    }
+}
+
+/// 分页滚动控制桥接：向上查找所在的分页 UIScrollView，
+/// 在图片放大时关闭分页滑动，避免单指拖动平移与翻页手势冲突。
+private struct PagingScrollViewBridge: UIViewRepresentable {
+    let isPagingEnabled: Bool
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView(frame: .zero)
+        view.isUserInteractionEnabled = false
+        view.backgroundColor = .clear
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        let enabled = isPagingEnabled
+        DispatchQueue.main.async {
+            Self.enclosingScrollView(of: uiView)?.isScrollEnabled = enabled
+        }
+    }
+
+    /// 向上遍历视图层级，返回承载分页逻辑的最近一层 UIScrollView
+    private static func enclosingScrollView(of view: UIView) -> UIScrollView? {
+        var current: UIView? = view.superview
+        while let ancestor = current {
+            if let scrollView = ancestor as? UIScrollView {
+                return scrollView
+            }
+            current = ancestor.superview
+        }
+        return nil
+    }
+}
 
 // MARK: - Previews
 

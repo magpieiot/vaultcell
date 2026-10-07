@@ -24,7 +24,7 @@ final class PincodeFormModel: ObservableObject {
     @Published var selectedCategoryID: UUID
     @Published var isFavorite: Bool = false
     @Published var isNumericOnly: Bool = false
-    @Published var customFieldModel: CustomFieldModel
+    @Published var customFields: [CustomField] = []
     @Published var tagSelection: TagSelectionViewModel
 
     var isEnabledNextButton: Bool {
@@ -51,10 +51,8 @@ final class PincodeFormModel: ObservableObject {
             self.selectedCategoryID = entry.categoryID
             self.isFavorite = entry.isFavorite
             self.isNumericOnly = entry.isNumericOnly
-            self.customFieldModel = CustomFieldModel(customFields: entry.customFields ?? [])
+            self.customFields = entry.customFields ?? []
             self.tagSelection.seedSelectedTags(with: entry.tags ?? [])
-        } else {
-            self.customFieldModel = CustomFieldModel(customFields: [])
         }
     }
 
@@ -74,7 +72,7 @@ final class PincodeFormModel: ObservableObject {
                 categoryID: selectedCategoryID,
                 tags: tags.isEmpty ? [] : tags,
                 isFavorite: isFavorite,
-                customFields: customFieldModel.customFields.isEmpty ? nil : customFieldModel.customFields,
+                customFields: customFields.isEmpty ? nil : customFields,
                 isSynced: false
             )
         case let .edit(entry):
@@ -85,7 +83,7 @@ final class PincodeFormModel: ObservableObject {
             updatedEntry.categoryID = selectedCategoryID
             updatedEntry.isFavorite = isFavorite
             updatedEntry.isNumericOnly = isNumericOnly
-            updatedEntry.customFields = customFieldModel.customFields.isEmpty ? nil : customFieldModel.customFields
+            updatedEntry.customFields = customFields.isEmpty ? nil : customFields
             updatedEntry.tags = tags.isEmpty ? nil : tags
             updatedEntry.updatedAt = Date()
             updatedEntry.isSynced = false

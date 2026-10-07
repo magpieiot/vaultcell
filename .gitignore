@@ -34,6 +34,8 @@ Thumbs.db
 # Xcode
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
+# Xcode 索引 / clang 模块缓存（生成物，体积大且与本机环境绑定）
+*.xcodeproj/-Xcc/
 
 # 本地工具缓存与生成物
 .compile

@@ -41,6 +41,12 @@ class PasswordRepository: PasswordRepositoryProtocol {
             }
         }
     }
+
+    /// 写操作成功后广播变更，供 AutoFill 凭据身份同步等下游做最终一致刷新。
+    /// NotificationCenter 线程安全，观察方会把回调调度回主线程。
+    private func notifyEntriesChanged() {
+        NotificationCenter.default.post(name: .passwordEntriesDidChange, object: nil)
+    }
     
     func fetchAll() async throws -> [PasswordEntry] {
         try await perform {
@@ -105,26 +111,30 @@ class PasswordRepository: PasswordRepositoryProtocol {
         try await perform {
             try self.dataSource.savePasswordEntry(entry)
         }
+        notifyEntriesChanged()
     }
     
     func update(_ entry: PasswordEntry) async throws {
         try await perform {
             try self.dataSource.savePasswordEntry(entry)
         }
+        notifyEntriesChanged()
     }
     
     func delete(_ id: UUID) async throws {
         try await perform {
             try self.dataSource.deletePasswordEntry(id)
         }
+        notifyEntriesChanged()
     }
 
     func softDelete(_ id: UUID) async throws {
         try await perform {
             guard let cdEntry = try self.dataSource.fetchPassword(by: id) else { return }
             cdEntry.deletedAt = Date()
-            try self.dataSource.context.save()
+            try self.dataSource.saveIfPossible()
         }
+        notifyEntriesChanged()
     }
 
     func fetchTrashed() async throws -> [PasswordEntry] {
@@ -146,7 +156,7 @@ class PasswordRepository: PasswordRepositoryProtocol {
     }
 
     func purgeExpired(retentionDays: Int) async throws -> [UUID] {
-        try await perform {
+        let purgedIDs = try await perform {
             let cutoff = Date().addingTimeInterval(-Double(retentionDays) * 86400)
             let cdEntries = try self.dataSource.fetchAllPasswords()
             var purgedIDs: [UUID] = []
@@ -158,10 +168,14 @@ class PasswordRepository: PasswordRepositoryProtocol {
                 }
             }
             if !purgedIDs.isEmpty {
-                try self.dataSource.context.save()
+                try self.dataSource.saveIfPossible()
             }
             return purgedIDs
         }
+        if !purgedIDs.isEmpty {
+            notifyEntriesChanged()
+        }
+        return purgedIDs
     }
 }
 
@@ -255,5 +269,24 @@ class TwoFactorRepository: TwoFactorRepositoryProtocol {
     }
     
     func delete(_ id: UUID) async throws {
+        // 按 2FA 配置 ID 定位并删除；同时维护父条目的 has2FA 标记。
+        // （此前为空实现：调用方以为删除成功，配置实际仍留在库里）
+        try await perform {
+            let request = NSFetchRequest<CDTwoFactorConfig>(entityName: "CDTwoFactorConfig")
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.fetchLimit = 1
+
+            guard let config = try self.dataSource.context.fetch(request).first else {
+                // 配置不存在：与 deletePasswordEntry 的幂等语义一致，静默返回
+                return
+            }
+            let entry = config.passwordEntry
+            let wasOnlyConfig = (entry?.twoFactorConfigs?.count ?? 0) <= 1
+            self.dataSource.context.delete(config)
+            if wasOnlyConfig {
+                entry?.has2FA = false
+            }
+            try self.dataSource.saveIfPossible()
+        }
     }
 }

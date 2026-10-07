@@ -17,7 +17,7 @@ struct EditPasswordView: View {
 
     /// 承载编辑状态的表单模型
     @StateObject private var formModel: PasswordFormModel
-    @StateObject private var customFieldModel: CustomFieldModel
+    @State private var customFields: [CustomField] = []
 
     /// TOTP 配置独立管理，便于扫码/重新扫描
     @State private var totpFactorConfig: TwoFactorConfig?
@@ -42,6 +42,8 @@ struct EditPasswordView: View {
     @State private var recentPhoneNumbers: [String] = []
     /// 是否显示删除确认弹窗
     @State private var showDeleteConfirmation = false
+    /// 自定义字段「有值但缺名称」时是否显示阻止保存提示
+    @State private var showFieldNameRequiredPrompt = false
 
     /// 用于关闭当前 sheet 的环境变量
     @Environment(\.dismiss) private var dismiss
@@ -76,8 +78,7 @@ struct EditPasswordView: View {
 
         let totp = entry.twoFactorConfigs?.first { $0.type == .totp }
         _totpFactorConfig = State(initialValue: totp)
-        _customFieldModel = StateObject(
-            wrappedValue: CustomFieldModel(customFields: entry.customFields ?? []))
+        _customFields = State(initialValue: entry.customFields ?? [])
     }
 
     var body: some View {
@@ -139,6 +140,7 @@ struct EditPasswordView: View {
         .sheet(isPresented: $showingOAuthProviderPicker) {
             oauthProviderPickerSheet
         }
+        .toast($currentToast)
         .onAppear {
             seedSelectedTagsIfNeeded()
             recentEmails = UserContactStore.recentEmails()
@@ -147,6 +149,7 @@ struct EditPasswordView: View {
         .onChange(of: viewModel.tags) { _, _ in
             seedSelectedTagsIfNeeded()
         }
+        .customFieldNameRequiredAlert(isPresented: $showFieldNameRequiredPrompt)
     }
 
     // MARK: - Sections
@@ -182,6 +185,7 @@ struct EditPasswordView: View {
                         Text(cat.name).tag(cat.id)
                     }
                 }
+                .pickerStyle(.menu)
             }
 
             HStack(spacing: 8) {
@@ -199,7 +203,7 @@ struct EditPasswordView: View {
                 iconName: "person",
                 iconColor: .blue,
                 title: String(localized: "Username"),
-                keyboardType: .asciiCapable,
+                keyboardType: .default,
                 text: $formModel.username
             )
 
@@ -372,7 +376,9 @@ struct EditPasswordView: View {
                     iconName: "phone",
                     iconColor: .blue,
                     title: String(localized: "Phone"),
-                    keyboardType: .numberPad,
+                    // .phonePad（而不是 .numberPad）：键盘上的 +*# 键可以打出 "+"，
+                    // 用户才能录入 "+86 138…" 这类带区号的写法
+                    keyboardType: .phonePad,
                     isItemDeleteEnabled: true,
                     onDeleteItem: {
                         print("delete phone")
@@ -514,14 +520,18 @@ struct EditPasswordView: View {
 
             }
             .padding(.leading, isShowRescanQrcode ? -64 : 0)
-            // 点击 Rescan 按钮左侧区域时收起 Rescan 按钮（不触发扫码）
-            .contentShape(Rectangle())
-            .onTapGesture {
-                guard isShowRescanQrcode else { return }
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    isShowRescanQrcode = false
-                }
-            }
+            // 点击行内空白区域收起 Rescan 按钮（不触发扫码）。
+            // 手势挂在背景层，避免行级手势抢走 "Scan QR Code" / "Rescan" 按钮的点击。
+            .background(
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        guard isShowRescanQrcode else { return }
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isShowRescanQrcode = false
+                        }
+                    }
+            )
 
             ForEach(Array((formModel.twoFactorConfigs ?? []).enumerated()), id: \.element.id) {
                 index, config in
@@ -606,12 +616,12 @@ struct EditPasswordView: View {
     // MARK: - Custom Fields
     private var customFieldSection: some View {
         Section {
-            CustomFieldSection(model: customFieldModel)
+            CustomFieldSection(customFields: $customFields)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")
         } footer: {
-            AddNewFieldButton(model: customFieldModel)
+            AddNewFieldButton(customFields: $customFields)
         }
     }
 
@@ -773,22 +783,28 @@ struct EditPasswordView: View {
 
         if let result = TOTPService.shared.parseOTPAuthURI(code) {
             totpFactorConfig?.secret = result.config.secret
+            totpFactorConfig?.algorithm = result.config.algorithm.rawValue
+            totpFactorConfig?.digits = result.config.digits
+            totpFactorConfig?.period = result.config.period
             totpFactorConfig?.issuer = result.issuer ?? ""
             totpFactorConfig?.boundValue = result.account ?? ""
             totpFactorConfig?.isEnabled = true
             totpFactorConfig?.createdAt = Date()
             totpFactorConfig?.lastVerifiedAt = Date()
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "TOTP key detected"), style: .success)
+            currentToast = ToastItem(
+                message: String(localized: "TOTP key detected"), style: .success)
         } else if !code.isEmpty {
             totpFactorConfig?.secret = code
             totpFactorConfig?.issuer = formModel.siteName
             totpFactorConfig?.boundValue = formModel.username
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "TOTP key detected"), style: .success)
+            currentToast = ToastItem(
+                message: String(localized: "TOTP key detected"), style: .success)
         } else {
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "Unable to recognize QR code"), style: .error)
+            currentToast = ToastItem(
+                message: String(localized: "Unable to recognize QR code"), style: .error)
         }
     }
 
@@ -799,6 +815,13 @@ struct EditPasswordView: View {
     }
 
     private func savePassword() {
+        // 自定义字段：丢弃 name/value 均为空的新增行；
+        // 若存在「有值但缺名称」的字段，提示并阻止保存
+        if customFields.sanitizeForSave() {
+            showFieldNameRequiredPrompt = true
+            return
+        }
+
         let trimmedSiteURL = (formModel.siteURL ?? "").trimmingCharacters(
             in: .whitespacesAndNewlines)
         let trimmedEmail = (formModel.bundleEmailAddress ?? "").trimmingCharacters(
@@ -819,8 +842,7 @@ struct EditPasswordView: View {
         updatedEntry.isPasswordResetEmail = formModel.isPasswordResetEmail
         updatedEntry.isPasswordResetPhone = formModel.isPasswordResetPhone
         updatedEntry.oAuthProvider = formModel.oAuthProvider
-        updatedEntry.customFields =
-            customFieldModel.customFields.isEmpty ? nil : customFieldModel.customFields
+        updatedEntry.customFields = customFields.isEmpty ? nil : customFields
         updatedEntry.tags = viewModel.tagSelection.selectedTags.map(\.name)
         updatedEntry.updatedAt = Date()
 

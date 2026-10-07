@@ -9,16 +9,19 @@ enum VaultListFilter: String, CaseIterable, Identifiable {
 
     var id: Self { self }
 
-    var displayName: String {
+    /// 返回 LocalizedStringKey 而非已解析的 String：
+    /// `Text` 持有 key 才能跟随 `\.locale` 环境变化刷新，
+    /// 预烘焙成 String 后切换应用内语言不会重新求值。
+    var displayName: LocalizedStringKey {
         switch self {
         case .all:
-            return String(localized: "All")
+            return "All"
         case .password:
-            return String(localized: "Password")
+            return "Password"
         case .pincode:
-            return String(localized: "Pincode")
+            return "Pincode"
         case .bankcard:
-            return String(localized: "BankCard")
+            return "BankCard"
         //case .wifikey:
         //    return "WiFiKey"
         }
@@ -59,6 +62,11 @@ struct VaultListView: View {
 
     private var securityAudit: VaultSecurityAudit {
         securityAuditService.calculate(entries: viewModel.passwordEntriesForAudit)
+    }
+
+    /// 安全分只统计密码条目，过滤器排除密码类型（仅 PIN / 银行卡）时不再展示入口
+    private var showsSecurityScoreBadge: Bool {
+        viewModel.selectedTypes.contains(.password)
     }
 
     var body: some View {
@@ -115,15 +123,17 @@ struct VaultListView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            NavigationLink {
-                SecurityScoreDetailView(viewModel: viewModel, audit: securityAudit)
-            } label: {
-                SecurityScoreBadge(score: securityAudit.vaultScore)
+        if showsSecurityScoreBadge {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    SecurityScoreDetailView(viewModel: viewModel, audit: securityAudit)
+                } label: {
+                    SecurityScoreBadge(score: securityAudit.vaultScore)
+                }
+                .buttonStyle(.borderedProminent)  // 自带填充背景
+                .buttonBorderShape(.capsule)
+                .tint(SecurityScoreBadge.backgroundColor(for: securityAudit.vaultScore))
             }
-            .buttonStyle(.borderedProminent)  // 自带填充背景
-            .buttonBorderShape(.capsule)
-            .tint(SecurityScoreBadge.backgroundColor(for: securityAudit.vaultScore))
         }
 
         ToolbarItem(placement: .navigationBarTrailing) {
@@ -148,7 +158,8 @@ struct VaultListView: View {
                             ///
                             viewModel.openDetail(for: item)
                         } label: {
-                            VaultItemRow(item: item, category: viewModel.category(for: item.categoryID))
+                            VaultItemRow(
+                                item: item, category: viewModel.category(for: item.categoryID))
                         }
                         .buttonStyle(.plain)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -208,10 +219,16 @@ struct VaultListView: View {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title)
                 .foregroundColor(isSortActive ? Color.blue : .secondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                // 与上方工具带背景保持一致（模仿 vaultStatBarSection 的 systemBackground）
-                .background(Color(.systemBackground).opacity(0.5))
+                .padding(2)
+                //.padding(.leading, 6)
+                //.padding(.trailing, 6)
+                //.padding(.vertical, 3)
+                // 毛玻璃底衬：悬浮在统计胶囊之上，低不透明度，可轻微透视下方内容
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.7)
+                )
         }
         .buttonStyle(.plain)
     }
@@ -234,7 +251,7 @@ struct VaultListView: View {
     /// 顶部工具带：横向滚动的统计过滤胶囊 + 悬浮在右侧的排序按钮（ZStack 叠放）。
     /// 作为 section header 随列表滚动，plain 样式下 sticky 吸附在导航栏下缘。
     private var vaultStatBarSection: some View {
-        ZStack(alignment: .trailing) {
+        HStack(alignment: .center) {
             VaultStatBar(
                 counts: itemCounts,
                 currentFilter: VaultListFilter.filter(matching: viewModel.selectedTypes) ?? .all,
@@ -243,7 +260,7 @@ struct VaultListView: View {
                 }
             )
             // 为右侧悬浮按钮留出空间，避免胶囊被遮挡
-            //.padding(.trailing, 48)
+            //.padding(.trailing, 16)
 
             sortMenu
         }
@@ -623,18 +640,16 @@ struct VaultItemRow: View {
         HStack {
             switch item.type {
             case .password:
-                if let bundledIconName = bundledIconName {
-                    Image(bundledIconName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else {
-                    // 缓存优先：本地缓存 → 远程加载并落盘 → 分类图标占位
-                    CachedIconView(
-                        urlString: item.icon ?? item.siteURL,
-                        placeholderSystemName: category?.icon ?? "folder.fill",
-                        placeholderColor: category?.tintColor ?? .blue
-                    )
-                }
+                // 显示优先级统一由 IconResolver 决定：内置图标 → 缓存 → 字母图块 → 远程抓取
+                CachedIconView(
+                    request: IconRequest(
+                        title: item.title,
+                        siteURL: item.siteURL,
+                        manualIconURL: item.icon
+                    ),
+                    fallbackSystemName: category?.icon ?? "folder.fill",
+                    placeholderColor: category?.tintColor ?? .blue
+                )
             case .pincode:
                 Image(systemName: "number.square.fill")
                     .font(.title3)
@@ -650,27 +665,10 @@ struct VaultItemRow: View {
                     .background(Color.green.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
-            // 1. 如果站点名称能匹配到本地预制资源，则优先显示本地图标；
-            // 2. 否则尝试使用 entry.icon 里的远程地址加载；
-            // 3. 如果远程图也不可用，则回退到分类默认图标。
-
         }
         .frame(width: 36, height: 36)
         //.background(Color.blue.opacity(0.1))
         .cornerRadius(8)
-    }
-
-    private var bundledIconName: String? {
-        // 通过站点名和本地资源名做大小写不敏感匹配，
-        // 例如 "GitHub" / "github" 都可以命中同一个内置资源。
-        // 先在 international 列表匹配，未命中再回退到中国版列表，
-        // 例如 "微信" / "支付宝" 也能显示内置图标。
-        famousApps.first(where: { $0.title.caseInsensitiveCompare(item.title) == .orderedSame })?
-            .icon
-            ?? famousAppsCn.first(where: {
-                $0.title.caseInsensitiveCompare(item.title) == .orderedSame
-            })?
-            .icon
     }
 }
 

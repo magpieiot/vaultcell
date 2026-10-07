@@ -6,20 +6,57 @@
 /// ------------------------------------------------------------------
 
 import AuthenticationServices
+import Darwin
 import UIKit
 import SwiftUI
+
+/// 扩展进程创建时刻的读取器（诊断用）。
+/// 各入口打印"距进程启动 X 秒"，用于把「系统侧冷启动（进程 spawn → 首个回调）」
+/// 与「扩展代码内耗时」区分开：若入口日志就已是数秒，瓶颈在冷启动而非代码逻辑。
+private enum ExtensionProcessClock {
+    /// 进程创建时刻（sysctl KERN_PROC 读取，首次访问时计算一次）
+    private static let processStartTime: Date? = {
+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()]
+        var info = kinfo_proc()
+        var size = MemoryLayout<kinfo_proc>.stride
+        guard sysctl(&mib, 4, &info, &size, nil, 0) == 0 else { return nil }
+        // kp_proc.p_un 是 union，Swift 直接点取 p_starttime 有未对齐风险，
+        // 按字节偏移安全读取（受控实验验证过读取的就是进程创建时刻）
+        guard let unOffset = MemoryLayout<kinfo_proc>.offset(of: \kinfo_proc.kp_proc.p_un) else { return nil }
+        return withUnsafeBytes(of: info) { raw in
+            guard let base = raw.baseAddress else { return nil }
+            let tv = base.loadUnaligned(fromByteOffset: unOffset, as: timeval.self)
+            return Date(timeIntervalSince1970: Double(tv.tv_sec) + Double(tv.tv_usec) / 1_000_000)
+        }
+    }()
+
+    /// 距扩展进程创建的秒数（读取失败时为 0，仅失去诊断精度）
+    static var secondsSinceProcessStart: Double {
+        guard let processStartTime else { return 0 }
+        return Date().timeIntervalSince(processStartTime)
+    }
+}
 
 @available(iOS 17.0, *)
 class CredentialProviderViewController: ASCredentialProviderViewController {
 
     private let credentialStore = AutoFillCredentialStore.shared
 
-    private var hostingController: UIHostingController<CredentialListView>?
+    private var hostingController: UIHostingController<AnyView>?
 
     /// 展示密码选择列表：用户在第三方登录界面点击"钥匙"并选择 VaultCell 后进入。
     /// 流程：生物识别解锁（系统弹出 Face ID / Touch ID）→ 读取共享密码库 → 展示列表。
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        let rootView = CredentialListView(
+        // 语言覆盖 swizzle 必须在任何本地化文案解析前安装
+        ExtensionLanguage.activate()
+        // 共享数据库的首次打开与"解锁 + 列表加载"并行，不占关键路径
+        credentialStore.warmUpDatabase()
+        NSLog("AutoFill: 进入 prepareCredentialList（距进程启动 %.2fs）",
+              ExtensionProcessClock.secondsSinceProcessStart)
+        // 诊断：系统实际下发的标识决定 QuickType 能否命中，控制台可见
+        NSLog("AutoFill: serviceIdentifiers = %@", serviceIdentifiers.map { "\($0.type == .domain ? "domain" : "url")|\($0.identifier)" })
+
+        present(CredentialListView(
             serviceIdentifiers: serviceIdentifiers,
             store: credentialStore,
             onSelect: { [weak self] credential in
@@ -28,16 +65,94 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
             onCancel: { [weak self] in
                 self?.cancelUserRequest()
             }
-        )
+        ))
+    }
 
-        let hostingController = UIHostingController(rootView: rootView)
-        self.hostingController = hostingController
-
-        addChild(hostingController)
-        guard let hostView = hostingController.view else {
-            return
+    /// 键盘快速类型（无用户交互）快速填充入口。
+    /// 无 UI 上下文中无法完成生物识别解锁（userPresence 读取会立即失败），
+    /// 因此回退为"需要用户交互"，由系统转入交互流程。
+    override func provideCredentialWithoutUserInteraction(for credentialRequest: ASCredentialRequest) {
+        ExtensionLanguage.activate()
+        // 共享数据库的首次打开与本方法内的 Keychain 读取/查找并行：
+        // 免交互路径若成功则直接命中就绪容器；若回落交互路径，容器也已就绪
+        credentialStore.warmUpDatabase()
+        NSLog("AutoFill: 进入免交互路径（距进程启动 %.2fs）",
+              ExtensionProcessClock.secondsSinceProcessStart)
+        let start = Date()
+        do {
+            // 快速路径不允许弹认证 UI：只复用近期已有的认证，取不到就立刻回落交互流程。
+            // 绝不能在这里用普通 unlock()（会弹出被系统立即取消的 Face ID，导致交互路径第一次必失败）
+            try credentialStore.unlockWithoutUserInteraction()
+            guard let credential = try findCredential(for: credentialRequest) else {
+                // 不能再回 credentialIdentityNotFound：该错误系统不会弹任何 UI，
+                // 用户看到的就是"点了密码建议毫无反应"。统一回落到交互流程。
+                NSLog("AutoFill: 免交互路径未定位到条目，回落交互流程（%.2fs）", Date().timeIntervalSince(start))
+                extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
+                return
+            }
+            NSLog("AutoFill: 免交互路径直接填充成功（%.2fs）", Date().timeIntervalSince(start))
+            provideCredential(credential)
+        } catch {
+            // 含"快速路径不允许认证"的正常回落
+            NSLog("AutoFill: 免交互路径不可用（%@），回落交互流程", String(describing: error))
+            extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
         }
+    }
+
+    /// 用户在快速类型中选择某条建议后的入口：此时允许展示生物识别认证界面。
+    ///
+    /// 这里必须给出真实的界面：旧实现在失败时以 `userInteractionRequired` 再次取消，
+    /// 系统随后收起扩展面板，表现为"闪一下空白列表又缩回、什么都没填"。
+    override func prepareInterfaceToProvideCredential(for credentialRequest: ASCredentialRequest) {
+        ExtensionLanguage.activate()
+        // 关键优化：共享数据库的首次打开（模型加载 + 迁移检查 + WAL 恢复）
+        // 在此立刻后台触发，与"系统呈现扩展面板 + Face ID 认证"完全并行，
+        // 解锁成功后的单条读取直接命中就绪容器
+        credentialStore.warmUpDatabase()
+        NSLog("AutoFill: 进入交互路径（距进程启动 %.2fs）",
+              ExtensionProcessClock.secondsSinceProcessStart)
+        present(CredentialUnlockView(
+            load: { [weak self] in
+                guard let self else { return }
+                let start = Date()
+                // 扩展界面由系统在 prepareInterfaceToProvideCredential 返回后才呈现，
+                // 过早发起生物识别会被系统立即取消（表现为"第一次必失败、点重试才行"）。
+                try? await Task.sleep(nanoseconds: 350_000_000)
+                try await self.unlockCredentialStore()
+                let unlockCost = Date().timeIntervalSince(start)
+
+                guard let credential = try self.findCredential(for: credentialRequest) else {
+                    throw CredentialLookupError()
+                }
+                NSLog("AutoFill: 交互路径填充成功（解锁 %.2fs，合计 %.2fs）",
+                      unlockCost, Date().timeIntervalSince(start))
+                self.provideCredential(credential)
+            },
+            onCancel: { [weak self] in
+                self?.cancelUserRequest()
+            }
+        ))
+    }
+
+    override func prepareInterfaceForExtensionConfiguration() {
+        // 配置界面无需实现
+    }
+
+    // MARK: - Private
+
+    /// 把 SwiftUI 视图装进扩展视图控制器（扩展只有这一块展示区域）
+    private func present(_ rootView: some View) {
+        hostingController?.willMove(toParent: nil)
+        hostingController?.view.removeFromSuperview()
+        hostingController?.removeFromParent()
+
+        let hosting = UIHostingController(rootView: AnyView(rootView))
+        hostingController = hosting
+
+        addChild(hosting)
+        guard let hostView = hosting.view else { return }
         hostView.translatesAutoresizingMaskIntoConstraints = false
+        hostView.backgroundColor = .clear
         view.addSubview(hostView)
 
         NSLayoutConstraint.activate([
@@ -47,47 +162,8 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
             hostView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        hostingController.didMove(toParent: self)
+        hosting.didMove(toParent: self)
     }
-
-    /// 键盘快速类型（无用户交互）快速填充入口。
-    /// 无 UI 上下文中无法完成生物识别解锁（userPresence 读取会立即失败），
-    /// 因此回退为"需要用户交互"，由系统转入交互流程。
-    override func provideCredentialWithoutUserInteraction(for credentialRequest: ASCredentialRequest) {
-        do {
-            // 快速路径不允许弹认证 UI：unlock 内部会抛出认证失败
-            try credentialStore.unlock()
-            guard let credential = try findCredential(for: credentialRequest) else {
-                extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
-                return
-            }
-            provideCredential(credential)
-        } catch {
-            extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
-        }
-    }
-
-    /// 用户在快速类型中选择某条建议后的入口：此时允许展示生物识别认证界面
-    override func prepareInterfaceToProvideCredential(for credentialRequest: ASCredentialRequest) {
-        Task {
-            do {
-                try await unlockCredentialStore()
-                guard let credential = try findCredential(for: credentialRequest) else {
-                    extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
-                    return
-                }
-                provideCredential(credential)
-            } catch {
-                extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
-            }
-        }
-    }
-
-    override func prepareInterfaceForExtensionConfiguration() {
-        // 配置界面无需实现
-    }
-
-    // MARK: - Private
 
     private func cancelUserRequest() {
         extensionContext.cancelRequest(withError: ASExtensionError(.userCanceled))
@@ -109,36 +185,60 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
     }
 
     /// 根据系统请求在已解锁凭据中定位一条记录：
-    /// 用户名精确匹配优先，其次参考服务标识（域名/URL）匹配。
+    /// 记录标识精确匹配优先，其次用户名精确匹配，最后参考服务标识（域名/URL）匹配。
+    /// 全程只解密命中的那一条，代价与密码库大小无关。
     private func findCredential(for request: ASCredentialRequest) throws -> ASPasswordCredential? {
-        // 取请求关联的用户名与服务标识
+        // 取请求关联的用户名、服务标识与记录标识
         let identity = (request as? ASPasswordCredentialRequest)?.credentialIdentity
+        NSLog("AutoFill: request identity = %@", identity.map { "\($0.serviceIdentifier.type == .domain ? "domain" : "url")|\($0.serviceIdentifier.identifier) user=\($0.user) record=\($0.recordIdentifier ?? "-")" } ?? "nil")
         let username = identity?.user
         let serviceIdentifier = identity?.serviceIdentifier.identifier
+        // 主 App 为同一条目注册多条身份时会加 "#序号" 后缀保证唯一，这里还原条目 ID
+        let recordIdentifier = identity?.recordIdentifier?.components(separatedBy: "#").first
+
+        // 0. 主 App 注册 identity 时写入了条目 ID，命中即单行取回，
+        //    避免"同一用户名存在于多个站点"时填错密码
+        if let recordIdentifier, let id = UUID(uuidString: recordIdentifier),
+           let resolved = try credentialStore.credential(for: id) {
+            return ASPasswordCredential(user: resolved.username, password: resolved.password)
+        }
 
         guard username != nil || serviceIdentifier != nil else {
             return nil
         }
 
-        let items = try credentialStore.fetchCredentials()
-
-        // 1. 先按用户名过滤（无用户名要求时保留全部）
-        let candidates = items.filter { item in
+        // 1. 读取元数据（不解密）后按用户名过滤（无用户名要求时保留全部）
+        let summaries = try credentialStore.fetchCredentialSummaries()
+        let candidates = summaries.filter { item in
             guard let username else { return true }
             return item.username.caseInsensitiveCompare(username) == .orderedSame
         }
-        // 2. 在候选中优先匹配服务标识
-        let matched: CredentialItem?
+        // 2. 在候选中匹配服务标识。
+        //    安全取舍：用户名相同但站点不匹配时**不做兜底**——宁可不填，
+        //    也不能把另一个站点的密码静默填进当前输入框；
+        //    免交互路径返回 nil 后系统会回落交互流程，用户仍可手动选择。
+        let matched: CredentialSummary?
         if let serviceIdentifier {
             matched = candidates.first {
-                AutoFillCredentialStore.matches(service: serviceIdentifier, siteURL: $0.siteURL)
-            } ?? candidates.first
+                AutoFillDomainMatcher.matches(service: serviceIdentifier, siteURL: $0.siteURL)
+            }
         } else {
             matched = candidates.first
         }
 
-        guard let matched else { return nil }
-        return ASPasswordCredential(user: matched.username, password: matched.password)
+        guard let matched, let resolved = try credentialStore.credential(for: matched.id) else {
+            return nil
+        }
+        return ASPasswordCredential(user: resolved.username, password: resolved.password)
+    }
+}
+
+/// 交互路径中未能定位到条目时的用户可见错误。
+/// 注意：这里刻意不使用 ASExtensionError(.userInteractionRequired)——
+/// 在交互路径上再次回该错误会让系统直接收起面板，用户什么都看不到。
+private struct CredentialLookupError: LocalizedError {
+    var errorDescription: String? {
+        String(localized: "No password found for this site. Make sure the item is saved in VaultCell and has a username.")
     }
 }
 
@@ -157,18 +257,18 @@ struct CredentialListView: View {
     let onCancel: () -> Void
 
     @State private var phase: LoadPhase = .unlocking
-    @State private var credentials: [CredentialItem] = []
+    @State private var credentials: [CredentialSummary] = []
     @State private var searchText = ""
     @State private var retryToken = 0
 
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("选择密码")
+                .navigationTitle("Select Password")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button("取消") {
+                        Button("Cancel") {
                             onCancel()
                         }
                     }
@@ -186,7 +286,7 @@ struct CredentialListView: View {
             VStack(spacing: 12) {
                 ProgressView()
                     .controlSize(.large)
-                Text("正在验证身份…")
+                Text("Verifying identity…")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -202,7 +302,7 @@ struct CredentialListView: View {
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-                Button("重试") {
+                Button("Retry") {
                     retryToken += 1
                 }
                 .buttonStyle(.borderedProminent)
@@ -216,9 +316,11 @@ struct CredentialListView: View {
                     Image(systemName: "lock.open")
                         .font(.system(size: 44))
                         .foregroundColor(.secondary)
-                    Text(credentials.isEmpty ? "暂无可用密码" : "没有匹配的密码")
+                    Text(credentials.isEmpty
+                         ? String(localized: "No passwords available")
+                         : String(localized: "No matching passwords"))
                         .font(.headline)
-                    Text("请先在 VaultCell 中保存密码")
+                    Text("Save a password in VaultCell first")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -253,12 +355,12 @@ struct CredentialListView: View {
                     .buttonStyle(.plain)
                 }
                 .listStyle(.plain)
-                .searchable(text: $searchText, prompt: "搜索密码")
+                .searchable(text: $searchText, prompt: "Search passwords")
             }
         }
     }
 
-    private var filteredCredentials: [CredentialItem] {
+    private var filteredCredentials: [CredentialSummary] {
         guard !searchText.isEmpty else {
             return credentials
         }
@@ -273,11 +375,17 @@ struct CredentialListView: View {
 
     private func loadCredentials() async {
         phase = .unlocking
+        let start = Date()
         do {
             // 1. 生物识别解锁（后台线程触发系统认证 UI）
+            // 等系统把扩展界面呈现出来再发起，过早会被立即取消
+            try? await Task.sleep(nanoseconds: 350_000_000)
             try await unlockCredentialStore()
-            // 2. 主线程读取共享数据库并解密（viewContext 绑定主线程）
-            let items = try store.fetchCredentials()
+            let unlockCost = Date().timeIntervalSince(start)
+            // 2. 后台线程读取元数据（不解密整库；密码在选中某条时才单条解密）
+            let items = try await loadSummaries()
+            NSLog("AutoFill: 列表加载完成 解锁 %.2fs 读取 %d 条 %.2fs",
+                  unlockCost, items.count, Date().timeIntervalSince(start) - unlockCost)
             credentials = prioritized(items)
             phase = .loaded
         } catch let error as AutoFillCredentialStoreError {
@@ -294,16 +402,16 @@ struct CredentialListView: View {
             credentials = []
             phase = .loaded
         case .authenticationFailed:
-            phase = .failed("身份验证失败，请重试")
+            phase = .failed(String(localized: "Authentication failed. Please try again."))
         case .vaultLocked:
-            phase = .failed("密码库已锁定，请重试")
+            phase = .failed(String(localized: "The vault is locked. Please try again."))
         case .databaseUnavailable, .invalidData:
             phase = .failed(error.localizedDescription)
         }
     }
 
     /// 将匹配当前站点的条目置顶（不隐藏其它条目，用户仍可搜索选择）
-    private func prioritized(_ items: [CredentialItem]) -> [CredentialItem] {
+    private func prioritized(_ items: [CredentialSummary]) -> [CredentialSummary] {
         guard !serviceIdentifiers.isEmpty else {
             return items
         }
@@ -312,9 +420,9 @@ struct CredentialListView: View {
             return items
         }
 
-        func score(_ item: CredentialItem) -> Int {
+        func score(_ item: CredentialSummary) -> Int {
             serviceIDs.contains {
-                AutoFillCredentialStore.matches(service: $0, siteURL: item.siteURL)
+                AutoFillDomainMatcher.matches(service: $0, siteURL: item.siteURL)
             } ? 1 : 0
         }
 
@@ -328,12 +436,37 @@ struct CredentialListView: View {
         }
     }
 
-    private func selectCredential(_ credential: CredentialItem) {
-        let passwordCredential = ASPasswordCredential(
-            user: credential.username,
-            password: credential.password
-        )
-        onSelect(passwordCredential)
+    /// 选中某条：此刻才按 ID 单条解密（列表加载阶段完全不碰密文）
+    private func selectCredential(_ credential: CredentialSummary) {
+        Task {
+            do {
+                guard let resolved = try await resolveCredential(credential.id) else {
+                    phase = .failed(String(localized: "Couldn't read this item's password. It may have been deleted or moved in VaultCell."))
+                    return
+                }
+                onSelect(ASPasswordCredential(user: resolved.username, password: resolved.password))
+            } catch {
+                phase = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// 在后台线程单条解密（Core Data 读取走私有队列上下文，不阻塞主线程）
+    private func resolveCredential(_ id: UUID) async throws -> (username: String, password: String)? {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result { try self.store.credential(for: id) })
+            }
+        }
+    }
+
+    /// 在后台线程读取列表元数据（不解密，库再大也很快）
+    private func loadSummaries() async throws -> [CredentialSummary] {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result { try self.store.fetchCredentialSummaries() })
+            }
+        }
     }
 
     private func unlockCredentialStore() async throws {
@@ -347,10 +480,60 @@ struct CredentialListView: View {
     }
 }
 
-struct CredentialItem: Identifiable, Codable {
-    let id: UUID
-    let siteName: String
-    let siteURL: String
-    let username: String
-    let password: String
+/// 点击某条自动填充建议后的交互界面（蓝牙/键盘上方建议 → 需要验证身份时展示）。
+///
+/// 旧实现在这个入口不搭任何界面：认证失败或没找到条目时直接以
+/// `userInteractionRequired` / `credentialIdentityNotFound` 取消，系统随即收起面板，
+/// 用户看到的就是"闪一下空白列表又缩回、什么都没填"。这里改为把过程与失败原因
+/// 都显示出来，并允许重试。
+@available(iOS 17.0, *)
+struct CredentialUnlockView: View {
+    /// 执行一次填充尝试：成功时内部会 completeRequest，界面随请求结束消失
+    let load: () async throws -> Void
+    let onCancel: () -> Void
+
+    @State private var errorMessage: String?
+    @State private var retryToken = 0
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                if let errorMessage {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.system(size: 44))
+                        .foregroundColor(.secondary)
+                    Text(errorMessage)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    Button("Retry") {
+                        retryToken += 1
+                    }
+                    .buttonStyle(.borderedProminent)
+                } else {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text("Verifying identity…")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .navigationTitle("VaultCell")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel", action: onCancel)
+                }
+            }
+        }
+        .task(id: retryToken) {
+            errorMessage = nil
+            do {
+                try await load()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
 }

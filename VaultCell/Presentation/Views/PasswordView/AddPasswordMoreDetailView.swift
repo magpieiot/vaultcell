@@ -11,7 +11,7 @@ struct AddPasswordMoreDetailView: View {
 
     @ObservedObject var formModel: PasswordFormModel
     @ObservedObject var viewModel: VaultListViewModel
-    @StateObject private var customFieldModel: CustomFieldModel = CustomFieldModel()
+    @State private var customFields: [CustomField] = []
     
     let categories: [PasswordCategory] = PasswordCategory.systemDefaults
     
@@ -22,6 +22,8 @@ struct AddPasswordMoreDetailView: View {
     @State private var scanError: String?
     @State private var currentToast: ToastItem?
     @State private var isSaving = false
+    /// 自定义字段「有值但缺名称」时是否显示阻止保存提示
+    @State private var showFieldNameRequiredPrompt = false
     @State private var hasSeededSelectedTags = false
     
     @FocusState private var isFocused: Bool
@@ -78,7 +80,7 @@ struct AddPasswordMoreDetailView: View {
             .onChange(of: viewModel.tags) { _, _ in
                 //seedSelectedTagsIfNeeded()
             }
-            .onChange(of: customFieldModel.customFields) { _, newValue in
+            .onChange(of: customFields) { _, newValue in
                 formModel.customFields = newValue
             }
         .toast($currentToast)
@@ -99,6 +101,7 @@ struct AddPasswordMoreDetailView: View {
                 )
             }
         }
+        .customFieldNameRequiredAlert(isPresented: $showFieldNameRequiredPrompt)
     }
 
     /// 绑定信息
@@ -154,6 +157,8 @@ struct AddPasswordMoreDetailView: View {
                     )
                 )
                     .textContentType(.telephoneNumber)
+                    // .phonePad（而不是 .numberPad）：键盘上的 +*# 键可以打出 "+"，
+                    // 用户才能录入 "+86 138…" 这类带区号的写法
                     .keyboardType(.phonePad)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -351,7 +356,7 @@ struct AddPasswordMoreDetailView: View {
     /// 每个字段包含名称和值
     private var customFieldsSection: some View {
         Section {
-            CustomFieldSection(model: customFieldModel)
+            CustomFieldSection(customFields: $customFields)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
             
         } header: {
@@ -386,6 +391,9 @@ struct AddPasswordMoreDetailView: View {
             /// 2. 更新 TOTP 配置
             
             totpFactorConfig?.secret = result.config.secret
+            totpFactorConfig?.algorithm = result.config.algorithm.rawValue
+            totpFactorConfig?.digits = result.config.digits
+            totpFactorConfig?.period = result.config.period
             totpFactorConfig?.issuer = result.issuer ?? ""
             totpFactorConfig?.boundValue = result.account ?? ""
             totpFactorConfig?.isEnabled = true
@@ -409,9 +417,17 @@ struct AddPasswordMoreDetailView: View {
     private func savePassword() {
         guard !isSaving else { return }
 
+        // 自定义字段：丢弃 name/value 均为空的新增行；
+        // 若存在「有值但缺名称」的字段，提示并阻止保存
+        if customFields.sanitizeForSave() {
+            formModel.customFields = customFields
+            showFieldNameRequiredPrompt = true
+            return
+        }
+
         formModel.tagSelection = viewModel.tagSelection.selectedTags.map(\.name)
         formModel.has2FA = totpFactorConfig?.secret != nil || !(formModel.twoFactorConfigs ?? []).isEmpty
-        formModel.customFields = customFieldModel.customFields
+        formModel.customFields = customFields
 
         var entry = formModel.buildDraftEntry()
 

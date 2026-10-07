@@ -17,6 +17,8 @@ struct PincodeFormView: View {
     @State private var isPincodeVisible = false
     @State private var showDeleteConfirmation = false
     @State private var isSaving = false
+    /// 自定义字段「有值但缺名称」时是否显示阻止保存提示
+    @State private var showFieldNameRequiredPrompt = false
 
     private var isEditMode: Bool {
         if case .edit = formModel.mode { return true }
@@ -46,6 +48,7 @@ struct PincodeFormView: View {
                 formContent
             }
         }
+        .customFieldNameRequiredAlert(isPresented: $showFieldNameRequiredPrompt)
     }
 
     private var formContent: some View {
@@ -179,12 +182,12 @@ struct PincodeFormView: View {
 
     private var customFieldSection: some View {
         Section {
-            CustomFieldSection(model: formModel.customFieldModel)
+            CustomFieldSection(customFields: $formModel.customFields)
                 .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
         } header: {
             Text("Custom Fields")
         } footer: {
-            AddNewFieldButton(model: formModel.customFieldModel)
+            AddNewFieldButton(customFields: $formModel.customFields)
         }
     }
 
@@ -216,6 +219,12 @@ struct PincodeFormView: View {
 
     private func save() async {
         guard formModel.isEnabledNextButton else { return }
+        // 自定义字段：丢弃 name/value 均为空的新增行；
+        // 若存在「有值但缺名称」的字段，提示并阻止保存
+        if formModel.customFields.sanitizeForSave() {
+            showFieldNameRequiredPrompt = true
+            return
+        }
         isSaving = true
         defer { isSaving = false }
 

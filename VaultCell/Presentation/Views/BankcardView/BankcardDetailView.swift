@@ -433,7 +433,7 @@ private struct BankcardFaceView: View {
         cardType: .debit,
         cardNetworks: ["Visa"],
         notes: "工商银行储蓄卡",
-        categoryID: PasswordCategory.systemDefaults[1].id,
+        categoryID: PasswordCategory.systemDefaults[2].id,
         tags: ["bank", "finance", "seed"],
         isFavorite: true
     )

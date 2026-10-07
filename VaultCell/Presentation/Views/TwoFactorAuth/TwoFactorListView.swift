@@ -139,36 +139,18 @@ struct TOTPEntryRow: View {
     }
 
     // MARK: - 站点图标
-    /// 与 PasswordDetailView.iconView 一致的显示优先级：
-    /// 1. 本地预制资源（通过站点名做大小写不敏感匹配）
-    /// 2. 远程 URL 加载（entry.icon 指向的图片地址）
-    /// 3. 分类默认 SF Symbol 图标
+    /// 与 PasswordDetailView.iconView 一致：显示优先级统一由 IconResolver 决定
     private var iconView: some View {
-        Group {
-            if let bundledIconName = bundledIconName {
-                Image(bundledIconName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                // 缓存优先：本地缓存 → 远程加载并落盘 → 分类图标占位
-                CachedIconView(
-                    urlString: entry.icon ?? entry.siteURL,
-                    placeholderSystemName: category?.icon ?? "folder.fill",
-                    placeholderColor: category?.tintColor ?? .blue
-                )
-            }
-        }
+        CachedIconView(
+            request: IconRequest(
+                title: entry.siteName,
+                siteURL: entry.siteURL,
+                manualIconURL: entry.icon
+            ),
+            fallbackSystemName: category?.icon ?? "folder.fill",
+            placeholderColor: category?.tintColor ?? .blue
+        )
         .frame(width: 36, height: 36)
         .cornerRadius(8)
-    }
-
-    private var bundledIconName: String? {
-        famousApps.first(where: { $0.title.caseInsensitiveCompare(entry.siteName) == .orderedSame }
-        )?
-        .icon
-            ?? famousAppsCn.first(where: {
-                $0.title.caseInsensitiveCompare(entry.siteName) == .orderedSame
-            })?
-            .icon
     }
 }

@@ -84,8 +84,8 @@ struct CategoryLabel : View {
             .padding(.horizontal, 12)
             .padding(.vertical, 4)
             .symbolRenderingMode(.hierarchical)
-            .background(category.backgroundColor ?? Color.secondary.opacity(0.12))
-            .foregroundColor(category.tintColor ?? Color.secondary)
+            .background(category.backgroundColor)
+            .foregroundColor(category.tintColor)
             .clipShape(Capsule())
     }
 }

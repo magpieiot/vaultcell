@@ -7,56 +7,22 @@
 
 import Foundation
 
-/// 应用目录加载错误
-enum AppCatalogError: Error, LocalizedError {
-    case fileNotFound
-    case decodeFailed(Error)
-    
-    var errorDescription: String? {
-        switch self {
-        case .fileNotFound:
-            return "未找到应用目录 JSON 文件"
-        case .decodeFailed(let error):
-            return "解析应用目录失败: \(error.localizedDescription)"
-        }
-    }
-}
-
 /// 应用目录服务协议
 protocol AppCatalogServiceProtocol {
-    /// 从 bundle 加载应用元数据数组
-    func loadApps() async throws -> [AppInfo]
+    /// 返回 bundle 中的统一应用目录条目
+    func loadApps() async -> [AppCatalogEntry]
 }
 
-/// 默认实现：从 main bundle 的 JSON 文件加载应用目录
+/// 默认实现：读取 `AppCatalog`（`app_catalog.json`）
+///
+/// 读取放在后台线程，避免首次访问时阻塞主线程；目录本身只解析一次。
 final class AppCatalogService: AppCatalogServiceProtocol {
-    
-    /// JSON 文件名（不含扩展名）
-    private let filename: String
-    
-    /// 资源所在 bundle
-    private let bundle: Bundle
-    
-    init(filename: String = "apps_500_min", bundle: Bundle = .main) {
-        self.filename = filename
-        self.bundle = bundle
-    }
-    
-    /// 加载并解析应用元数据
-    ///
-    /// 在后台线程读取文件，避免阻塞主线程。
-    func loadApps() async throws -> [AppInfo] {
-        try await Task.detached(priority: .userInitiated) {
-            guard let url = self.bundle.url(forResource: self.filename, withExtension: "json") else {
-                throw AppCatalogError.fileNotFound
-            }
-            let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            do {
-                return try decoder.decode([AppInfo].self, from: data)
-            } catch {
-                throw AppCatalogError.decodeFailed(error)
-            }
+
+    init() {}
+
+    func loadApps() async -> [AppCatalogEntry] {
+        await Task.detached(priority: .userInitiated) {
+            AppCatalog.entries
         }.value
     }
 }

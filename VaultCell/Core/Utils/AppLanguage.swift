@@ -84,10 +84,15 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable {
         AppLanguageManager.shared.set(language)
     }
 
-    /// 应用启动时调用：安装 Bundle swizzling。
+    /// 应用启动时调用：安装 Bundle swizzling，并把历史的语言选择补写到共享容器。
     static func bootstrap() {
         // 确保 swizzling 只安装一次
         _ = Bundle._swizzleOnce
+
+        // 旧版本只写主 App 自己的 UserDefaults：升级后补写一份到 App Group，
+        // 否则老用户（未重新选过语言）的扩展读不到覆盖值，只能回退系统语言
+        guard let raw = UserDefaults.standard.string(forKey: VaultKey.appLanguage) else { return }
+        UserDefaults(suiteName: appGroupIdentifier)?.set(raw, forKey: VaultKey.appLanguage)
     }
 }
 
@@ -104,12 +109,27 @@ extension AppLanguage {
     }
 
     /// 持久化语言选择；.followOS 会清除覆盖项。
+    /// 除主 App 自己的 UserDefaults 外，同步写入 App Group：
+    /// AutoFill 扩展是独立进程，读不到主 App 的 UserDefaults.standard，
+    /// 只能从共享容器里读取同一份覆盖值，保证扩展界面语言与主 App 一致。
     static func persist(_ language: AppLanguage) {
+        let suite = UserDefaults(suiteName: appGroupIdentifier)
         if language == .followOS {
             UserDefaults.standard.removeObject(forKey: VaultKey.appLanguage)
+            suite?.removeObject(forKey: VaultKey.appLanguage)
         } else {
             UserDefaults.standard.set(language.rawValue, forKey: VaultKey.appLanguage)
+            suite?.set(language.rawValue, forKey: VaultKey.appLanguage)
         }
+    }
+
+    /// 当前构建变体对应的 App Group（与扩展侧 ExtensionLanguage 保持一致）
+    private static var appGroupIdentifier: String {
+        #if CN
+        return "group.com.magpie.vaultcell.cn.shared"
+        #else
+        return "group.com.magpie.vaultcell.shared"
+        #endif
     }
 
     /// 将当前选择写入 AppleLanguages，使系统在下一次启动时也使用该语言。

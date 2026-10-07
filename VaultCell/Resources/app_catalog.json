@@ -1,0 +1,6962 @@
+[
+ {
+  "id": "google",
+  "asset": "Google",
+  "domains": [
+   "google.com"
+  ],
+  "en": "Google",
+  "zh": "谷歌",
+  "pinyin": "guge",
+  "initials": "gg",
+  "region": "global",
+  "oauth": true,
+  "rank": 1
+ },
+ {
+  "id": "cloudflare",
+  "asset": "Cloudflare",
+  "domains": [
+   "cloudflare.com"
+  ],
+  "en": "Cloudflare",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 2
+ },
+ {
+  "id": "facebook",
+  "asset": "Facebook",
+  "domains": [
+   "facebook.com"
+  ],
+  "en": "Facebook",
+  "zh": "脸书",
+  "pinyin": "lianshu",
+  "initials": "ls",
+  "region": "global",
+  "oauth": true,
+  "rank": 3
+ },
+ {
+  "id": "microsoft",
+  "asset": "Microsoft",
+  "domains": [
+   "microsoft.com"
+  ],
+  "en": "Microsoft",
+  "zh": "微软",
+  "pinyin": "weiruan",
+  "initials": "wr",
+  "region": "global",
+  "oauth": true,
+  "rank": 4
+ },
+ {
+  "id": "wechat",
+  "asset": "WeChat",
+  "domains": [
+   "weixin.qq.com"
+  ],
+  "en": "WeChat",
+  "zh": "微信",
+  "pinyin": "weixin",
+  "initials": "wx",
+  "region": "cn",
+  "oauth": true,
+  "rank": 5
+ },
+ {
+  "id": "youtube",
+  "asset": "YouTube",
+  "domains": [
+   "youtube.com"
+  ],
+  "en": "YouTube",
+  "zh": "YouTube",
+  "pinyin": "YouTube",
+  "initials": "YouTube",
+  "region": "global",
+  "oauth": false,
+  "rank": 6
+ },
+ {
+  "id": "baidu",
+  "asset": "Baidu",
+  "domains": [
+   "baidu.com"
+  ],
+  "en": "Baidu",
+  "zh": "百度",
+  "pinyin": "baidu",
+  "initials": "bd",
+  "region": "cn",
+  "oauth": true,
+  "rank": 7
+ },
+ {
+  "id": "apple",
+  "asset": "Apple",
+  "domains": [
+   "apple.com"
+  ],
+  "en": "Apple",
+  "zh": "苹果",
+  "pinyin": "pingguo",
+  "initials": "pg",
+  "region": "global",
+  "oauth": true,
+  "rank": 8
+ },
+ {
+  "id": "douyin",
+  "asset": "Douyin",
+  "domains": [
+   "douyin.com"
+  ],
+  "en": "Douyin",
+  "zh": "抖音",
+  "pinyin": "douyin",
+  "initials": "dy",
+  "region": "cn",
+  "oauth": true,
+  "rank": 9
+ },
+ {
+  "id": "instagram",
+  "asset": "Instagram",
+  "domains": [
+   "instagram.com"
+  ],
+  "en": "Instagram",
+  "zh": "Instagram",
+  "pinyin": "Instagram",
+  "initials": "Instagram",
+  "region": "global",
+  "oauth": true,
+  "rank": 10
+ },
+ {
+  "id": "mailru",
+  "asset": "Mailru",
+  "domains": [
+   "mail.ru"
+  ],
+  "en": "Mail.ru",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 11
+ },
+ {
+  "id": "taobao",
+  "asset": "Taobao",
+  "domains": [
+   "taobao.com"
+  ],
+  "en": "Taobao",
+  "zh": "淘宝",
+  "pinyin": "taobao",
+  "initials": "tb",
+  "region": "cn",
+  "oauth": true,
+  "rank": 12
+ },
+ {
+  "id": "alipay",
+  "asset": "Alipay",
+  "domains": [
+   "alipay.com"
+  ],
+  "en": "Alipay",
+  "zh": "支付宝",
+  "pinyin": "zhifubao",
+  "initials": "zfb",
+  "region": "cn",
+  "oauth": true,
+  "rank": 13
+ },
+ {
+  "id": "linkedin",
+  "asset": "LinkedIn",
+  "domains": [
+   "linkedin.com"
+  ],
+  "en": "LinkedIn",
+  "zh": "领英",
+  "pinyin": "lingying",
+  "initials": "ly",
+  "region": "global",
+  "oauth": true,
+  "rank": 14
+ },
+ {
+  "id": "microsoft365",
+  "asset": "Microsoft365",
+  "domains": [
+   "office.com"
+  ],
+  "en": "Microsoft 365",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 15
+ },
+ {
+  "id": "qq",
+  "asset": "QQ",
+  "domains": [
+   "im.qq.com"
+  ],
+  "en": "QQ",
+  "zh": "QQ",
+  "pinyin": "QQ",
+  "initials": "QQ",
+  "region": "cn",
+  "oauth": true,
+  "rank": 16
+ },
+ {
+  "id": "amazon",
+  "asset": "Amazon",
+  "domains": [
+   "amazon.com"
+  ],
+  "en": "Amazon",
+  "zh": "亚马逊",
+  "pinyin": "yamaxun",
+  "initials": "ymx",
+  "region": "global",
+  "oauth": true,
+  "rank": 17
+ },
+ {
+  "id": "weibo",
+  "asset": "Weibo",
+  "domains": [
+   "weibo.com"
+  ],
+  "en": "Weibo",
+  "zh": "微博",
+  "pinyin": "weibo",
+  "initials": "wb",
+  "region": "cn",
+  "oauth": true,
+  "rank": 18
+ },
+ {
+  "id": "bing",
+  "asset": "Bing",
+  "domains": [
+   "bing.com"
+  ],
+  "en": "Bing",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 19
+ },
+ {
+  "id": "kuaishou",
+  "asset": "Kuaishou",
+  "domains": [
+   "kuaishou.com"
+  ],
+  "en": "Kuaishou",
+  "zh": "快手",
+  "pinyin": "kuaishou",
+  "initials": "ks",
+  "region": "cn",
+  "oauth": true,
+  "rank": 20
+ },
+ {
+  "id": "wikipedia",
+  "asset": "Wikipedia",
+  "domains": [
+   "wikipedia.org"
+  ],
+  "en": "Wikipedia",
+  "zh": "维基百科",
+  "pinyin": "weijibaike",
+  "initials": "wjbk",
+  "region": "global",
+  "oauth": false,
+  "rank": 21
+ },
+ {
+  "id": "github",
+  "asset": "GitHub",
+  "domains": [
+   "github.com"
+  ],
+  "en": "GitHub",
+  "zh": "GitHub",
+  "pinyin": "GitHub",
+  "initials": "GitHub",
+  "region": "global",
+  "oauth": true,
+  "rank": 22
+ },
+ {
+  "id": "pinduoduo",
+  "asset": "Pinduoduo",
+  "domains": [
+   "pinduoduo.com"
+  ],
+  "en": "Pinduoduo",
+  "zh": "拼多多",
+  "pinyin": "pinduoduo",
+  "initials": "pdd",
+  "region": "cn",
+  "oauth": false,
+  "rank": 23
+ },
+ {
+  "id": "jdcom",
+  "asset": "JDcom",
+  "domains": [
+   "jd.com"
+  ],
+  "en": "JD.com",
+  "zh": "京东",
+  "pinyin": "jingdong",
+  "initials": "jd",
+  "region": "cn",
+  "oauth": true,
+  "rank": 24
+ },
+ {
+  "id": "netflix",
+  "asset": "Netflix",
+  "domains": [
+   "netflix.com"
+  ],
+  "en": "Netflix",
+  "zh": "奈飞",
+  "pinyin": "naifei",
+  "initials": "nf",
+  "region": "global",
+  "oauth": false,
+  "rank": 25
+ },
+ {
+  "id": "xiaohongshured",
+  "asset": "XiaohongshuRED",
+  "domains": [
+   "xiaohongshu.com"
+  ],
+  "en": "Xiaohongshu (RED)",
+  "zh": "小红书",
+  "pinyin": "xiaohongshu",
+  "initials": "xhs",
+  "region": "cn",
+  "oauth": false,
+  "rank": 26
+ },
+ {
+  "id": "skype",
+  "asset": "Skype",
+  "domains": [
+   "skype.com"
+  ],
+  "en": "Skype",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 27
+ },
+ {
+  "id": "bilibili",
+  "asset": "Bilibili",
+  "domains": [
+   "bilibili.com"
+  ],
+  "en": "Bilibili",
+  "zh": "哔哩哔哩",
+  "pinyin": "bilibili",
+  "initials": "blbl",
+  "region": "cn",
+  "oauth": true,
+  "rank": 28
+ },
+ {
+  "id": "pinterest",
+  "asset": "Pinterest",
+  "domains": [
+   "pinterest.com"
+  ],
+  "en": "Pinterest",
+  "zh": "Pinterest",
+  "pinyin": "Pinterest",
+  "initials": "Pinterest",
+  "region": "global",
+  "oauth": true,
+  "rank": 29
+ },
+ {
+  "id": "xtwitter",
+  "asset": "XTwitter",
+  "domains": [
+   "x.com"
+  ],
+  "en": "X (Twitter)",
+  "zh": "X",
+  "pinyin": "X",
+  "initials": "X",
+  "region": "global",
+  "oauth": true,
+  "rank": 30
+ },
+ {
+  "id": "outlook",
+  "asset": "Outlook",
+  "domains": [
+   "outlook.com"
+  ],
+  "en": "Outlook",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 31
+ },
+ {
+  "id": "tiktok",
+  "asset": "TikTok",
+  "domains": [
+   "tiktok.com"
+  ],
+  "en": "TikTok",
+  "zh": "TikTok",
+  "pinyin": "TikTok",
+  "initials": "TikTok",
+  "region": "global",
+  "oauth": true,
+  "rank": 32
+ },
+ {
+  "id": "roblox",
+  "asset": "Roblox",
+  "domains": [
+   "roblox.com"
+  ],
+  "en": "Roblox",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 33
+ },
+ {
+  "id": "meituan",
+  "asset": "Meituan",
+  "domains": [
+   "meituan.com"
+  ],
+  "en": "Meituan",
+  "zh": "美团",
+  "pinyin": "meituan",
+  "initials": "mt",
+  "region": "cn",
+  "oauth": false,
+  "rank": 34
+ },
+ {
+  "id": "whatsapp",
+  "asset": "WhatsApp",
+  "domains": [
+   "whatsapp.com"
+  ],
+  "en": "WhatsApp",
+  "zh": "WhatsApp",
+  "pinyin": "WhatsApp",
+  "initials": "WhatsApp",
+  "region": "global",
+  "oauth": false,
+  "rank": 35
+ },
+ {
+  "id": "icloud",
+  "asset": "iCloud",
+  "domains": [
+   "icloud.com"
+  ],
+  "en": "iCloud",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 36
+ },
+ {
+  "id": "yahoo",
+  "asset": "Yahoo",
+  "domains": [
+   "yahoo.com"
+  ],
+  "en": "Yahoo!",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 37
+ },
+ {
+  "id": "msn",
+  "asset": "MSN",
+  "domains": [
+   "msn.com"
+  ],
+  "en": "MSN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 38
+ },
+ {
+  "id": "amap",
+  "asset": "Amap",
+  "domains": [
+   "amap.com"
+  ],
+  "en": "Amap",
+  "zh": "高德地图",
+  "pinyin": "gaodeditu",
+  "initials": "gddt",
+  "region": "cn",
+  "oauth": false,
+  "rank": 39
+ },
+ {
+  "id": "spotify",
+  "asset": "Spotify",
+  "domains": [
+   "spotify.com"
+  ],
+  "en": "Spotify",
+  "zh": "Spotify",
+  "pinyin": "Spotify",
+  "initials": "Spotify",
+  "region": "global",
+  "oauth": true,
+  "rank": 40
+ },
+ {
+  "id": "adobe",
+  "asset": "Adobe",
+  "domains": [
+   "adobe.com"
+  ],
+  "en": "Adobe",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 41
+ },
+ {
+  "id": "iqiyi",
+  "asset": "iQIYI",
+  "domains": [
+   "iqiyi.com"
+  ],
+  "en": "iQIYI",
+  "zh": "爱奇艺",
+  "pinyin": "aiqiyi",
+  "initials": "aqy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 42
+ },
+ {
+  "id": "chatgpt",
+  "asset": "ChatGPT",
+  "domains": [
+   "chatgpt.com"
+  ],
+  "en": "ChatGPT",
+  "zh": "ChatGPT",
+  "pinyin": "ChatGPT",
+  "initials": "ChatGPT",
+  "region": "global",
+  "oauth": false,
+  "rank": 43
+ },
+ {
+  "id": "tencentvideo",
+  "asset": "TencentVideo",
+  "domains": [
+   "v.qq.com"
+  ],
+  "en": "Tencent Video",
+  "zh": "腾讯视频",
+  "pinyin": "tengxunshipin",
+  "initials": "txsp",
+  "region": "cn",
+  "oauth": false,
+  "rank": 44
+ },
+ {
+  "id": "vimeo",
+  "asset": "Vimeo",
+  "domains": [
+   "vimeo.com"
+  ],
+  "en": "Vimeo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 45
+ },
+ {
+  "id": "zoom",
+  "asset": "Zoom",
+  "domains": [
+   "zoom.us"
+  ],
+  "en": "Zoom",
+  "zh": "Zoom",
+  "pinyin": "Zoom",
+  "initials": "Zoom",
+  "region": "global",
+  "oauth": true,
+  "rank": 46
+ },
+ {
+  "id": "zhihu",
+  "asset": "Zhihu",
+  "domains": [
+   "zhihu.com"
+  ],
+  "en": "Zhihu",
+  "zh": "知乎",
+  "pinyin": "zhihu",
+  "initials": "zh",
+  "region": "cn",
+  "oauth": true,
+  "rank": 47
+ },
+ {
+  "id": "neteasecloudmusic",
+  "asset": "NetEaseCloudMusic",
+  "domains": [
+   "music.163.com"
+  ],
+  "en": "NetEase Cloud Music",
+  "zh": "网易云音乐",
+  "pinyin": "wangyiyunyinyue",
+  "initials": "wyyyy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 48
+ },
+ {
+  "id": "opera",
+  "asset": "Opera",
+  "domains": [
+   "opera.com"
+  ],
+  "en": "Opera",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 49
+ },
+ {
+  "id": "mozillafirefox",
+  "asset": "MozillaFirefox",
+  "domains": [
+   "mozilla.org"
+  ],
+  "en": "Mozilla Firefox",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 50
+ },
+ {
+  "id": "samsung",
+  "asset": "Samsung",
+  "domains": [
+   "samsung.com"
+  ],
+  "en": "Samsung",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 51
+ },
+ {
+  "id": "youku",
+  "asset": "Youku",
+  "domains": [
+   "youku.com"
+  ],
+  "en": "Youku",
+  "zh": "优酷",
+  "pinyin": "youku",
+  "initials": "yk",
+  "region": "cn",
+  "oauth": false,
+  "rank": 52
+ },
+ {
+  "id": "wordpresscom",
+  "asset": "WordPresscom",
+  "domains": [
+   "wordpress.com"
+  ],
+  "en": "WordPress.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 53
+ },
+ {
+  "id": "reddit",
+  "asset": "Reddit",
+  "domains": [
+   "reddit.com"
+  ],
+  "en": "Reddit",
+  "zh": "Reddit",
+  "pinyin": "Reddit",
+  "initials": "Reddit",
+  "region": "global",
+  "oauth": true,
+  "rank": 54
+ },
+ {
+  "id": "toutiao",
+  "asset": "Toutiao",
+  "domains": [
+   "toutiao.com"
+  ],
+  "en": "Toutiao",
+  "zh": "今日头条",
+  "pinyin": "jinritoutiao",
+  "initials": "jrtt",
+  "region": "cn",
+  "oauth": false,
+  "rank": 55
+ },
+ {
+  "id": "tmall",
+  "asset": "Tmall",
+  "domains": [
+   "tmall.com"
+  ],
+  "en": "Tmall",
+  "zh": "天猫",
+  "pinyin": "tianmao",
+  "initials": "tm",
+  "region": "cn",
+  "oauth": true,
+  "rank": 56
+ },
+ {
+  "id": "baiduwangpan",
+  "asset": "BaiduWangpan",
+  "domains": [
+   "pan.baidu.com"
+  ],
+  "en": "Baidu Wangpan",
+  "zh": "百度网盘",
+  "pinyin": "baiduwangpan",
+  "initials": "bdwp",
+  "region": "cn",
+  "oauth": false,
+  "rank": 57
+ },
+ {
+  "id": "baidumaps",
+  "asset": "BaiduMaps",
+  "domains": [
+   "map.baidu.com"
+  ],
+  "en": "Baidu Maps",
+  "zh": "百度地图",
+  "pinyin": "baiduditu",
+  "initials": "bddt",
+  "region": "cn",
+  "oauth": false,
+  "rank": 58
+ },
+ {
+  "id": "dianping",
+  "asset": "Dianping",
+  "domains": [
+   "dianping.com"
+  ],
+  "en": "Dianping",
+  "zh": "大众点评",
+  "pinyin": "dazhongdianping",
+  "initials": "dzdp",
+  "region": "cn",
+  "oauth": false,
+  "rank": 59
+ },
+ {
+  "id": "europeanunion",
+  "asset": "EuropeanUnion",
+  "domains": [
+   "europa.eu"
+  ],
+  "en": "European Union",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 60
+ },
+ {
+  "id": "vk",
+  "asset": "VK",
+  "domains": [
+   "vk.com"
+  ],
+  "en": "VK",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 61
+ },
+ {
+  "id": "snapchat",
+  "asset": "Snapchat",
+  "domains": [
+   "snapchat.com"
+  ],
+  "en": "Snapchat",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 62
+ },
+ {
+  "id": "eleme",
+  "asset": "Eleme",
+  "domains": [
+   "ele.me"
+  ],
+  "en": "Ele.me",
+  "zh": "饿了么",
+  "pinyin": "eleme",
+  "initials": "elm",
+  "region": "cn",
+  "oauth": false,
+  "rank": 63
+ },
+ {
+  "id": "openai",
+  "asset": "OpenAI",
+  "domains": [
+   "openai.com"
+  ],
+  "en": "OpenAI",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 64
+ },
+ {
+  "id": "ctrip",
+  "asset": "Ctrip",
+  "domains": [
+   "ctrip.com"
+  ],
+  "en": "Ctrip",
+  "zh": "携程旅行",
+  "pinyin": "xiechenglvxing",
+  "initials": "xclx",
+  "region": "cn",
+  "oauth": false,
+  "rank": 66
+ },
+ {
+  "id": "xianyu",
+  "asset": "Xianyu",
+  "domains": [
+   "goofish.com"
+  ],
+  "en": "Xianyu",
+  "zh": "闲鱼",
+  "pinyin": "xianyu",
+  "initials": "xy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 67
+ },
+ {
+  "id": "dropbox",
+  "asset": "Dropbox",
+  "domains": [
+   "dropbox.com"
+  ],
+  "en": "Dropbox",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 68
+ },
+ {
+  "id": "internetarchive",
+  "asset": "InternetArchive",
+  "domains": [
+   "archive.org"
+  ],
+  "en": "Internet Archive",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 69
+ },
+ {
+  "id": "netease",
+  "asset": "NetEase",
+  "domains": [
+   "163.com"
+  ],
+  "en": "NetEase",
+  "zh": "网易",
+  "pinyin": "wangyi",
+  "initials": "wy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 70
+ },
+ {
+  "id": "godaddy",
+  "asset": "GoDaddy",
+  "domains": [
+   "godaddy.com"
+  ],
+  "en": "GoDaddy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 71
+ },
+ {
+  "id": "xiaomi",
+  "asset": "Xiaomi",
+  "domains": [
+   "xiaomi.com"
+  ],
+  "en": "Xiaomi",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 72
+ },
+ {
+  "id": "thenewyorktimes",
+  "asset": "TheNewYorkTimes",
+  "domains": [
+   "nytimes.com"
+  ],
+  "en": "The New York Times",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 73
+ },
+ {
+  "id": "sina",
+  "asset": "Sina",
+  "domains": [
+   "sina.com.cn"
+  ],
+  "en": "Sina",
+  "zh": "新浪",
+  "pinyin": "xinlang",
+  "initials": "xl",
+  "region": "cn",
+  "oauth": false,
+  "rank": 74
+ },
+ {
+  "id": "tumblr",
+  "asset": "Tumblr",
+  "domains": [
+   "tumblr.com"
+  ],
+  "en": "Tumblr",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 75
+ },
+ {
+  "id": "epicgames",
+  "asset": "EpicGames",
+  "domains": [
+   "epicgames.com"
+  ],
+  "en": "Epic Games",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 76
+ },
+ {
+  "id": "paypal",
+  "asset": "PayPal",
+  "domains": [
+   "paypal.com"
+  ],
+  "en": "PayPal",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 77
+ },
+ {
+  "id": "discord",
+  "asset": "Discord",
+  "domains": [
+   "discord.com"
+  ],
+  "en": "Discord",
+  "zh": "Discord",
+  "pinyin": "Discord",
+  "initials": "Discord",
+  "region": "global",
+  "oauth": true,
+  "rank": 78
+ },
+ {
+  "id": "douban",
+  "asset": "Douban",
+  "domains": [
+   "douban.com"
+  ],
+  "en": "Douban",
+  "zh": "豆瓣",
+  "pinyin": "douban",
+  "initials": "db",
+  "region": "cn",
+  "oauth": false,
+  "rank": 79
+ },
+ {
+  "id": "shopify",
+  "asset": "Shopify",
+  "domains": [
+   "shopify.com"
+  ],
+  "en": "Shopify",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 80
+ },
+ {
+  "id": "flickr",
+  "asset": "Flickr",
+  "domains": [
+   "flickr.com"
+  ],
+  "en": "Flickr",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 81
+ },
+ {
+  "id": "wpsoffice",
+  "asset": "WPSOffice",
+  "domains": [
+   "wps.cn"
+  ],
+  "en": "WPS Office",
+  "zh": "WPS Office",
+  "pinyin": "WPS Office",
+  "initials": "WPS Office",
+  "region": "cn",
+  "oauth": false,
+  "rank": 82
+ },
+ {
+  "id": "soundcloud",
+  "asset": "SoundCloud",
+  "domains": [
+   "soundcloud.com"
+  ],
+  "en": "SoundCloud",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 83
+ },
+ {
+  "id": "ciscowebex",
+  "asset": "CiscoWebex",
+  "domains": [
+   "webex.com"
+  ],
+  "en": "Cisco Webex",
+  "zh": "Webex",
+  "pinyin": "Webex",
+  "initials": "Webex",
+  "region": "global",
+  "oauth": false,
+  "rank": 84
+ },
+ {
+  "id": "medium",
+  "asset": "Medium",
+  "domains": [
+   "medium.com"
+  ],
+  "en": "Medium",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 85
+ },
+ {
+  "id": "cnn",
+  "asset": "CNN",
+  "domains": [
+   "cnn.com"
+  ],
+  "en": "CNN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 86
+ },
+ {
+  "id": "theguardian",
+  "asset": "TheGuardian",
+  "domains": [
+   "theguardian.com"
+  ],
+  "en": "The Guardian",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 87
+ },
+ {
+  "id": "dingtalk",
+  "asset": "DingTalk",
+  "domains": [
+   "dingtalk.com"
+  ],
+  "en": "DingTalk",
+  "zh": "钉钉",
+  "pinyin": "dingding",
+  "initials": "dd",
+  "region": "cn",
+  "oauth": true,
+  "rank": 88
+ },
+ {
+  "id": "ebay",
+  "asset": "eBay",
+  "domains": [
+   "ebay.com"
+  ],
+  "en": "eBay",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 89
+ },
+ {
+  "id": "oracle",
+  "asset": "Oracle",
+  "domains": [
+   "oracle.com"
+  ],
+  "en": "Oracle",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 90
+ },
+ {
+  "id": "forbes",
+  "asset": "Forbes",
+  "domains": [
+   "forbes.com"
+  ],
+  "en": "Forbes",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 91
+ },
+ {
+  "id": "feishu",
+  "asset": "Feishu",
+  "domains": [
+   "feishu.cn"
+  ],
+  "en": "Feishu",
+  "zh": "飞书",
+  "pinyin": "feishu",
+  "initials": "fs",
+  "region": "cn",
+  "oauth": true,
+  "rank": 92
+ },
+ {
+  "id": "bbc",
+  "asset": "BBC",
+  "domains": [
+   "bbc.com"
+  ],
+  "en": "BBC",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 93
+ },
+ {
+  "id": "sciencedirect",
+  "asset": "ScienceDirect",
+  "domains": [
+   "sciencedirect.com"
+  ],
+  "en": "ScienceDirect",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 94
+ },
+ {
+  "id": "twitch",
+  "asset": "Twitch",
+  "domains": [
+   "twitch.tv"
+  ],
+  "en": "Twitch",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 95
+ },
+ {
+  "id": "gmail",
+  "asset": "Gmail",
+  "domains": [
+   "gmail.com"
+  ],
+  "en": "Gmail",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 96
+ },
+ {
+  "id": "mgtv",
+  "asset": "MGTV",
+  "domains": [
+   "mgtv.com"
+  ],
+  "en": "MGTV",
+  "zh": "芒果TV",
+  "pinyin": "mangguoTV",
+  "initials": "mgTV",
+  "region": "cn",
+  "oauth": false,
+  "rank": 97
+ },
+ {
+  "id": "researchgate",
+  "asset": "ResearchGate",
+  "domains": [
+   "researchgate.net"
+  ],
+  "en": "ResearchGate",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 98
+ },
+ {
+  "id": "bbcuk",
+  "asset": "BBCUK",
+  "domains": [
+   "bbc.co.uk"
+  ],
+  "en": "BBC UK",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 99
+ },
+ {
+  "id": "ximalaya",
+  "asset": "Ximalaya",
+  "domains": [
+   "ximalaya.com"
+  ],
+  "en": "Ximalaya",
+  "zh": "喜马拉雅",
+  "pinyin": "ximalaya",
+  "initials": "xmly",
+  "region": "cn",
+  "oauth": false,
+  "rank": 100
+ },
+ {
+  "id": "canva",
+  "asset": "Canva",
+  "domains": [
+   "canva.com"
+  ],
+  "en": "Canva",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 101
+ },
+ {
+  "id": "stripe",
+  "asset": "Stripe",
+  "domains": [
+   "stripe.com"
+  ],
+  "en": "Stripe",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 102
+ },
+ {
+  "id": "theweatherchannel",
+  "asset": "TheWeatherChannel",
+  "domains": [
+   "weather.com"
+  ],
+  "en": "The Weather Channel",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 103
+ },
+ {
+  "id": "wikimedia",
+  "asset": "Wikimedia",
+  "domains": [
+   "wikimedia.org"
+  ],
+  "en": "Wikimedia",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 104
+ },
+ {
+  "id": "telegram",
+  "asset": "Telegram",
+  "domains": [
+   "telegram.org"
+  ],
+  "en": "Telegram",
+  "zh": "Telegram",
+  "pinyin": "Telegram",
+  "initials": "Telegram",
+  "region": "global",
+  "oauth": false,
+  "rank": 105
+ },
+ {
+  "id": "huyalive",
+  "asset": "HuyaLive",
+  "domains": [
+   "huya.com"
+  ],
+  "en": "Huya Live",
+  "zh": "虎牙直播",
+  "pinyin": "huyazhibo",
+  "initials": "hyzb",
+  "region": "cn",
+  "oauth": false,
+  "rank": 106
+ },
+ {
+  "id": "cisco",
+  "asset": "Cisco",
+  "domains": [
+   "cisco.com"
+  ],
+  "en": "Cisco",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 107
+ },
+ {
+  "id": "hubspot",
+  "asset": "HubSpot",
+  "domains": [
+   "hubspot.com"
+  ],
+  "en": "HubSpot",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 108
+ },
+ {
+  "id": "worldhealthorganization",
+  "asset": "WorldHealthOrganization",
+  "domains": [
+   "who.int"
+  ],
+  "en": "World Health Organization",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 109
+ },
+ {
+  "id": "imdb",
+  "asset": "IMDb",
+  "domains": [
+   "imdb.com"
+  ],
+  "en": "IMDb",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 110
+ },
+ {
+  "id": "bookingcom",
+  "asset": "Bookingcom",
+  "domains": [
+   "booking.com"
+  ],
+  "en": "Booking.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 111
+ },
+ {
+  "id": "linktree",
+  "asset": "Linktree",
+  "domains": [
+   "linktr.ee"
+  ],
+  "en": "Linktree",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 112
+ },
+ {
+  "id": "douyu",
+  "asset": "Douyu",
+  "domains": [
+   "douyu.com"
+  ],
+  "en": "Douyu",
+  "zh": "斗鱼",
+  "pinyin": "douyu",
+  "initials": "dy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 113
+ },
+ {
+  "id": "springer",
+  "asset": "Springer",
+  "domains": [
+   "springer.com"
+  ],
+  "en": "Springer",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 114
+ },
+ {
+  "id": "ibm",
+  "asset": "IBM",
+  "domains": [
+   "ibm.com"
+  ],
+  "en": "IBM",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 115
+ },
+ {
+  "id": "reuters",
+  "asset": "Reuters",
+  "domains": [
+   "reuters.com"
+  ],
+  "en": "Reuters",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 116
+ },
+ {
+  "id": "hp",
+  "asset": "HP",
+  "domains": [
+   "hp.com"
+  ],
+  "en": "HP",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 117
+ },
+ {
+  "id": "kugoumusic",
+  "asset": "KugouMusic",
+  "domains": [
+   "kugou.com"
+  ],
+  "en": "Kugou Music",
+  "zh": "酷狗音乐",
+  "pinyin": "kugouyinyue",
+  "initials": "kgyy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 118
+ },
+ {
+  "id": "nature",
+  "asset": "Nature",
+  "domains": [
+   "nature.com"
+  ],
+  "en": "Nature",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 119
+ },
+ {
+  "id": "alibabacom",
+  "asset": "Alibabacom",
+  "domains": [
+   "alibaba.com"
+  ],
+  "en": "Alibaba.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 120
+ },
+ {
+  "id": "salesforce",
+  "asset": "Salesforce",
+  "domains": [
+   "salesforce.com"
+  ],
+  "en": "Salesforce",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 121
+ },
+ {
+  "id": "steam",
+  "asset": "Steam",
+  "domains": [
+   "steampowered.com"
+  ],
+  "en": "Steam",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 122
+ },
+ {
+  "id": "qunar",
+  "asset": "Qunar",
+  "domains": [
+   "qunar.com"
+  ],
+  "en": "Qunar",
+  "zh": "去哪儿",
+  "pinyin": "qunaer",
+  "initials": "qne",
+  "region": "cn",
+  "oauth": false,
+  "rank": 123
+ },
+ {
+  "id": "odnoklassniki",
+  "asset": "Odnoklassniki",
+  "domains": [
+   "ok.ru"
+  ],
+  "en": "Odnoklassniki",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 124
+ },
+ {
+  "id": "wiley",
+  "asset": "Wiley",
+  "domains": [
+   "wiley.com"
+  ],
+  "en": "Wiley",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 125
+ },
+ {
+  "id": "etsy",
+  "asset": "Etsy",
+  "domains": [
+   "etsy.com"
+  ],
+  "en": "Etsy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 126
+ },
+ {
+  "id": "12306",
+  "asset": "12306",
+  "domains": [
+   "12306.cn"
+  ],
+  "en": "12306",
+  "zh": "中国铁路12306",
+  "pinyin": "zhongguotielu12306",
+  "initials": "zgtl12306",
+  "region": "cn",
+  "oauth": false,
+  "rank": 127
+ },
+ {
+  "id": "electronicarts",
+  "asset": "ElectronicArts",
+  "domains": [
+   "ea.com"
+  ],
+  "en": "Electronic Arts",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 128
+ },
+ {
+  "id": "unitednations",
+  "asset": "UnitedNations",
+  "domains": [
+   "un.org"
+  ],
+  "en": "United Nations",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 129
+ },
+ {
+  "id": "weebly",
+  "asset": "Weebly",
+  "domains": [
+   "weebly.com"
+  ],
+  "en": "Weebly",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 130
+ },
+ {
+  "id": "amplitude",
+  "asset": "Amplitude",
+  "domains": [
+   "amplitude.com"
+  ],
+  "en": "Amplitude",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 131
+ },
+ {
+  "id": "cdc",
+  "asset": "CDC",
+  "domains": [
+   "cdc.gov"
+  ],
+  "en": "CDC",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 132
+ },
+ {
+  "id": "didi",
+  "asset": "DiDi",
+  "domains": [
+   "didiglobal.com"
+  ],
+  "en": "DiDi",
+  "zh": "滴滴出行",
+  "pinyin": "didichuxing",
+  "initials": "ddcx",
+  "region": "cn",
+  "oauth": false,
+  "rank": 133
+ },
+ {
+  "id": "slack",
+  "asset": "Slack",
+  "domains": [
+   "slack.com"
+  ],
+  "en": "Slack",
+  "zh": "Slack",
+  "pinyin": "Slack",
+  "initials": "Slack",
+  "region": "global",
+  "oauth": true,
+  "rank": 134
+ },
+ {
+  "id": "thewallstreetjournal",
+  "asset": "TheWallStreetJournal",
+  "domains": [
+   "wsj.com"
+  ],
+  "en": "The Wall Street Journal",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 135
+ },
+ {
+  "id": "walmart",
+  "asset": "Walmart",
+  "domains": [
+   "walmart.com"
+  ],
+  "en": "Walmart",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 136
+ },
+ {
+  "id": "thewashingtonpost",
+  "asset": "TheWashingtonPost",
+  "domains": [
+   "washingtonpost.com"
+  ],
+  "en": "The Washington Post",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 137
+ },
+ {
+  "id": "bloomberg",
+  "asset": "Bloomberg",
+  "domains": [
+   "bloomberg.com"
+  ],
+  "en": "Bloomberg",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 138
+ },
+ {
+  "id": "tradingview",
+  "asset": "TradingView",
+  "domains": [
+   "tradingview.com"
+  ],
+  "en": "TradingView",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 139
+ },
+ {
+  "id": "xiaomistore",
+  "asset": "XiaomiStore",
+  "domains": [
+   "mi.com"
+  ],
+  "en": "Xiaomi Store",
+  "zh": "小米商城",
+  "pinyin": "xiaomishangcheng",
+  "initials": "xmsc",
+  "region": "cn",
+  "oauth": false,
+  "rank": 140
+ },
+ {
+  "id": "nvidia",
+  "asset": "NVIDIA",
+  "domains": [
+   "nvidia.com"
+  ],
+  "en": "NVIDIA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 141
+ },
+ {
+  "id": "nasa",
+  "asset": "NASA",
+  "domains": [
+   "nasa.gov"
+  ],
+  "en": "NASA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 142
+ },
+ {
+  "id": "dell",
+  "asset": "Dell",
+  "domains": [
+   "dell.com"
+  ],
+  "en": "Dell",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 143
+ },
+ {
+  "id": "indeed",
+  "asset": "Indeed",
+  "domains": [
+   "indeed.com"
+  ],
+  "en": "Indeed",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 144
+ },
+ {
+  "id": "huawei",
+  "asset": "Huawei",
+  "domains": [
+   "huawei.com"
+  ],
+  "en": "Huawei",
+  "zh": "华为商城",
+  "pinyin": "huaweishangcheng",
+  "initials": "hwsc",
+  "region": "cn",
+  "oauth": true,
+  "rank": 145
+ },
+ {
+  "id": "yandex",
+  "asset": "Yandex",
+  "domains": [
+   "yandex.com"
+  ],
+  "en": "Yandex",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 146
+ },
+ {
+  "id": "dailymotion",
+  "asset": "Dailymotion",
+  "domains": [
+   "dailymotion.com"
+  ],
+  "en": "Dailymotion",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 147
+ },
+ {
+  "id": "unsplash",
+  "asset": "Unsplash",
+  "domains": [
+   "unsplash.com"
+  ],
+  "en": "Unsplash",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 148
+ },
+ {
+  "id": "aliexpress",
+  "asset": "AliExpress",
+  "domains": [
+   "aliexpress.com"
+  ],
+  "en": "AliExpress",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 149
+ },
+ {
+  "id": "bluesky",
+  "asset": "Bluesky",
+  "domains": [
+   "bsky.app"
+  ],
+  "en": "Bluesky",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 150
+ },
+ {
+  "id": "temu",
+  "asset": "Temu",
+  "domains": [
+   "temu.com"
+  ],
+  "en": "Temu",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 151
+ },
+ {
+  "id": "sohu",
+  "asset": "Sohu",
+  "domains": [
+   "sohu.com"
+  ],
+  "en": "Sohu",
+  "zh": "搜狐",
+  "pinyin": "souhu",
+  "initials": "sh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 152
+ },
+ {
+  "id": "gitlab",
+  "asset": "GitLab",
+  "domains": [
+   "gitlab.com"
+  ],
+  "en": "GitLab",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 153
+ },
+ {
+  "id": "line",
+  "asset": "LINE",
+  "domains": [
+   "line.me"
+  ],
+  "en": "LINE",
+  "zh": "Line",
+  "pinyin": "Line",
+  "initials": "Line",
+  "region": "global",
+  "oauth": true,
+  "rank": 154
+ },
+ {
+  "id": "brave",
+  "asset": "Brave",
+  "domains": [
+   "brave.com"
+  ],
+  "en": "Brave",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 155
+ },
+ {
+  "id": "ifeng",
+  "asset": "ifeng",
+  "domains": [
+   "ifeng.com"
+  ],
+  "en": "ifeng",
+  "zh": "凤凰网",
+  "pinyin": "fenghuangwang",
+  "initials": "fhw",
+  "region": "cn",
+  "oauth": false,
+  "rank": 156
+ },
+ {
+  "id": "businessinsider",
+  "asset": "BusinessInsider",
+  "domains": [
+   "businessinsider.com"
+  ],
+  "en": "Business Insider",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 157
+ },
+ {
+  "id": "espn",
+  "asset": "ESPN",
+  "domains": [
+   "espn.com"
+  ],
+  "en": "ESPN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 158
+ },
+ {
+  "id": "intel",
+  "asset": "Intel",
+  "domains": [
+   "intel.com"
+  ],
+  "en": "Intel",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 159
+ },
+ {
+  "id": "pixabay",
+  "asset": "Pixabay",
+  "domains": [
+   "pixabay.com"
+  ],
+  "en": "Pixabay",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 160
+ },
+ {
+  "id": "abcnews",
+  "asset": "ABCNews",
+  "domains": [
+   "abcnews.go.com"
+  ],
+  "en": "ABC News",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 161
+ },
+ {
+  "id": "substack",
+  "asset": "Substack",
+  "domains": [
+   "substack.com"
+  ],
+  "en": "Substack",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 162
+ },
+ {
+  "id": "cnbc",
+  "asset": "CNBC",
+  "domains": [
+   "cnbc.com"
+  ],
+  "en": "CNBC",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 163
+ },
+ {
+  "id": "claude",
+  "asset": "Claude",
+  "domains": [
+   "claude.ai",
+   "claudeai.com"
+  ],
+  "en": "Claude",
+  "zh": "Claude",
+  "pinyin": "Claude",
+  "initials": "Claude",
+  "region": "global",
+  "oauth": false,
+  "rank": 164
+ },
+ {
+  "id": "quora",
+  "asset": "Quora",
+  "domains": [
+   "quora.com"
+  ],
+  "en": "Quora",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 165
+ },
+ {
+  "id": "aol",
+  "asset": "AOL",
+  "domains": [
+   "aol.com"
+  ],
+  "en": "AOL",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 166
+ },
+ {
+  "id": "npr",
+  "asset": "NPR",
+  "domains": [
+   "npr.org"
+  ],
+  "en": "NPR",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 167
+ },
+ {
+  "id": "cctvcom",
+  "asset": "CCTVcom",
+  "domains": [
+   "cctv.com"
+  ],
+  "en": "CCTV.com",
+  "zh": "央视网",
+  "pinyin": "yangshiwang",
+  "initials": "ysw",
+  "region": "cn",
+  "oauth": false,
+  "rank": 168
+ },
+ {
+  "id": "duckduckgo",
+  "asset": "DuckDuckGo",
+  "domains": [
+   "duckduckgo.com"
+  ],
+  "en": "DuckDuckGo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 169
+ },
+ {
+  "id": "eventbrite",
+  "asset": "Eventbrite",
+  "domains": [
+   "eventbrite.com"
+  ],
+  "en": "Eventbrite",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 170
+ },
+ {
+  "id": "arxiv",
+  "asset": "arXiv",
+  "domains": [
+   "arxiv.org"
+  ],
+  "en": "arXiv",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 171
+ },
+ {
+  "id": "scribd",
+  "asset": "Scribd",
+  "domains": [
+   "scribd.com"
+  ],
+  "en": "Scribd",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 172
+ },
+ {
+  "id": "duolingo",
+  "asset": "Duolingo",
+  "domains": [
+   "duolingo.com"
+  ],
+  "en": "Duolingo",
+  "zh": "多邻国",
+  "pinyin": "duolinguo",
+  "initials": "dlg",
+  "region": "global",
+  "oauth": false,
+  "rank": 173
+ },
+ {
+  "id": "fandom",
+  "asset": "Fandom",
+  "domains": [
+   "fandom.com"
+  ],
+  "en": "Fandom",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 174
+ },
+ {
+  "id": "docker",
+  "asset": "Docker",
+  "domains": [
+   "docker.com"
+  ],
+  "en": "Docker",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 175
+ },
+ {
+  "id": "stackoverflow",
+  "asset": "StackOverflow",
+  "domains": [
+   "stackoverflow.com"
+  ],
+  "en": "Stack Overflow",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 176
+ },
+ {
+  "id": "shein",
+  "asset": "SHEIN",
+  "domains": [
+   "shein.com"
+  ],
+  "en": "SHEIN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 177
+ },
+ {
+  "id": "behance",
+  "asset": "Behance",
+  "domains": [
+   "behance.net"
+  ],
+  "en": "Behance",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 178
+ },
+ {
+  "id": "thetimesofindia",
+  "asset": "TheTimesofIndia",
+  "domains": [
+   "indiatimes.com"
+  ],
+  "en": "The Times of India",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 179
+ },
+ {
+  "id": "xinhuanet",
+  "asset": "XinhuaNet",
+  "domains": [
+   "news.cn"
+  ],
+  "en": "Xinhua Net",
+  "zh": "新华网",
+  "pinyin": "xinhuawang",
+  "initials": "xhw",
+  "region": "cn",
+  "oauth": false,
+  "rank": 180
+ },
+ {
+  "id": "financialtimes",
+  "asset": "FinancialTimes",
+  "domains": [
+   "ft.com"
+  ],
+  "en": "Financial Times",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 181
+ },
+ {
+  "id": "blogger",
+  "asset": "Blogger",
+  "domains": [
+   "blogger.com"
+  ],
+  "en": "Blogger",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 182
+ },
+ {
+  "id": "wired",
+  "asset": "Wired",
+  "domains": [
+   "wired.com"
+  ],
+  "en": "Wired",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 183
+ },
+ {
+  "id": "eastmoney",
+  "asset": "Eastmoney",
+  "domains": [
+   "eastmoney.com"
+  ],
+  "en": "Eastmoney",
+  "zh": "东方财富",
+  "pinyin": "dongfangcaifu",
+  "initials": "dfcf",
+  "region": "cn",
+  "oauth": false,
+  "rank": 184
+ },
+ {
+  "id": "usatoday",
+  "asset": "USAToday",
+  "domains": [
+   "usatoday.com"
+  ],
+  "en": "USA Today",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 185
+ },
+ {
+  "id": "time",
+  "asset": "TIME",
+  "domains": [
+   "time.com"
+  ],
+  "en": "TIME",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 186
+ },
+ {
+  "id": "patreon",
+  "asset": "Patreon",
+  "domains": [
+   "patreon.com"
+  ],
+  "en": "Patreon",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 187
+ },
+ {
+  "id": "deviantart",
+  "asset": "DeviantArt",
+  "domains": [
+   "deviantart.com"
+  ],
+  "en": "DeviantArt",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 188
+ },
+ {
+  "id": "tripadvisor",
+  "asset": "Tripadvisor",
+  "domains": [
+   "tripadvisor.com"
+  ],
+  "en": "Tripadvisor",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 189
+ },
+ {
+  "id": "rakuten",
+  "asset": "Rakuten",
+  "domains": [
+   "rakuten.co.jp"
+  ],
+  "en": "Rakuten",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 190
+ },
+ {
+  "id": "grammarly",
+  "asset": "Grammarly",
+  "domains": [
+   "grammarly.com"
+  ],
+  "en": "Grammarly",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 191
+ },
+ {
+  "id": "hotjar",
+  "asset": "Hotjar",
+  "domains": [
+   "hotjar.com"
+  ],
+  "en": "Hotjar",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 192
+ },
+ {
+  "id": "target",
+  "asset": "Target",
+  "domains": [
+   "target.com"
+  ],
+  "en": "Target",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 193
+ },
+ {
+  "id": "ieee",
+  "asset": "IEEE",
+  "domains": [
+   "ieee.org"
+  ],
+  "en": "IEEE",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 194
+ },
+ {
+  "id": "atlassian",
+  "asset": "Atlassian",
+  "domains": [
+   "atlassian.com"
+  ],
+  "en": "Atlassian",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 195
+ },
+ {
+  "id": "xueqiu",
+  "asset": "Xueqiu",
+  "domains": [
+   "xueqiu.com"
+  ],
+  "en": "Xueqiu",
+  "zh": "雪球",
+  "pinyin": "xueqiu",
+  "initials": "xq",
+  "region": "cn",
+  "oauth": false,
+  "rank": 196
+ },
+ {
+  "id": "noaa",
+  "asset": "NOAA",
+  "domains": [
+   "noaa.gov"
+  ],
+  "en": "NOAA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 197
+ },
+ {
+  "id": "wix",
+  "asset": "Wix",
+  "domains": [
+   "wix.com"
+  ],
+  "en": "Wix",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 198
+ },
+ {
+  "id": "mdpi",
+  "asset": "MDPI",
+  "domains": [
+   "mdpi.com"
+  ],
+  "en": "MDPI",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 199
+ },
+ {
+  "id": "playstation",
+  "asset": "PlayStation",
+  "domains": [
+   "playstation.com"
+  ],
+  "en": "PlayStation",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 200
+ },
+ {
+  "id": "klaviyo",
+  "asset": "Klaviyo",
+  "domains": [
+   "klaviyo.com"
+  ],
+  "en": "Klaviyo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 201
+ },
+ {
+  "id": "accuweather",
+  "asset": "AccuWeather",
+  "domains": [
+   "accuweather.com"
+  ],
+  "en": "AccuWeather",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 202
+ },
+ {
+  "id": "squarespace",
+  "asset": "Squarespace",
+  "domains": [
+   "squarespace.com"
+  ],
+  "en": "Squarespace",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 203
+ },
+ {
+  "id": "ikea",
+  "asset": "IKEA",
+  "domains": [
+   "ikea.com"
+  ],
+  "en": "IKEA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 204
+ },
+ {
+  "id": "techcrunch",
+  "asset": "TechCrunch",
+  "domains": [
+   "techcrunch.com"
+  ],
+  "en": "TechCrunch",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 205
+ },
+ {
+  "id": "nintendo",
+  "asset": "Nintendo",
+  "domains": [
+   "nintendo.com"
+  ],
+  "en": "Nintendo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 206
+ },
+ {
+  "id": "digitalocean",
+  "asset": "DigitalOcean",
+  "domains": [
+   "digitalocean.com"
+  ],
+  "en": "DigitalOcean",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 207
+ },
+ {
+  "id": "anthropic",
+  "asset": "Anthropic",
+  "domains": [
+   "anthropic.com"
+  ],
+  "en": "Anthropic",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 208
+ },
+ {
+  "id": "encyclopaediabritannica",
+  "asset": "EncyclopaediaBritannica",
+  "domains": [
+   "britannica.com"
+  ],
+  "en": "Encyclopaedia Britannica",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 209
+ },
+ {
+  "id": "fontawesome",
+  "asset": "FontAwesome",
+  "domains": [
+   "fontawesome.com"
+  ],
+  "en": "Font Awesome",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 210
+ },
+ {
+  "id": "yelp",
+  "asset": "Yelp",
+  "domains": [
+   "yelp.com"
+  ],
+  "en": "Yelp",
+  "zh": "Yelp",
+  "pinyin": "Yelp",
+  "initials": "Yelp",
+  "region": "global",
+  "oauth": false,
+  "rank": 211
+ },
+ {
+  "id": "chinaconstructionbank",
+  "asset": "ChinaConstructionBank",
+  "domains": [
+   "ccb.com"
+  ],
+  "en": "China Construction Bank",
+  "zh": "中国建设银行",
+  "pinyin": "zhongguojiansheyinhang",
+  "initials": "zgjsyh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 212
+ },
+ {
+  "id": "viber",
+  "asset": "Viber",
+  "domains": [
+   "viber.com"
+  ],
+  "en": "Viber",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 213
+ },
+ {
+  "id": "cbsnews",
+  "asset": "CBSNews",
+  "domains": [
+   "cbsnews.com"
+  ],
+  "en": "CBS News",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 214
+ },
+ {
+  "id": "cnet",
+  "asset": "CNET",
+  "domains": [
+   "cnet.com"
+  ],
+  "en": "CNET",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 215
+ },
+ {
+  "id": "wattpad",
+  "asset": "Wattpad",
+  "domains": [
+   "wattpad.com"
+  ],
+  "en": "Wattpad",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 216
+ },
+ {
+  "id": "nike",
+  "asset": "Nike",
+  "domains": [
+   "nike.com"
+  ],
+  "en": "Nike",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 217
+ },
+ {
+  "id": "imgur",
+  "asset": "Imgur",
+  "domains": [
+   "imgur.com"
+  ],
+  "en": "Imgur",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 218
+ },
+ {
+  "id": "openstreetmap",
+  "asset": "OpenStreetMap",
+  "domains": [
+   "openstreetmap.org"
+  ],
+  "en": "OpenStreetMap",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 219
+ },
+ {
+  "id": "bankofchina",
+  "asset": "BankofChina",
+  "domains": [
+   "boc.cn"
+  ],
+  "en": "Bank of China",
+  "zh": "中国银行",
+  "pinyin": "zhongguoyinhang",
+  "initials": "zgyh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 220
+ },
+ {
+  "id": "deepl",
+  "asset": "DeepL",
+  "domains": [
+   "deepl.com"
+  ],
+  "en": "DeepL",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 221
+ },
+ {
+  "id": "mailchimp",
+  "asset": "Mailchimp",
+  "domains": [
+   "mailchimp.com"
+  ],
+  "en": "Mailchimp",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 222
+ },
+ {
+  "id": "uber",
+  "asset": "Uber",
+  "domains": [
+   "uber.com"
+  ],
+  "en": "Uber",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 223
+ },
+ {
+  "id": "box",
+  "asset": "Box",
+  "domains": [
+   "box.com"
+  ],
+  "en": "Box",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 224
+ },
+ {
+  "id": "chinamerchantsbank",
+  "asset": "ChinaMerchantsBank",
+  "domains": [
+   "cmbchina.com"
+  ],
+  "en": "China Merchants Bank",
+  "zh": "招商银行",
+  "pinyin": "zhaoshangyinhang",
+  "initials": "zsyh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 225
+ },
+ {
+  "id": "ted",
+  "asset": "TED",
+  "domains": [
+   "ted.com"
+  ],
+  "en": "TED",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 226
+ },
+ {
+  "id": "bandcamp",
+  "asset": "Bandcamp",
+  "domains": [
+   "bandcamp.com"
+  ],
+  "en": "Bandcamp",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 227
+ },
+ {
+  "id": "fifa",
+  "asset": "FIFA",
+  "domains": [
+   "fifa.com"
+  ],
+  "en": "FIFA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 228
+ },
+ {
+  "id": "marriott",
+  "asset": "Marriott",
+  "domains": [
+   "marriott.com"
+  ],
+  "en": "Marriott",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 229
+ },
+ {
+  "id": "chinamobile",
+  "asset": "ChinaMobile",
+  "domains": [
+   "10086.cn"
+  ],
+  "en": "China Mobile",
+  "zh": "中国移动",
+  "pinyin": "zhongguoyidong",
+  "initials": "zgyd",
+  "region": "cn",
+  "oauth": false,
+  "rank": 230
+ },
+ {
+  "id": "thehomedepot",
+  "asset": "TheHomeDepot",
+  "domains": [
+   "homedepot.com"
+  ],
+  "en": "The Home Depot",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 231
+ },
+ {
+  "id": "fda",
+  "asset": "FDA",
+  "domains": [
+   "fda.gov"
+  ],
+  "en": "FDA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 232
+ },
+ {
+  "id": "mlb",
+  "asset": "MLB",
+  "domains": [
+   "mlb.com"
+  ],
+  "en": "MLB",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 233
+ },
+ {
+  "id": "amazonprimevideo",
+  "asset": "AmazonPrimeVideo",
+  "domains": [
+   "primevideo.com"
+  ],
+  "en": "Amazon Prime Video",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 234
+ },
+ {
+  "id": "chinaunicom",
+  "asset": "ChinaUnicom",
+  "domains": [
+   "10010.com"
+  ],
+  "en": "China Unicom",
+  "zh": "中国联通",
+  "pinyin": "zhongguoliantong",
+  "initials": "zglt",
+  "region": "cn",
+  "oauth": false,
+  "rank": 235
+ },
+ {
+  "id": "airbnb",
+  "asset": "Airbnb",
+  "domains": [
+   "airbnb.com"
+  ],
+  "en": "Airbnb",
+  "zh": "爱彼迎",
+  "pinyin": "aibiying",
+  "initials": "aby",
+  "region": "global",
+  "oauth": true,
+  "rank": 236
+ },
+ {
+  "id": "lenovo",
+  "asset": "Lenovo",
+  "domains": [
+   "lenovo.com"
+  ],
+  "en": "Lenovo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 237
+ },
+ {
+  "id": "bestbuy",
+  "asset": "BestBuy",
+  "domains": [
+   "bestbuy.com"
+  ],
+  "en": "Best Buy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 238
+ },
+ {
+  "id": "fiverr",
+  "asset": "Fiverr",
+  "domains": [
+   "fiverr.com"
+  ],
+  "en": "Fiverr",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 239
+ },
+ {
+  "id": "livejournal",
+  "asset": "LiveJournal",
+  "domains": [
+   "livejournal.com"
+  ],
+  "en": "LiveJournal",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 240
+ },
+ {
+  "id": "linode",
+  "asset": "Linode",
+  "domains": [
+   "linode.com"
+  ],
+  "en": "Linode",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 241
+ },
+ {
+  "id": "apnews",
+  "asset": "APNews",
+  "domains": [
+   "apnews.com"
+  ],
+  "en": "AP News",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 242
+ },
+ {
+  "id": "chinatelecom",
+  "asset": "ChinaTelecom",
+  "domains": [
+   "189.cn"
+  ],
+  "en": "China Telecom",
+  "zh": "中国电信",
+  "pinyin": "zhongguodianxin",
+  "initials": "zgdx",
+  "region": "cn",
+  "oauth": false,
+  "rank": 243
+ },
+ {
+  "id": "disney",
+  "asset": "Disney",
+  "domains": [
+   "disneyplus.com"
+  ],
+  "en": "Disney+",
+  "zh": "迪士尼",
+  "pinyin": "dishini",
+  "initials": "dsn",
+  "region": "global",
+  "oauth": false,
+  "rank": 244
+ },
+ {
+  "id": "theverge",
+  "asset": "TheVerge",
+  "domains": [
+   "theverge.com"
+  ],
+  "en": "The Verge",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 245
+ },
+ {
+  "id": "mixpanel",
+  "asset": "Mixpanel",
+  "domains": [
+   "mixpanel.com"
+  ],
+  "en": "Mixpanel",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 246
+ },
+ {
+  "id": "nbcnews",
+  "asset": "NBCNews",
+  "domains": [
+   "nbcnews.com"
+  ],
+  "en": "NBC News",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 247
+ },
+ {
+  "id": "academiaedu",
+  "asset": "Academiaedu",
+  "domains": [
+   "academia.edu"
+  ],
+  "en": "Academia.edu",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 248
+ },
+ {
+  "id": "xbox",
+  "asset": "Xbox",
+  "domains": [
+   "xbox.com"
+  ],
+  "en": "Xbox",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 249
+ },
+ {
+  "id": "namecheap",
+  "asset": "Namecheap",
+  "domains": [
+   "namecheap.com"
+  ],
+  "en": "Namecheap",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 250
+ },
+ {
+  "id": "zohomail",
+  "asset": "ZohoMail",
+  "domains": [
+   "zoho.com"
+  ],
+  "en": "Zoho Mail",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 251
+ },
+ {
+  "id": "sfexpress",
+  "asset": "SFExpress",
+  "domains": [
+   "sf-express.com"
+  ],
+  "en": "SF Express",
+  "zh": "顺丰速运",
+  "pinyin": "shunfengsuyun",
+  "initials": "sfsy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 252
+ },
+ {
+  "id": "mayoclinic",
+  "asset": "MayoClinic",
+  "domains": [
+   "mayoclinic.org"
+  ],
+  "en": "Mayo Clinic",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 253
+ },
+ {
+  "id": "pexels",
+  "asset": "Pexels",
+  "domains": [
+   "pexels.com"
+  ],
+  "en": "Pexels",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 254
+ },
+ {
+  "id": "discogs",
+  "asset": "Discogs",
+  "domains": [
+   "discogs.com"
+  ],
+  "en": "Discogs",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 255
+ },
+ {
+  "id": "agoda",
+  "asset": "Agoda",
+  "domains": [
+   "agoda.com"
+  ],
+  "en": "Agoda",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 256
+ },
+ {
+  "id": "lowes",
+  "asset": "Lowes",
+  "domains": [
+   "lowes.com"
+  ],
+  "en": "Lowe's",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 257
+ },
+ {
+  "id": "figma",
+  "asset": "Figma",
+  "domains": [
+   "figma.com"
+  ],
+  "en": "Figma",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 258
+ },
+ {
+  "id": "cainiao",
+  "asset": "Cainiao",
+  "domains": [
+   "cainiao.com"
+  ],
+  "en": "Cainiao",
+  "zh": "菜鸟",
+  "pinyin": "cainiao",
+  "initials": "cn",
+  "region": "cn",
+  "oauth": false,
+  "rank": 259
+ },
+ {
+  "id": "losangelestimes",
+  "asset": "LosAngelesTimes",
+  "domains": [
+   "latimes.com"
+  ],
+  "en": "Los Angeles Times",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 260
+ },
+ {
+  "id": "chesscom",
+  "asset": "Chesscom",
+  "domains": [
+   "chess.com"
+  ],
+  "en": "Chess.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 261
+ },
+ {
+  "id": "lg",
+  "asset": "LG",
+  "domains": [
+   "lg.com"
+  ],
+  "en": "LG",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 262
+ },
+ {
+  "id": "kuaidi100",
+  "asset": "Kuaidi100",
+  "domains": [
+   "kuaidi100.com"
+  ],
+  "en": "Kuaidi100",
+  "zh": "快递100",
+  "pinyin": "kuaidi100",
+  "initials": "kd100",
+  "region": "cn",
+  "oauth": false,
+  "rank": 263
+ },
+ {
+  "id": "hilton",
+  "asset": "Hilton",
+  "domains": [
+   "hilton.com"
+  ],
+  "en": "Hilton",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 264
+ },
+ {
+  "id": "curseforge",
+  "asset": "CurseForge",
+  "domains": [
+   "curseforge.com"
+  ],
+  "en": "CurseForge",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 265
+ },
+ {
+  "id": "fidelity",
+  "asset": "Fidelity",
+  "domains": [
+   "fidelity.com"
+  ],
+  "en": "Fidelity",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 266
+ },
+ {
+  "id": "webmd",
+  "asset": "WebMD",
+  "domains": [
+   "webmd.com"
+  ],
+  "en": "WebMD",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 267
+ },
+ {
+  "id": "healthline",
+  "asset": "Healthline",
+  "domains": [
+   "healthline.com"
+  ],
+  "en": "Healthline",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 268
+ },
+ {
+  "id": "genius",
+  "asset": "Genius",
+  "domains": [
+   "genius.com"
+  ],
+  "en": "Genius",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 269
+ },
+ {
+  "id": "58com",
+  "asset": "58com",
+  "domains": [
+   "58.com"
+  ],
+  "en": "58.com",
+  "zh": "58同城",
+  "pinyin": "58tongcheng",
+  "initials": "58tc",
+  "region": "cn",
+  "oauth": false,
+  "rank": 270
+ },
+ {
+  "id": "frontiers",
+  "asset": "Frontiers",
+  "domains": [
+   "frontiersin.org"
+  ],
+  "en": "Frontiers",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 271
+ },
+ {
+  "id": "characterai",
+  "asset": "CharacterAI",
+  "domains": [
+   "character.ai"
+  ],
+  "en": "Character.AI",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 272
+ },
+ {
+  "id": "nationalgeographic",
+  "asset": "NationalGeographic",
+  "domains": [
+   "nationalgeographic.com"
+  ],
+  "en": "National Geographic",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 273
+ },
+ {
+  "id": "hm",
+  "asset": "HM",
+  "domains": [
+   "hm.com"
+  ],
+  "en": "H&M",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 274
+ },
+ {
+  "id": "perplexity",
+  "asset": "Perplexity",
+  "domains": [
+   "perplexity.ai"
+  ],
+  "en": "Perplexity",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 275
+ },
+ {
+  "id": "nexusmods",
+  "asset": "NexusMods",
+  "domains": [
+   "nexusmods.com"
+  ],
+  "en": "Nexus Mods",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 276
+ },
+ {
+  "id": "freepik",
+  "asset": "Freepik",
+  "domains": [
+   "freepik.com"
+  ],
+  "en": "Freepik",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 277
+ },
+ {
+  "id": "giphy",
+  "asset": "GIPHY",
+  "domains": [
+   "giphy.com"
+  ],
+  "en": "GIPHY",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 279
+ },
+ {
+  "id": "thewhitehouse",
+  "asset": "TheWhiteHouse",
+  "domains": [
+   "whitehouse.gov"
+  ],
+  "en": "The White House",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 280
+ },
+ {
+  "id": "sofascore",
+  "asset": "SofaScore",
+  "domains": [
+   "sofascore.com"
+  ],
+  "en": "SofaScore",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 281
+ },
+ {
+  "id": "binance",
+  "asset": "Binance",
+  "domains": [
+   "binance.com"
+  ],
+  "en": "Binance",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 282
+ },
+ {
+  "id": "costco",
+  "asset": "Costco",
+  "domains": [
+   "costco.com"
+  ],
+  "en": "Costco",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 283
+ },
+ {
+  "id": "anjuke",
+  "asset": "Anjuke",
+  "domains": [
+   "anjuke.com"
+  ],
+  "en": "Anjuke",
+  "zh": "安居客",
+  "pinyin": "anjuke",
+  "initials": "ajk",
+  "region": "cn",
+  "oauth": false,
+  "rank": 284
+ },
+ {
+  "id": "goal",
+  "asset": "Goal",
+  "domains": [
+   "goal.com"
+  ],
+  "en": "Goal",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 285
+ },
+ {
+  "id": "flipkart",
+  "asset": "Flipkart",
+  "domains": [
+   "flipkart.com"
+  ],
+  "en": "Flipkart",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 286
+ },
+ {
+  "id": "xing",
+  "asset": "XING",
+  "domains": [
+   "xing.com"
+  ],
+  "en": "XING",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 287
+ },
+ {
+  "id": "letterboxd",
+  "asset": "Letterboxd",
+  "domains": [
+   "letterboxd.com"
+  ],
+  "en": "Letterboxd",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 288
+ },
+ {
+  "id": "newyorkpost",
+  "asset": "NewYorkPost",
+  "domains": [
+   "nypost.com"
+  ],
+  "en": "New York Post",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 289
+ },
+ {
+  "id": "flashscore",
+  "asset": "FlashScore",
+  "domains": [
+   "flashscore.com"
+  ],
+  "en": "FlashScore",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 290
+ },
+ {
+  "id": "merriamwebster",
+  "asset": "MerriamWebster",
+  "domains": [
+   "merriam-webster.com"
+  ],
+  "en": "Merriam-Webster",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 291
+ },
+ {
+  "id": "moneycontrol",
+  "asset": "Moneycontrol",
+  "domains": [
+   "moneycontrol.com"
+  ],
+  "en": "Moneycontrol",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 292
+ },
+ {
+  "id": "wise",
+  "asset": "Wise",
+  "domains": [
+   "wise.com"
+  ],
+  "en": "Wise",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 293
+ },
+ {
+  "id": "dongchedi",
+  "asset": "Dongchedi",
+  "domains": [
+   "dongchedi.com"
+  ],
+  "en": "Dongchedi",
+  "zh": "懂车帝",
+  "pinyin": "dongchedi",
+  "initials": "dcd",
+  "region": "cn",
+  "oauth": false,
+  "rank": 294
+ },
+ {
+  "id": "fortune",
+  "asset": "Fortune",
+  "domains": [
+   "fortune.com"
+  ],
+  "en": "Fortune",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 295
+ },
+ {
+  "id": "coursera",
+  "asset": "Coursera",
+  "domains": [
+   "coursera.org"
+  ],
+  "en": "Coursera",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 296
+ },
+ {
+  "id": "paramount",
+  "asset": "Paramount",
+  "domains": [
+   "paramountplus.com"
+  ],
+  "en": "Paramount+",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 297
+ },
+ {
+  "id": "amd",
+  "asset": "AMD",
+  "domains": [
+   "amd.com"
+  ],
+  "en": "AMD",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 298
+ },
+ {
+  "id": "gsmarena",
+  "asset": "GSMArena",
+  "domains": [
+   "gsmarena.com"
+  ],
+  "en": "GSMArena",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 299
+ },
+ {
+  "id": "smzdm",
+  "asset": "SMZDM",
+  "domains": [
+   "smzdm.com"
+  ],
+  "en": "SMZDM",
+  "zh": "什么值得买",
+  "pinyin": "shenmezhidemai",
+  "initials": "smzdm",
+  "region": "cn",
+  "oauth": false,
+  "rank": 300
+ },
+ {
+  "id": "skysports",
+  "asset": "SkySports",
+  "domains": [
+   "skysports.com"
+  ],
+  "en": "Sky Sports",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 301
+ },
+ {
+  "id": "pandora",
+  "asset": "Pandora",
+  "domains": [
+   "pandora.com"
+  ],
+  "en": "Pandora",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 302
+ },
+ {
+  "id": "dribbble",
+  "asset": "Dribbble",
+  "domains": [
+   "dribbble.com"
+  ],
+  "en": "Dribbble",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 303
+ },
+ {
+  "id": "finnno",
+  "asset": "FINNno",
+  "domains": [
+   "finn.no"
+  ],
+  "en": "FINN.no",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 304
+ },
+ {
+  "id": "archiveofourown",
+  "asset": "ArchiveofOurOwn",
+  "domains": [
+   "archiveofourown.org"
+  ],
+  "en": "Archive of Our Own",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 305
+ },
+ {
+  "id": "onedrive",
+  "asset": "OneDrive",
+  "domains": [
+   "onedrive.com"
+  ],
+  "en": "OneDrive",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 306
+ },
+ {
+  "id": "theeconomist",
+  "asset": "TheEconomist",
+  "domains": [
+   "economist.com"
+  ],
+  "en": "The Economist",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 307
+ },
+ {
+  "id": "alibabacloud",
+  "asset": "AlibabaCloud",
+  "domains": [
+   "aliyun.com"
+  ],
+  "en": "Alibaba Cloud",
+  "zh": "阿里云",
+  "pinyin": "aliyun",
+  "initials": "aly",
+  "region": "cn",
+  "oauth": false,
+  "rank": 308
+ },
+ {
+  "id": "stackexchange",
+  "asset": "StackExchange",
+  "domains": [
+   "stackexchange.com"
+  ],
+  "en": "Stack Exchange",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 309
+ },
+ {
+  "id": "dafont",
+  "asset": "DaFont",
+  "domains": [
+   "dafont.com"
+  ],
+  "en": "DaFont",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 310
+ },
+ {
+  "id": "riotgames",
+  "asset": "RiotGames",
+  "domains": [
+   "riotgames.com"
+  ],
+  "en": "Riot Games",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 311
+ },
+ {
+  "id": "waze",
+  "asset": "Waze",
+  "domains": [
+   "waze.com"
+  ],
+  "en": "Waze",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 312
+ },
+ {
+  "id": "tencentcloud",
+  "asset": "TencentCloud",
+  "domains": [
+   "tencentcloud.com"
+  ],
+  "en": "Tencent Cloud",
+  "zh": "腾讯云",
+  "pinyin": "tengxunyun",
+  "initials": "txy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 313
+ },
+ {
+  "id": "makemytrip",
+  "asset": "MakeMyTrip",
+  "domains": [
+   "makemytrip.com"
+  ],
+  "en": "MakeMyTrip",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 314
+ },
+ {
+  "id": "espncricinfo",
+  "asset": "ESPNcricinfo",
+  "domains": [
+   "espncricinfo.com"
+  ],
+  "en": "ESPNcricinfo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 315
+ },
+ {
+  "id": "jstor",
+  "asset": "JSTOR",
+  "domains": [
+   "jstor.org"
+  ],
+  "en": "JSTOR",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 316
+ },
+ {
+  "id": "lichess",
+  "asset": "Lichess",
+  "domains": [
+   "lichess.org"
+  ],
+  "en": "Lichess",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 317
+ },
+ {
+  "id": "removebg",
+  "asset": "removebg",
+  "domains": [
+   "remove.bg"
+  ],
+  "en": "remove.bg",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 318
+ },
+ {
+  "id": "fanfictionnet",
+  "asset": "FanFictionnet",
+  "domains": [
+   "fanfiction.net"
+  ],
+  "en": "FanFiction.net",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 319
+ },
+ {
+  "id": "abcnewsaustralia",
+  "asset": "ABCNewsAustralia",
+  "domains": [
+   "abc.net.au"
+  ],
+  "en": "ABC News Australia",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 320
+ },
+ {
+  "id": "tencentmeeting",
+  "asset": "TencentMeeting",
+  "domains": [
+   "meeting.tencent.com"
+  ],
+  "en": "Tencent Meeting",
+  "zh": "腾讯会议",
+  "pinyin": "tengxunhuiyi",
+  "initials": "txhy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 321
+ },
+ {
+  "id": "huggingface",
+  "asset": "HuggingFace",
+  "domains": [
+   "huggingface.co"
+  ],
+  "en": "Hugging Face",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 322
+ },
+ {
+  "id": "deutschewelle",
+  "asset": "DeutscheWelle",
+  "domains": [
+   "dw.com"
+  ],
+  "en": "Deutsche Welle",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 323
+ },
+ {
+  "id": "wiktionary",
+  "asset": "Wiktionary",
+  "domains": [
+   "wiktionary.org"
+  ],
+  "en": "Wiktionary",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 324
+ },
+ {
+  "id": "youdao",
+  "asset": "Youdao",
+  "domains": [
+   "youdao.com"
+  ],
+  "en": "Youdao",
+  "zh": "有道",
+  "pinyin": "youdao",
+  "initials": "yd",
+  "region": "cn",
+  "oauth": false,
+  "rank": 325
+ },
+ {
+  "id": "cricbuzz",
+  "asset": "Cricbuzz",
+  "domains": [
+   "cricbuzz.com"
+  ],
+  "en": "Cricbuzz",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 326
+ },
+ {
+  "id": "neteasemail126",
+  "asset": "NetEaseMail126",
+  "domains": [
+   "126.com"
+  ],
+  "en": "NetEase Mail 126",
+  "zh": "网易126邮箱",
+  "pinyin": "wangyi126youxiang",
+  "initials": "wy126yx",
+  "region": "cn",
+  "oauth": false,
+  "rank": 327
+ },
+ {
+  "id": "calculatornet",
+  "asset": "Calculatornet",
+  "domains": [
+   "calculator.net"
+  ],
+  "en": "Calculator.net",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 328
+ },
+ {
+  "id": "aljazeera",
+  "asset": "AlJazeera",
+  "domains": [
+   "aljazeera.com"
+  ],
+  "en": "Al Jazeera",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 329
+ },
+ {
+  "id": "buzzfeed",
+  "asset": "BuzzFeed",
+  "domains": [
+   "buzzfeed.com"
+  ],
+  "en": "BuzzFeed",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 330
+ },
+ {
+  "id": "ucbrowser",
+  "asset": "UCBrowser",
+  "domains": [
+   "uc.cn"
+  ],
+  "en": "UC Browser",
+  "zh": "UC浏览器",
+  "pinyin": "UCliulanqi",
+  "initials": "UCllq",
+  "region": "cn",
+  "oauth": false,
+  "rank": 331
+ },
+ {
+  "id": "boardgamearena",
+  "asset": "BoardGameArena",
+  "domains": [
+   "boardgamearena.com"
+  ],
+  "en": "Board Game Arena",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 332
+ },
+ {
+  "id": "360security",
+  "asset": "360Security",
+  "domains": [
+   "360.cn"
+  ],
+  "en": "360 Security",
+  "zh": "360安全中心",
+  "pinyin": "360anquanzhongxin",
+  "initials": "360aqzx",
+  "region": "cn",
+  "oauth": false,
+  "rank": 333
+ },
+ {
+  "id": "trello",
+  "asset": "Trello",
+  "domains": [
+   "trello.com"
+  ],
+  "en": "Trello",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 334
+ },
+ {
+  "id": "sogou",
+  "asset": "Sogou",
+  "domains": [
+   "sogou.com"
+  ],
+  "en": "Sogou",
+  "zh": "搜狗",
+  "pinyin": "sougou",
+  "initials": "sg",
+  "region": "cn",
+  "oauth": false,
+  "rank": 335
+ },
+ {
+  "id": "360search",
+  "asset": "360Search",
+  "domains": [
+   "so.com"
+  ],
+  "en": "360 Search",
+  "zh": "360搜索",
+  "pinyin": "360sousuo",
+  "initials": "360ss",
+  "region": "cn",
+  "oauth": false,
+  "rank": 336
+ },
+ {
+  "id": "acm",
+  "asset": "ACM",
+  "domains": [
+   "acm.org"
+  ],
+  "en": "ACM",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 337
+ },
+ {
+  "id": "hao123",
+  "asset": "hao123",
+  "domains": [
+   "hao123.com"
+  ],
+  "en": "hao123",
+  "zh": "hao123网址导航",
+  "pinyin": "hao123wangzhidaohang",
+  "initials": "hao123wzdh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 338
+ },
+ {
+  "id": "csdn",
+  "asset": "CSDN",
+  "domains": [
+   "csdn.net"
+  ],
+  "en": "CSDN",
+  "zh": "CSDN",
+  "pinyin": "CSDN",
+  "initials": "CSDN",
+  "region": "cn",
+  "oauth": true,
+  "rank": 339
+ },
+ {
+  "id": "juejin",
+  "asset": "Juejin",
+  "domains": [
+   "juejin.cn"
+  ],
+  "en": "Juejin",
+  "zh": "稀土掘金",
+  "pinyin": "xitujuejin",
+  "initials": "xtjj",
+  "region": "cn",
+  "oauth": false,
+  "rank": 340
+ },
+ {
+  "id": "shutterstock",
+  "asset": "Shutterstock",
+  "domains": [
+   "shutterstock.com"
+  ],
+  "en": "Shutterstock",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 341
+ },
+ {
+  "id": "gitee",
+  "asset": "Gitee",
+  "domains": [
+   "gitee.com"
+  ],
+  "en": "Gitee",
+  "zh": "Gitee",
+  "pinyin": "Gitee",
+  "initials": "Gitee",
+  "region": "cn",
+  "oauth": true,
+  "rank": 342
+ },
+ {
+  "id": "yuque",
+  "asset": "Yuque",
+  "domains": [
+   "yuque.com"
+  ],
+  "en": "Yuque",
+  "zh": "语雀",
+  "pinyin": "yuque",
+  "initials": "yq",
+  "region": "cn",
+  "oauth": false,
+  "rank": 343
+ },
+ {
+  "id": "mercadolibre",
+  "asset": "MercadoLibre",
+  "domains": [
+   "mercadolibre.com"
+  ],
+  "en": "Mercado Libre",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 344
+ },
+ {
+  "id": "w3schools",
+  "asset": "W3Schools",
+  "domains": [
+   "w3schools.com"
+  ],
+  "en": "W3Schools",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 345
+ },
+ {
+  "id": "cnblogs",
+  "asset": "cnblogs",
+  "domains": [
+   "cnblogs.com"
+  ],
+  "en": "cnblogs",
+  "zh": "博客园",
+  "pinyin": "bokeyuan",
+  "initials": "bky",
+  "region": "cn",
+  "oauth": false,
+  "rank": 346
+ },
+ {
+  "id": "threads",
+  "asset": "Threads",
+  "domains": [
+   "threads.net"
+  ],
+  "en": "Threads",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 347
+ },
+ {
+  "id": "twilio",
+  "asset": "Twilio",
+  "domains": [
+   "twilio.com"
+  ],
+  "en": "Twilio",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 348
+ },
+ {
+  "id": "vmware",
+  "asset": "VMware",
+  "domains": [
+   "vmware.com"
+  ],
+  "en": "VMware",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 349
+ },
+ {
+  "id": "zdnet",
+  "asset": "ZDNet",
+  "domains": [
+   "zdnet.com"
+  ],
+  "en": "ZDNet",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 350
+ },
+ {
+  "id": "wikihow",
+  "asset": "wikiHow",
+  "domains": [
+   "wikihow.com"
+  ],
+  "en": "wikiHow",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 351
+ },
+ {
+  "id": "arstechnica",
+  "asset": "ArsTechnica",
+  "domains": [
+   "arstechnica.com"
+  ],
+  "en": "Ars Technica",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 353
+ },
+ {
+  "id": "udemy",
+  "asset": "Udemy",
+  "domains": [
+   "udemy.com"
+  ],
+  "en": "Udemy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 354
+ },
+ {
+  "id": "clevelandclinic",
+  "asset": "ClevelandClinic",
+  "domains": [
+   "clevelandclinic.org"
+  ],
+  "en": "Cleveland Clinic",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 355
+ },
+ {
+  "id": "v2ex",
+  "asset": "V2EX",
+  "domains": [
+   "v2ex.com"
+  ],
+  "en": "V2EX",
+  "zh": "V2EX",
+  "pinyin": "V2EX",
+  "initials": "V2EX",
+  "region": "cn",
+  "oauth": false,
+  "rank": 356
+ },
+ {
+  "id": "investingcom",
+  "asset": "Investingcom",
+  "domains": [
+   "investing.com"
+  ],
+  "en": "Investing.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 357
+ },
+ {
+  "id": "meetup",
+  "asset": "Meetup",
+  "domains": [
+   "meetup.com"
+  ],
+  "en": "Meetup",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 358
+ },
+ {
+  "id": "deezer",
+  "asset": "Deezer",
+  "domains": [
+   "deezer.com"
+  ],
+  "en": "Deezer",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 359
+ },
+ {
+  "id": "blueapron",
+  "asset": "BlueApron",
+  "domains": [
+   "blueapron.com"
+  ],
+  "en": "Blue Apron",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 360
+ },
+ {
+  "id": "hulu",
+  "asset": "Hulu",
+  "domains": [
+   "hulu.com"
+  ],
+  "en": "Hulu",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 361
+ },
+ {
+  "id": "deepseek",
+  "asset": "DeepSeek",
+  "domains": [
+   "deepseek.com"
+  ],
+  "en": "DeepSeek",
+  "zh": "DeepSeek",
+  "pinyin": "DeepSeek",
+  "initials": "DeepSeek",
+  "region": "cn",
+  "oauth": false,
+  "rank": 362
+ },
+ {
+  "id": "notion",
+  "asset": "Notion",
+  "domains": [
+   "notion.so",
+   "notionapp.com"
+  ],
+  "en": "Notion",
+  "zh": "Notion",
+  "pinyin": "Notion",
+  "initials": "Notion",
+  "region": "global",
+  "oauth": true,
+  "rank": 363
+ },
+ {
+  "id": "nba",
+  "asset": "NBA",
+  "domains": [
+   "nba.com"
+  ],
+  "en": "NBA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 364
+ },
+ {
+  "id": "politico",
+  "asset": "Politico",
+  "domains": [
+   "politico.com"
+  ],
+  "en": "Politico",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 365
+ },
+ {
+  "id": "science",
+  "asset": "Science",
+  "domains": [
+   "science.org"
+  ],
+  "en": "Science",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 366
+ },
+ {
+  "id": "doubao",
+  "asset": "Doubao",
+  "domains": [
+   "doubao.com"
+  ],
+  "en": "Doubao",
+  "zh": "豆包",
+  "pinyin": "doubao",
+  "initials": "db",
+  "region": "cn",
+  "oauth": false,
+  "rank": 367
+ },
+ {
+  "id": "ign",
+  "asset": "IGN",
+  "domains": [
+   "ign.com"
+  ],
+  "en": "IGN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 368
+ },
+ {
+  "id": "evernote",
+  "asset": "Evernote",
+  "domains": [
+   "evernote.com"
+  ],
+  "en": "Evernote",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 369
+ },
+ {
+  "id": "ssrn",
+  "asset": "SSRN",
+  "domains": [
+   "ssrn.com"
+  ],
+  "en": "SSRN",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 370
+ },
+ {
+  "id": "kimi",
+  "asset": "Kimi",
+  "domains": [
+   "kimi.com"
+  ],
+  "en": "Kimi",
+  "zh": "Kimi",
+  "pinyin": "Kimi",
+  "initials": "Kimi",
+  "region": "cn",
+  "oauth": false,
+  "rank": 371
+ },
+ {
+  "id": "ndtv",
+  "asset": "NDTV",
+  "domains": [
+   "ndtv.com"
+  ],
+  "en": "NDTV",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 372
+ },
+ {
+  "id": "segment",
+  "asset": "Segment",
+  "domains": [
+   "segment.com"
+  ],
+  "en": "Segment",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 373
+ },
+ {
+  "id": "timeanddate",
+  "asset": "TimeandDate",
+  "domains": [
+   "timeanddate.com"
+  ],
+  "en": "Time and Date",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 374
+ },
+ {
+  "id": "blizzard",
+  "asset": "Blizzard",
+  "domains": [
+   "blizzard.com"
+  ],
+  "en": "Blizzard",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 375
+ },
+ {
+  "id": "qwen",
+  "asset": "Qwen",
+  "domains": [
+   "tongyi.com"
+  ],
+  "en": "Qwen",
+  "zh": "通义千问",
+  "pinyin": "tongyiqianwen",
+  "initials": "tyqw",
+  "region": "cn",
+  "oauth": false,
+  "rank": 376
+ },
+ {
+  "id": "bitbucket",
+  "asset": "Bitbucket",
+  "domains": [
+   "bitbucket.org"
+  ],
+  "en": "Bitbucket",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 377
+ },
+ {
+  "id": "mongodb",
+  "asset": "MongoDB",
+  "domains": [
+   "mongodb.com"
+  ],
+  "en": "MongoDB",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 378
+ },
+ {
+  "id": "plos",
+  "asset": "PLOS",
+  "domains": [
+   "plos.org"
+  ],
+  "en": "PLOS",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 379
+ },
+ {
+  "id": "ahrefs",
+  "asset": "Ahrefs",
+  "domains": [
+   "ahrefs.com"
+  ],
+  "en": "Ahrefs",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 380
+ },
+ {
+  "id": "npm",
+  "asset": "npm",
+  "domains": [
+   "npmjs.com"
+  ],
+  "en": "npm",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 381
+ },
+ {
+  "id": "ihghotels",
+  "asset": "IHGHotels",
+  "domains": [
+   "ihg.com"
+  ],
+  "en": "IHG Hotels",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 382
+ },
+ {
+  "id": "coinbase",
+  "asset": "Coinbase",
+  "domains": [
+   "coinbase.com"
+  ],
+  "en": "Coinbase",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 383
+ },
+ {
+  "id": "iflytekspark",
+  "asset": "iFlytekSpark",
+  "domains": [
+   "xfyun.cn"
+  ],
+  "en": "iFlytek Spark",
+  "zh": "讯飞星火",
+  "pinyin": "xunfeixinghuo",
+  "initials": "xfxh",
+  "region": "cn",
+  "oauth": false,
+  "rank": 384
+ },
+ {
+  "id": "engadget",
+  "asset": "Engadget",
+  "domains": [
+   "engadget.com"
+  ],
+  "en": "Engadget",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 385
+ },
+ {
+  "id": "ticketmaster",
+  "asset": "Ticketmaster",
+  "domains": [
+   "ticketmaster.com"
+  ],
+  "en": "Ticketmaster",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 386
+ },
+ {
+  "id": "metamask",
+  "asset": "MetaMask",
+  "domains": [
+   "metamask.io"
+  ],
+  "en": "MetaMask",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 387
+ },
+ {
+  "id": "sap",
+  "asset": "SAP",
+  "domains": [
+   "sap.com"
+  ],
+  "en": "SAP",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 388
+ },
+ {
+  "id": "chatglm",
+  "asset": "ChatGLM",
+  "domains": [
+   "chatglm.cn"
+  ],
+  "en": "ChatGLM",
+  "zh": "智谱清言",
+  "pinyin": "zhipuqingyan",
+  "initials": "zpqy",
+  "region": "cn",
+  "oauth": false,
+  "rank": 389
+ },
+ {
+  "id": "strava",
+  "asset": "Strava",
+  "domains": [
+   "strava.com"
+  ],
+  "en": "Strava",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 390
+ },
+ {
+  "id": "peacock",
+  "asset": "Peacock",
+  "domains": [
+   "peacocktv.com"
+  ],
+  "en": "Peacock",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 391
+ },
+ {
+  "id": "expedia",
+  "asset": "Expedia",
+  "domains": [
+   "expedia.com"
+  ],
+  "en": "Expedia",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 392
+ },
+ {
+  "id": "sony",
+  "asset": "Sony",
+  "domains": [
+   "sony.com"
+  ],
+  "en": "Sony",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 393
+ },
+ {
+  "id": "constantcontact",
+  "asset": "ConstantContact",
+  "domains": [
+   "constantcontact.com"
+  ],
+  "en": "Constant Contact",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 394
+ },
+ {
+  "id": "vox",
+  "asset": "Vox",
+  "domains": [
+   "vox.com"
+  ],
+  "en": "Vox",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 395
+ },
+ {
+  "id": "asana",
+  "asset": "Asana",
+  "domains": [
+   "asana.com"
+  ],
+  "en": "Asana",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 396
+ },
+ {
+  "id": "klarna",
+  "asset": "Klarna",
+  "domains": [
+   "klarna.com"
+  ],
+  "en": "Klarna",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 397
+ },
+ {
+  "id": "semrush",
+  "asset": "Semrush",
+  "domains": [
+   "semrush.com"
+  ],
+  "en": "Semrush",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 398
+ },
+ {
+  "id": "ryanair",
+  "asset": "Ryanair",
+  "domains": [
+   "ryanair.com"
+  ],
+  "en": "Ryanair",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 399
+ },
+ {
+  "id": "mixcloud",
+  "asset": "Mixcloud",
+  "domains": [
+   "mixcloud.com"
+  ],
+  "en": "Mixcloud",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 400
+ },
+ {
+  "id": "craigslist",
+  "asset": "Craigslist",
+  "domains": [
+   "craigslist.org"
+  ],
+  "en": "Craigslist",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 401
+ },
+ {
+  "id": "coinmarketcap",
+  "asset": "CoinMarketCap",
+  "domains": [
+   "coinmarketcap.com"
+  ],
+  "en": "CoinMarketCap",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 402
+ },
+ {
+  "id": "crunchyroll",
+  "asset": "Crunchyroll",
+  "domains": [
+   "crunchyroll.com"
+  ],
+  "en": "Crunchyroll",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 403
+ },
+ {
+  "id": "semanticscholar",
+  "asset": "SemanticScholar",
+  "domains": [
+   "semanticscholar.org"
+  ],
+  "en": "Semantic Scholar",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 404
+ },
+ {
+  "id": "lastfm",
+  "asset": "Lastfm",
+  "domains": [
+   "last.fm"
+  ],
+  "en": "Last.fm",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 405
+ },
+ {
+  "id": "windy",
+  "asset": "Windy",
+  "domains": [
+   "windy.com"
+  ],
+  "en": "Windy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 406
+ },
+ {
+  "id": "hyatt",
+  "asset": "Hyatt",
+  "domains": [
+   "hyatt.com"
+  ],
+  "en": "Hyatt",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 407
+ },
+ {
+  "id": "signal",
+  "asset": "Signal",
+  "domains": [
+   "signal.org"
+  ],
+  "en": "Signal",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 408
+ },
+ {
+  "id": "congressgov",
+  "asset": "Congressgov",
+  "domains": [
+   "congress.gov"
+  ],
+  "en": "Congress.gov",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 409
+ },
+ {
+  "id": "axios",
+  "asset": "Axios",
+  "domains": [
+   "axios.com"
+  ],
+  "en": "Axios",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 410
+ },
+ {
+  "id": "slate",
+  "asset": "Slate",
+  "domains": [
+   "slate.com"
+  ],
+  "en": "Slate",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 411
+ },
+ {
+  "id": "clickup",
+  "asset": "ClickUp",
+  "domains": [
+   "clickup.com"
+  ],
+  "en": "ClickUp",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 412
+ },
+ {
+  "id": "olympicscom",
+  "asset": "Olympicscom",
+  "domains": [
+   "olympics.com"
+  ],
+  "en": "Olympics.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 413
+ },
+ {
+  "id": "hackernews",
+  "asset": "HackerNews",
+  "domains": [
+   "news.ycombinator.com"
+  ],
+  "en": "Hacker News",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 414
+ },
+ {
+  "id": "minecraft",
+  "asset": "Minecraft",
+  "domains": [
+   "minecraft.net"
+  ],
+  "en": "Minecraft",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 415
+ },
+ {
+  "id": "doordash",
+  "asset": "DoorDash",
+  "domains": [
+   "doordash.com"
+  ],
+  "en": "DoorDash",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 416
+ },
+ {
+  "id": "miro",
+  "asset": "Miro",
+  "domains": [
+   "miro.com"
+  ],
+  "en": "Miro",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 417
+ },
+ {
+  "id": "rockstargames",
+  "asset": "RockstarGames",
+  "domains": [
+   "rockstargames.com"
+  ],
+  "en": "Rockstar Games",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 418
+ },
+ {
+  "id": "rt",
+  "asset": "RT",
+  "domains": [
+   "rt.com"
+  ],
+  "en": "RT",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 419
+ },
+ {
+  "id": "gettyimages",
+  "asset": "GettyImages",
+  "domains": [
+   "gettyimages.com"
+  ],
+  "en": "Getty Images",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 420
+ },
+ {
+  "id": "upwork",
+  "asset": "Upwork",
+  "domains": [
+   "upwork.com"
+  ],
+  "en": "Upwork",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 421
+ },
+ {
+  "id": "wayfair",
+  "asset": "Wayfair",
+  "domains": [
+   "wayfair.com"
+  ],
+  "en": "Wayfair",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 422
+ },
+ {
+  "id": "heretechnologies",
+  "asset": "HERETechnologies",
+  "domains": [
+   "here.com"
+  ],
+  "en": "HERE Technologies",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 423
+ },
+ {
+  "id": "quizlet",
+  "asset": "Quizlet",
+  "domains": [
+   "quizlet.com"
+  ],
+  "en": "Quizlet",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 424
+ },
+ {
+  "id": "lastpass",
+  "asset": "LastPass",
+  "domains": [
+   "lastpass.com"
+  ],
+  "en": "LastPass",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 425
+ },
+ {
+  "id": "iheartradio",
+  "asset": "iHeartRadio",
+  "domains": [
+   "iheart.com"
+  ],
+  "en": "iHeartRadio",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 426
+ },
+ {
+  "id": "thesydneymorningherald",
+  "asset": "TheSydneyMorningHerald",
+  "domains": [
+   "smh.com.au"
+  ],
+  "en": "The Sydney Morning Herald",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 427
+ },
+ {
+  "id": "glassdoor",
+  "asset": "Glassdoor",
+  "domains": [
+   "glassdoor.com"
+  ],
+  "en": "Glassdoor",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 428
+ },
+ {
+  "id": "gamespot",
+  "asset": "GameSpot",
+  "domains": [
+   "gamespot.com"
+  ],
+  "en": "GameSpot",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 429
+ },
+ {
+  "id": "okx",
+  "asset": "OKX",
+  "domains": [
+   "okx.com"
+  ],
+  "en": "OKX",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 430
+ },
+ {
+  "id": "nextdoor",
+  "asset": "Nextdoor",
+  "domains": [
+   "nextdoor.com"
+  ],
+  "en": "Nextdoor",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 431
+ },
+ {
+  "id": "tenor",
+  "asset": "Tenor",
+  "domains": [
+   "tenor.com"
+  ],
+  "en": "Tenor",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 432
+ },
+ {
+  "id": "audible",
+  "asset": "Audible",
+  "domains": [
+   "audible.com"
+  ],
+  "en": "Audible",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 433
+ },
+ {
+  "id": "thehill",
+  "asset": "TheHill",
+  "domains": [
+   "thehill.com"
+  ],
+  "en": "The Hill",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 434
+ },
+ {
+  "id": "khanacademy",
+  "asset": "KhanAcademy",
+  "domains": [
+   "khanacademy.org"
+  ],
+  "en": "Khan Academy",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 435
+ },
+ {
+  "id": "flaticon",
+  "asset": "Flaticon",
+  "domains": [
+   "flaticon.com"
+  ],
+  "en": "Flaticon",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 436
+ },
+ {
+  "id": "getyourguide",
+  "asset": "GetYourGuide",
+  "domains": [
+   "getyourguide.com"
+  ],
+  "en": "GetYourGuide",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 437
+ },
+ {
+  "id": "projectgutenberg",
+  "asset": "ProjectGutenberg",
+  "domains": [
+   "gutenberg.org"
+  ],
+  "en": "Project Gutenberg",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 438
+ },
+ {
+  "id": "hindustantimes",
+  "asset": "HindustanTimes",
+  "domains": [
+   "hindustantimes.com"
+  ],
+  "en": "Hindustan Times",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 439
+ },
+ {
+  "id": "rumble",
+  "asset": "Rumble",
+  "domains": [
+   "rumble.com"
+  ],
+  "en": "Rumble",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 440
+ },
+ {
+  "id": "cell",
+  "asset": "Cell",
+  "domains": [
+   "cell.com"
+  ],
+  "en": "Cell",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 441
+ },
+ {
+  "id": "1password",
+  "asset": "1Password",
+  "domains": [
+   "1password.com"
+  ],
+  "en": "1Password",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 442
+ },
+ {
+  "id": "nhk",
+  "asset": "NHK",
+  "domains": [
+   "nhk.or.jp"
+  ],
+  "en": "NHK",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 443
+ },
+ {
+  "id": "howstuffworks",
+  "asset": "HowStuffWorks",
+  "domains": [
+   "howstuffworks.com"
+  ],
+  "en": "HowStuffWorks",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 444
+ },
+ {
+  "id": "envato",
+  "asset": "Envato",
+  "domains": [
+   "envato.com"
+  ],
+  "en": "Envato",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 445
+ },
+ {
+  "id": "accor",
+  "asset": "Accor",
+  "domains": [
+   "accor.com"
+  ],
+  "en": "Accor",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 446
+ },
+ {
+  "id": "pypi",
+  "asset": "PyPI",
+  "domains": [
+   "pypi.org"
+  ],
+  "en": "PyPI",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 447
+ },
+ {
+  "id": "uniqlo",
+  "asset": "UNIQLO",
+  "domains": [
+   "uniqlo.com"
+  ],
+  "en": "UNIQLO",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 448
+ },
+ {
+  "id": "spotifyforcreators",
+  "asset": "SpotifyforCreators",
+  "domains": [
+   "anchor.fm"
+  ],
+  "en": "Spotify for Creators",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 449
+ },
+ {
+  "id": "fotmob",
+  "asset": "FotMob",
+  "domains": [
+   "fotmob.com"
+  ],
+  "en": "FotMob",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 450
+ },
+ {
+  "id": "suno",
+  "asset": "Suno",
+  "domains": [
+   "suno.com"
+  ],
+  "en": "Suno",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 451
+ },
+ {
+  "id": "zapier",
+  "asset": "Zapier",
+  "domains": [
+   "zapier.com"
+  ],
+  "en": "Zapier",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 452
+ },
+ {
+  "id": "podbean",
+  "asset": "PodBean",
+  "domains": [
+   "podbean.com"
+  ],
+  "en": "PodBean",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 453
+ },
+ {
+  "id": "chicagotribune",
+  "asset": "ChicagoTribune",
+  "domains": [
+   "chicagotribune.com"
+  ],
+  "en": "Chicago Tribune",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 454
+ },
+ {
+  "id": "adidas",
+  "asset": "Adidas",
+  "domains": [
+   "adidas.com"
+  ],
+  "en": "Adidas",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 455
+ },
+ {
+  "id": "brevo",
+  "asset": "Brevo",
+  "domains": [
+   "brevo.com"
+  ],
+  "en": "Brevo",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 456
+ },
+ {
+  "id": "theindianexpress",
+  "asset": "TheIndianExpress",
+  "domains": [
+   "indianexpress.com"
+  ],
+  "en": "The Indian Express",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 457
+ },
+ {
+  "id": "kofi",
+  "asset": "Kofi",
+  "domains": [
+   "ko-fi.com"
+  ],
+  "en": "Ko-fi",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 458
+ },
+ {
+  "id": "affirm",
+  "asset": "Affirm",
+  "domains": [
+   "affirm.com"
+  ],
+  "en": "Affirm",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 459
+ },
+ {
+  "id": "tripcom",
+  "asset": "Tripcom",
+  "domains": [
+   "trip.com"
+  ],
+  "en": "Trip.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 460
+ },
+ {
+  "id": "shazam",
+  "asset": "Shazam",
+  "domains": [
+   "shazam.com"
+  ],
+  "en": "Shazam",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 461
+ },
+ {
+  "id": "philips",
+  "asset": "Philips",
+  "domains": [
+   "philips.com"
+  ],
+  "en": "Philips",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 462
+ },
+ {
+  "id": "charlesschwab",
+  "asset": "CharlesSchwab",
+  "domains": [
+   "schwab.com"
+  ],
+  "en": "Charles Schwab",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 463
+ },
+ {
+  "id": "france24",
+  "asset": "France24",
+  "domains": [
+   "france24.com"
+  ],
+  "en": "France 24",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 464
+ },
+ {
+  "id": "instacart",
+  "asset": "Instacart",
+  "domains": [
+   "instacart.com"
+  ],
+  "en": "Instacart",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 465
+ },
+ {
+  "id": "disneyhotstar",
+  "asset": "DisneyHotstar",
+  "domains": [
+   "hotstar.com"
+  ],
+  "en": "Disney+ Hotstar",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 466
+ },
+ {
+  "id": "rottentomatoes",
+  "asset": "RottenTomatoes",
+  "domains": [
+   "rottentomatoes.com"
+  ],
+  "en": "Rotten Tomatoes",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 467
+ },
+ {
+  "id": "ubisoft",
+  "asset": "Ubisoft",
+  "domains": [
+   "ubisoft.com"
+  ],
+  "en": "Ubisoft",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 468
+ },
+ {
+  "id": "theasahishimbun",
+  "asset": "TheAsahiShimbun",
+  "domains": [
+   "asahi.com"
+  ],
+  "en": "The Asahi Shimbun",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 469
+ },
+ {
+  "id": "usagov",
+  "asset": "USAgov",
+  "domains": [
+   "usa.gov"
+  ],
+  "en": "USA.gov",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 470
+ },
+ {
+  "id": "today",
+  "asset": "Today",
+  "domains": [
+   "today.com"
+  ],
+  "en": "Today",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 471
+ },
+ {
+  "id": "thehindu",
+  "asset": "TheHindu",
+  "domains": [
+   "thehindu.com"
+  ],
+  "en": "The Hindu",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 472
+ },
+ {
+  "id": "panasonic",
+  "asset": "Panasonic",
+  "domains": [
+   "panasonic.com"
+  ],
+  "en": "Panasonic",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 473
+ },
+ {
+  "id": "protonmail",
+  "asset": "ProtonMail",
+  "domains": [
+   "proton.me"
+  ],
+  "en": "Proton Mail",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 474
+ },
+ {
+  "id": "moz",
+  "asset": "Moz",
+  "domains": [
+   "moz.com"
+  ],
+  "en": "Moz",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 475
+ },
+ {
+  "id": "mastodon",
+  "asset": "Mastodon",
+  "domains": [
+   "mastodon.social"
+  ],
+  "en": "Mastodon",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 476
+ },
+ {
+  "id": "tidal",
+  "asset": "TIDAL",
+  "domains": [
+   "tidal.com"
+  ],
+  "en": "TIDAL",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 477
+ },
+ {
+  "id": "bybit",
+  "asset": "Bybit",
+  "domains": [
+   "bybit.com"
+  ],
+  "en": "Bybit",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 478
+ },
+ {
+  "id": "robinhood",
+  "asset": "Robinhood",
+  "domains": [
+   "robinhood.com"
+  ],
+  "en": "Robinhood",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 479
+ },
+ {
+  "id": "medscape",
+  "asset": "Medscape",
+  "domains": [
+   "medscape.com"
+  ],
+  "en": "Medscape",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 480
+ },
+ {
+  "id": "ubereats",
+  "asset": "UberEats",
+  "domains": [
+   "ubereats.com"
+  ],
+  "en": "Uber Eats",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 481
+ },
+ {
+  "id": "maxhbomax",
+  "asset": "MaxHBOMax",
+  "domains": [
+   "max.com"
+  ],
+  "en": "Max (HBO Max)",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 482
+ },
+ {
+  "id": "modrinth",
+  "asset": "Modrinth",
+  "domains": [
+   "modrinth.com"
+  ],
+  "en": "Modrinth",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 483
+ },
+ {
+  "id": "esa",
+  "asset": "ESA",
+  "domains": [
+   "esa.int"
+  ],
+  "en": "ESA",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 484
+ },
+ {
+  "id": "thedailybeast",
+  "asset": "TheDailyBeast",
+  "domains": [
+   "thedailybeast.com"
+  ],
+  "en": "The Daily Beast",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 485
+ },
+ {
+  "id": "tubi",
+  "asset": "Tubi",
+  "domains": [
+   "tubitv.com"
+  ],
+  "en": "Tubi",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 486
+ },
+ {
+  "id": "sproutsocial",
+  "asset": "SproutSocial",
+  "domains": [
+   "sproutsocial.com"
+  ],
+  "en": "Sprout Social",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 487
+ },
+ {
+  "id": "gog",
+  "asset": "GOG",
+  "domains": [
+   "gog.com"
+  ],
+  "en": "GOG",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 488
+ },
+ {
+  "id": "hootsuite",
+  "asset": "Hootsuite",
+  "domains": [
+   "hootsuite.com"
+  ],
+  "en": "Hootsuite",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 489
+ },
+ {
+  "id": "vanguard",
+  "asset": "Vanguard",
+  "domains": [
+   "vanguard.com"
+  ],
+  "en": "Vanguard",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 490
+ },
+ {
+  "id": "myanimelist",
+  "asset": "MyAnimeList",
+  "domains": [
+   "myanimelist.net"
+  ],
+  "en": "MyAnimeList",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 491
+ },
+ {
+  "id": "ifood",
+  "asset": "iFood",
+  "domains": [
+   "ifood.com.br"
+  ],
+  "en": "iFood",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 492
+ },
+ {
+  "id": "geeksforgeeks",
+  "asset": "GeeksforGeeks",
+  "domains": [
+   "geeksforgeeks.org"
+  ],
+  "en": "GeeksforGeeks",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 493
+ },
+ {
+  "id": "mondaycom",
+  "asset": "Mondaycom",
+  "domains": [
+   "monday.com"
+  ],
+  "en": "Monday.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 494
+ },
+ {
+  "id": "zara",
+  "asset": "Zara",
+  "domains": [
+   "zara.com"
+  ],
+  "en": "Zara",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 495
+ },
+ {
+  "id": "deltaairlines",
+  "asset": "DeltaAirLines",
+  "domains": [
+   "delta.com"
+  ],
+  "en": "Delta Air Lines",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 496
+ },
+ {
+  "id": "vercel",
+  "asset": "Vercel",
+  "domains": [
+   "vercel.com"
+  ],
+  "en": "Vercel",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": true,
+  "rank": 497
+ },
+ {
+  "id": "americanairlines",
+  "asset": "AmericanAirlines",
+  "domains": [
+   "aa.com"
+  ],
+  "en": "American Airlines",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 498
+ },
+ {
+  "id": "dictionarycom",
+  "asset": "Dictionarycom",
+  "domains": [
+   "dictionary.com"
+  ],
+  "en": "Dictionary.com",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 499
+ },
+ {
+  "id": "coingecko",
+  "asset": "CoinGecko",
+  "domains": [
+   "coingecko.com"
+  ],
+  "en": "CoinGecko",
+  "zh": null,
+  "pinyin": null,
+  "initials": null,
+  "region": "global",
+  "oauth": false,
+  "rank": 500
+ }
+]

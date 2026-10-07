@@ -38,8 +38,9 @@ struct TOTPConfig {
     init(secret: String, algorithm: TOTPAlgorithm = .sha1, digits: Int = 6, period: Int = 30) {
         self.secret = secret
         self.algorithm = algorithm
-        self.digits = digits
-        self.period = period
+        // 防御异常配置：period 为 0 会导致除零，digits 过大可能溢出
+        self.digits = min(max(digits, 1), 9)
+        self.period = max(1, period)
     }
 }
 

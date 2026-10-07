@@ -140,7 +140,7 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
         try await perform {
             guard let cdNote = try self.dataSource.fetchSafeNote(by: id) else { return }
             cdNote.deletedAt = Date()
-            try self.dataSource.context.save()
+            try self.dataSource.saveIfPossible()
         }
     }
 
@@ -182,7 +182,7 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
                 }
             }
             if !purgedIDs.isEmpty {
-                try self.dataSource.context.save()
+                try self.dataSource.saveIfPossible()
             }
             return purgedIDs
         }

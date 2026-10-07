@@ -112,7 +112,7 @@ class BankcardRepository: BankcardRepositoryProtocol {
         try await perform {
             guard let cdEntry = try self.dataSource.fetchBankcard(by: id) else { return }
             cdEntry.deletedAt = Date()
-            try self.dataSource.context.save()
+            try self.dataSource.saveIfPossible()
         }
     }
 
@@ -147,7 +147,7 @@ class BankcardRepository: BankcardRepositoryProtocol {
                 }
             }
             if !purgedIDs.isEmpty {
-                try self.dataSource.context.save()
+                try self.dataSource.saveIfPossible()
             }
             return purgedIDs
         }

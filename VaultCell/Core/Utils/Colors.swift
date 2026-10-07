@@ -149,6 +149,7 @@ extension Color {
     /// 密码库分类背景色 (低饱和度)
     enum CategoryBackground {
         static let Primary = Color("Category_Primary_Bg")
+        static let Social  = Color("Category_Social_Bg")
         static let Work    = Color("Category_Work_Bg")
         static let Life    = Color("Category_Life_Bg")
         static let Finance = Color("Category_Finance_Bg")
@@ -159,6 +160,7 @@ extension Color {
     /// 密码库分类前景/Tint色 (高对比度)
     enum CategoryTint {
         static let Primary = Color("Category_Primary_Tint")
+        static let Social  = Color("Category_Social_Tint")
         static let Work    = Color("Category_Work_Tint")
         static let Life    = Color("Category_Life_Tint")
         static let Finance = Color("Category_Finance_Tint")
