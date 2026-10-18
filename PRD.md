@@ -1267,77 +1267,70 @@ class SecureBuffer {
 
 #### 3.3.7 认证安全与防暴力破解
 
-```swift
-class AuthenticationService {
-    private let maxAttempts = 5
-    private let baseDelay: TimeInterval = 1.0
-    private let maxDelay: TimeInterval = 60.0
-    
-    private var failedAttempts = 0
-    private var lockoutUntil: Date?
-    
-    enum AuthenticationResult {
-        case success
-        case wrongPassword
-        case lockedOut(until: Date)
-    }
-    
-    func verifyMasterPassword(_ password: String) throws -> AuthenticationResult {
-        // 检查锁定状态
-        if let lockout = lockoutUntil, Date() < lockout {
-            return .lockedOut(until: lockout)
-        }
-        
-        let isValid = try performPasswordVerification(password)
-        
-        if isValid {
-            failedAttempts = 0
-            lockoutUntil = nil
-            return .success
-        } else {
-            failedAttempts += 1
-            
-            // 指数级延迟策略
-            let delay = min(
-                baseDelay * pow(2.0, Double(failedAttempts - 1)),
-                maxDelay
-            )
-            
-            if failedAttempts >= maxAttempts {
-                lockoutUntil = Date().addingTimeInterval(delay * 10)
-                return .lockedOut(until: lockoutUntil!)
-            }
-            
-            Thread.sleep(forTimeInterval: delay)
-            return .wrongPassword
-        }
-    }
-    
-    private func performPasswordVerification(_ password: String) throws -> Bool {
-        let storedVerificationHash = try KeychainService.getVerificationHash()
-        let storedSalt = try KeychainService.getSalt()
-        
-        let (_, computedHash) = try KDFService.deriveMasterKey(
-            password: password,
-            salt: storedSalt
-        )
-        
-        // 安全的恒时比较，防止时序攻击
-        return secureCompare(storedVerificationHash, computedHash)
-    }
-    
-    private func secureCompare(_ a: Data, _ b: Data) -> Bool {
-        guard a.count == b.count else { return false }
-        
-        var result: UInt8 = 0
-        for i in 0..<a.count {
-            result |= a[i] ^ b[i]
-        }
-        
-        return result == 0
-    }
-}
+> 本节描述**已落地**的主密码失败限流方案（v1.3）。早期草稿里的 `AuthenticationService` 示意代码从未实现，已移除。
+
+**设计边界：三类威胁，只防其中一类**
+
+应用层限速只对 A 类有效。先把边界讲清楚，是为了避免"看起来有防护、实际可一键绕过"的虚假安全感。
+
+| 类别 | 场景 | 应用层限速 | 真正有效的手段 |
+|-----|------|-----------|--------------|
+| **A. 手输猜解** | 拿到已开机但 App 处于锁定态的手机，反复试主密码 | ✅ 有效（本方案主战场） | 失败退避 + 持久化计数 |
+| **B. 离线爆破** | 越狱/取证取出 salt 与加密后的 DEK，上 GPU/ASIC 跑字典 | ❌ 无效，计数器形同虚设 | KDF 成本 + 主密码强度（见 3.3.2） |
+| **C. 生物识别旁路** | 通过 Face ID 或设备密码直接读取生物识别 DEK，绕开主密码 | ❌ 无关 | 生物识别策略（后续版本） |
+
+因此本方案**不为"防篡改计数器"引入额外复杂度**：能改本地存储的攻击者本来就能走 B 类，与其加固计数器，不如把投入放在 KDF 与密码强度上。
+
+**退避策略**
+
+| 连续失败 | 处置 |
+|---------|------|
+| 1–4 次 | 不延迟（留给正常用户偶尔输错的余量），仅提示密码错误 |
+| 5 次 | 冷却 30 秒 |
+| 6 次 | 冷却 60 秒 |
+| 7 次 | 2 分钟 |
+| 8 次 | 5 分钟 |
+| 9 次 | 15 分钟 |
+| ≥ 10 次 | 30 分钟（封顶） |
+
+补充规则：
+
+- **成功即清零**：密码解锁、生物识别、二次验证任一成功，计数与冷却一并清除；
+- **24 小时衰减**：距上次失败超过 24 小时视为新的一轮，避免历史失败长期累积惩罚；
+- **冷却期内不消耗算力**：拦截发生在 PBKDF2 派生**之前**，冻结期间不会白烧每次 0.3–0.8 秒的 CPU；
+- **生物识别失败不计入**：Face ID 的尝试次数由系统自己限制，重复计数只会误伤正常用户。
+
+**拦截点**
+
+三条会校验主密码的链路都汇聚在 `AppState`，闸门统一架在这一层（而不是 ViewModel），否则"重置保险库的二次验证"会变成一条免费的重试通道：
+
+```text
+解锁页         → AuthenticationViewModel.unlock()      → AppState.unlockVault(with:)
+重置保险库验证  → SettingsViewModel.verifyAndReset()    → AppState.verifyMasterPassword(_:)
+生物识别       → BiometricButton                       → AppState.unlockWithBiometrics()
 ```
+
+冷却期内三条链路一律抛 `UnlockThrottledError` 直接返回，不进入密钥派生。
+
+**持久化**
+
+计数存 Keychain（`kSecAttrAccessibleWhenUnlockedThisDeviceOnly`），与 salt、加密 DEK 同一套可访问性：不进备份、不跨设备同步，**杀掉进程或重启 App 都无法绕过**。设备锁定期间读不到时按"从未失败"处理——宁可放行，也不误伤正常用户。
+
+**界面表现**
+
+| 位置 | 表现 |
+|-----|------|
+| 解锁按钮 | 冷却期内置灰不可点（`canUnlock` 增加冷却判断） |
+| 密码框下方 | 常驻一行提示：警告图标 + "尝试次数过多" + 倒计时胶囊（不足 1 分钟显示 `29s`，否则 `5:00`） |
+| 键盘 Go 提交 | 走 toast 提示"尝试次数过多，请稍后再试"，不静默失败 |
+
+倒计时数值每秒由 `AppState` 心跳刷新，界面通过 `@EnvironmentObject` 订阅；空闲时数值不变则不推送，不产生无谓刷新。
+
+**已知缺口（后续版本）**
+
+1. **B 类防护**：KDF 迭代次数目前是硬编码常量，需先把参数写入保险库才能安全升级，再评估迁移 Argon2id；
+2. **主密码强度门槛**：当前只看长度与字符类型，`Password123!` 会被判为 Strong，需接入弱口令与模式检测（另见 3.3.2）；
+3. **C 类旁路**：生物识别 DEK 的 ACL 为 `userPresence`，设备数字密码同样可解，需单独设计强制主密码的策略。
 
 ### 3.4 数据存储设计
 
@@ -1830,7 +1823,7 @@ Week 14:    Phase 8 - 上线准备
 | **密钥管理** | HKDF分层密钥派生 | DEK/KEK/HMAC分离，职责隔离 | NIST SP 800-56C |
 | **密钥存储** | Keychain + Secure Enclave | 硬件安全模块隔离存储 | Apple Security Framework |
 | **内存安全** | 自动擦除 + 内存锁定 | mlock() + 保护页 + 多次覆盖 | 军事级内存安全 |
-| **防暴力破解** | 5次失败指数级延迟 + 锁定 | 恒时比较防止时序攻击 | OWASP推荐 |
+| **防暴力破解** | 连续失败阶梯退避：免罚 4 次，第 5 次起 30s 起跳、30min 封顶 | AppState 三处校验链统一闸门 + Keychain 持久化计数 + 冷却倒计时（详见 3.3.7） | OWASP推荐 |
 | **生物识别** | Secure Enclave绑定验证 | 用户在场要求 + 硬件验证 | LocalAuthentication |
 | **数据完整性** | AAD关联数据认证 | 防止替换和篡改攻击 | AES-GCM |
 | **零泄漏** | 主密钥永不写入磁盘 | 仅内存存在，自动清理 | 零知识架构 |
@@ -2011,6 +2004,7 @@ Week 14:    Phase 8 - 上线准备
 
 | 版本 | 日期 | 更新内容 | 作者 |
 |-----|------|---------|------|
+| 1.3 | 2026-10-18 | 3.3.7 重写为已落地的主密码失败限流方案（威胁分层、退避阶梯、拦截点、持久化、界面表现），移除未实现的示意代码 | Security Team |
 | 1.2 | 2026-06-03 | 新增2FA管理功能完整设计 | Product Team |
 | 1.1 | 2026-06-03 | 增强安全架构，升级至企业级标准 | Security Team |
 | 1.0 | 2026-06-03 | 初稿完成 | Product Team |
