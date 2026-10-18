@@ -84,8 +84,13 @@ class AuthenticationViewModel: ObservableObject {
         passwordStrength.rawValue >= PasswordStrength.medium.rawValue
     }
     
+    /// 解锁冷却剩余秒数：> 0 时界面冻结输入并显示倒计时
+    var cooldownRemaining: TimeInterval {
+        appState.unlockCooldownRemaining
+    }
+
     var canUnlock: Bool {
-        !masterPassword.isEmpty
+        !masterPassword.isEmpty && cooldownRemaining <= 0
     }
     
     init(appState: AppState, toastCenter: ToastCenter) {
@@ -170,6 +175,9 @@ class AuthenticationViewModel: ObservableObject {
         // AES-GCM 认证失败即主密码不对（与备份解密的判断口径一致）
         if let cryptoError = error as? CryptoKitError, case .authenticationFailure = cryptoError {
             return String(localized: "That's not the right master password. Try again.")
+        }
+        if error is UnlockThrottledError {
+            return String(localized: "Too many attempts. Try again later.")
         }
         return String(localized: "Something went wrong. Please try again.")
     }

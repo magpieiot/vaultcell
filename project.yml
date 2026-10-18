@@ -60,6 +60,8 @@ targets:
           - "Resources/VaultCell.icon/**"
       # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
       - path: Shared/AutoFillDomainMatcher.swift
+      - path: Shared/AutoFillCredentialIdentityFactory.swift
+      - path: Shared/AutoFillSharedKeys.swift
     resources:
       - path: VaultCell/Resources
         excludes:
@@ -126,6 +128,10 @@ targets:
       # 图标链路的纯逻辑（Foundation / CryptoKit / CoreGraphics，无 UIKit，可脱离 host app 编译）
       - path: VaultCell/Core/Services/Icons/DomainKey.swift
       - path: VaultCell/Core/Services/Icons/IconSafety.swift
+      # TOTP（RFC 6238）纯逻辑（CryptoKit + Foundation，无 Keychain / UIKit，可脱离 host app 编译）
+      - path: VaultCell/Core/Security/TOTPService.swift
+      # 解锁失败限流的纯策略（仅 Foundation，无 Keychain / UIKit）
+      - path: VaultCell/Domain/Services/UnlockThrottleService.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.tests
@@ -144,6 +150,8 @@ targets:
       - path: VaultCell/Resources/VaultCell.xcdatamodeld
       # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
       - path: Shared/AutoFillDomainMatcher.swift
+      - path: Shared/AutoFillCredentialIdentityFactory.swift
+      - path: Shared/AutoFillSharedKeys.swift
     settings:
       base:
         INFOPLIST_FILE: AutoFillProvider/Info.plist

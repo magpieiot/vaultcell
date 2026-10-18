@@ -275,6 +275,10 @@ struct UnlockView: View {
                 .onSubmit { Task { await viewModel.unlock() } }
             }
 
+            if viewModel.cooldownRemaining > 0 {
+                UnlockCooldownNotice(remaining: viewModel.cooldownRemaining)
+            }
+
             PrimaryActionButton(
                 title: String(localized: "Unlock"),
                 isLoading: viewModel.isLoading,
@@ -596,6 +600,39 @@ private struct InlineError: View {
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// 解锁冷却提示：说明 + 倒计时
+///
+/// 倒计时单独成块，避开"数字插在句子中间"的语序问题（中文要说"30 秒后重试"，英文是"in 30s"）。
+private struct UnlockCooldownNotice: View {
+    let remaining: TimeInterval
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "timer")
+                .font(.footnote)
+            Text(String(localized: "Too many attempts"))
+                .font(.footnote)
+            Spacer(minLength: 0)
+            Text(verbatim: Self.countdownText(remaining))
+                .font(.footnote.weight(.semibold).monospacedDigit())
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(Color.warningColor.opacity(0.14))
+                .clipShape(Capsule())
+        }
+        .foregroundColor(.warningColor)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// 剩余时间：不足 1 分钟直接显示秒数，否则按 分:秒
+    private static func countdownText(_ remaining: TimeInterval) -> String {
+        let total = Int(ceil(remaining))
+        guard total >= 60 else { return "\(total)s" }
+        return String(format: "%d:%02d", total / 60, total % 60)
     }
 }
 

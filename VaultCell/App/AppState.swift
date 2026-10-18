@@ -34,8 +34,20 @@ class AppState: ObservableObject {
     /// App 进入非活跃状态时置为 `true`，在界面上覆盖半透明遮罩，
     /// 防止系统截取的后台快照暴露敏感信息；回到活跃状态时置为 `false`。
     @Published var shouldShowPrivacyOverlay: Bool = false
-    
+
+    /// 解锁冷却剩余秒数（> 0 表示界面应冻结输入）
+    ///
+    /// 平行于 `isLocked`：冻结的是"试密码"这件事，不是保险库的锁定状态，
+    /// 因此不会触发 `clearSensitiveData()`。由冷却计时器每秒刷新。
+    @Published var unlockCooldownRemaining: TimeInterval = 0
+
     // MARK: - 私有服务依赖
+
+    /// 主密码解锁失败限流：连续输错后的阶梯退避
+    private var unlockThrottle: UnlockThrottleService
+
+    /// 冷却倒计时的驱动任务
+    private var cooldownTicker: Task<Void, Never>?
     
     /// 保险库锁定服务，负责加密/解密和锁定相关操作
     private let lockService: AppLockService
@@ -67,7 +79,14 @@ class AppState: ObservableObject {
         self.lockService = lockService
         self.keychainService = keychainService
         self.appCatalogService = appCatalogService
-        
+        self.unlockThrottle = UnlockThrottleService(
+            store: KeychainUnlockThrottleStore(keychain: keychainService)
+        )
+
+        // 恢复上次遗留的冷却：杀掉进程不该绕过限流
+        unlockCooldownRemaining = unlockThrottle.remainingCooldown
+        startCooldownTicker()
+
         // 启动时检查是否存在已有保险库
         checkExistingVault()
         // 订阅密码条目变更，驱动 AutoFill 凭据身份同步（自动填充建议的前置条件）
@@ -139,6 +158,9 @@ class AppState: ObservableObject {
     ///
     /// - Parameter masterPassword: 用户输入的主密码
     func unlockVault(with masterPassword: String) async throws {
+        // 限流闸门：冷却期内直接挡下，不再白烧一次 PBKDF2
+        try throwIfUnlockThrottled()
+
         let lockService = self.lockService
         
         // 使用 continuation 将同步回调封装为 async/await 风格
@@ -150,11 +172,13 @@ class AppState: ObservableObject {
                     // 回到主线程更新UI状态并上报登录事件
                     DispatchQueue.main.async { @MainActor in
                         self.authenticate()
+                        self.noteUnlockSucceeded()
                         continuation.resume()
                     }
                 } catch {
                     // 回到主线程抛出错误
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { @MainActor in
+                        self.noteUnlockFailed()
                         continuation.resume(throwing: error)
                     }
                 }
@@ -170,17 +194,22 @@ class AppState: ObservableObject {
     /// - Parameter masterPassword: 用户输入的主密码
     /// - Throws: 主密码错误或解密失败时抛出对应错误
     func verifyMasterPassword(_ masterPassword: String) async throws {
+        // 与解锁共用同一道闸门：否则二次验证界面就是一条免费的重试通道
+        try throwIfUnlockThrottled()
+
         let lockService = self.lockService
 
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     try lockService.unlockVault(with: masterPassword)
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { @MainActor in
+                        self.noteUnlockSucceeded()
                         continuation.resume()
                     }
                 } catch {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.async { @MainActor in
+                        self.noteUnlockFailed()
                         continuation.resume(throwing: error)
                     }
                 }
@@ -194,6 +223,9 @@ class AppState: ObservableObject {
     ///
     /// - Throws: 如果生物识别不可用或验证失败，抛出对应错误
     func unlockWithBiometrics() async throws {
+        // 冷却期内同样不放行：否则冻住主密码输入后仍可改走生物识别
+        try throwIfUnlockThrottled()
+
         // 检查生物识别是否可用
         guard BiometricService.shared.isBiometricAvailable else {
             throw NSError(domain: "VaultCell", code: -1, userInfo: [NSLocalizedDescriptionKey: "Biometric authentication unavailable"])
@@ -207,10 +239,12 @@ class AppState: ObservableObject {
         isPerformingBiometricAuth = true
 
         // 调用锁定服务进行生物识别验证
+        // 失败不计入限流：Face ID 的尝试次数由系统自己管着，重复计数只会误伤
         try lockService.unlockWithBiometrics()
 
         // 更新状态并上报登录事件
         authenticate()
+        noteUnlockSucceeded()
     }
     
     // MARK: - 公开方法 - 锁定与注销
@@ -233,6 +267,45 @@ class AppState: ObservableObject {
         clearSensitiveData()
     }
     
+    // MARK: - 解锁限流（防暴力破解）
+
+    /// 冷却期内的统一拦截点：三条校验链（密码解锁 / 二次验证 / 生物识别）都先过这道闸
+    private func throwIfUnlockThrottled() throws {
+        guard unlockThrottle.remainingCooldown <= 0 else { throw UnlockThrottledError() }
+    }
+
+    /// 证明身份成功：清零失败计数与冷却
+    private func noteUnlockSucceeded() {
+        unlockThrottle.recordSuccess()
+        stopCooldownTicker()
+        unlockCooldownRemaining = 0
+    }
+
+    /// 记录一次失败，并进入（或延长）冷却
+    private func noteUnlockFailed() {
+        unlockCooldownRemaining = unlockThrottle.recordFailure()
+        startCooldownTicker()
+    }
+
+    /// 每秒刷新 `unlockCooldownRemaining`，让界面上的倒计时自己走完
+    private func startCooldownTicker() {
+        guard unlockCooldownRemaining > 0, cooldownTicker == nil else { return }
+        cooldownTicker = Task { [weak self] in
+            while let self, !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                let remaining = self.unlockThrottle.remainingCooldown
+                self.unlockCooldownRemaining = remaining
+                if remaining <= 0 { break }
+            }
+            self?.stopCooldownTicker()
+        }
+    }
+
+    private func stopCooldownTicker() {
+        cooldownTicker?.cancel()
+        cooldownTicker = nil
+    }
+    
     // MARK: - 公开方法 - 应用生命周期
     
     /// 是否正处于后台，用于区分"从后台恢复"与"应用内短暂非活跃"
@@ -248,10 +321,42 @@ class AppState: ObservableObject {
         // 场景切换在此时完成，后续的 .inactive 可正常触发快照遮罩
         isPerformingBiometricAuth = false
         checkAutoLock()
+        // 后台期间时钟照走，回到前台按当前时间重算冷却
+        unlockCooldownRemaining = unlockThrottle.remainingCooldown
+        startCooldownTicker()
+        consumeAutoFillSavePing()
         // 兜底同步：系统可能在重装、恢复备份或用户切换自动填充开关后清空 identity
         if isAuthenticated && !isLocked {
             synchronizeAutoFillIdentities()
         }
+    }
+
+    /// 消费「AutoFill 扩展保存过密码」的标记。
+    ///
+    /// 扩展在 Safari / App 的登录流程里保存密码时直接写共享数据库，主 App 的
+    /// 列表不会自动感知；这里在回到前台时比对 App Group 里的时间戳，发现新写入
+    /// 就广播一次变更（列表重载 + 身份同步）。未解锁时同样要广播列表重载，
+    /// 否则用户解锁后看到的仍是旧列表。
+    private func consumeAutoFillSavePing() {
+        let defaults = UserDefaults.standard
+        let shared = UserDefaults(suiteName: Self.appGroupIdentifier)
+        let savedAt = shared?.double(forKey: AutoFillSharedKeys.savedCredentialAt) ?? 0
+        let consumedAt = defaults.double(forKey: VaultKey.consumedAutoFillSaveAt)
+
+        guard savedAt > consumedAt else { return }
+        defaults.set(savedAt, forKey: VaultKey.consumedAutoFillSaveAt)
+        NSLog("AutoFill: 检测到扩展保存的新密码，刷新列表与身份同步")
+        NotificationCenter.default.post(name: .autoFillDidSaveCredential, object: nil)
+        NotificationCenter.default.post(name: .passwordEntriesDidChange, object: nil)
+    }
+
+    /// 当前构建变体对应的 App Group（与扩展侧 AutoFillCredentialStore 保持一致）
+    private static var appGroupIdentifier: String {
+        #if CN
+        return "group.com.magpie.vaultcell.cn.shared"
+        #else
+        return "group.com.magpie.vaultcell.shared"
+        #endif
     }
     
     /// 应用即将进入非活跃状态时的处理

@@ -44,6 +44,8 @@ enum VaultKey {
     static let biometricDek = "vaultcell.biometricDek"
     static let hasVault = "vaultcell.hasVault"
     static let vaultInstalledMarker = "vaultcell.vaultInstalledMarker"
+    /// 主密码解锁失败限流状态（存 Keychain，keychainService 的 account 名）
+    static let unlockThrottle = "vaultcell.unlockThrottle"
     static let settings = "vaultcell.settings"
     static let biometricEnabled = "vaultcell.biometricEnabled"
     static let autoLockInterval = "vaultcell.autoLockInterval"
@@ -60,6 +62,8 @@ enum VaultKey {
     /// 是否已看过"密码库就绪"首次填充引导页（一次性决策点标记）
     static let hasSeenVaultSetupGuide = "vaultcell.hasSeenVaultSetupGuide"
     static let appLanguage = "vaultcell.appLanguage"
+    /// 主 App 已消费过的「扩展保存密码」时间戳（对应 App Group 中的 AutoFillSharedKeys.savedCredentialAt）
+    static let consumedAutoFillSaveAt = "vaultcell.consumedAutoFillSaveAt"
     /// 是否允许抓取远程网站图标（默认值按 App Store 地区决定，首启落盘一次）
     static let iconAutoFetch = "vaultcell.iconAutoFetch"
     /// 地区默认值是否已落盘（只写一次，之后完全尊重用户在设置页的选择）
