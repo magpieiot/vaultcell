@@ -16,7 +16,7 @@
 /// 同步策略：
 /// - 全量 replace，保证与数据库最终一致（覆盖新增、修改、删除、回收站软删）；
 /// - 只读取明文元数据（id / siteURL / username），不解密密码，
-///   因此同步不依赖保险库解锁状态；
+///   因此同步不依赖密码库解锁状态；
 /// - 用户未在"设置 → 通用 → 自动填充与密码"中启用 VaultCell 时，
 ///   identity store 处于未启用状态，此时静默跳过，不报错也不打扰用户。
 /// ------------------------------------------------------------------
@@ -29,6 +29,11 @@ extension Notification.Name {
     /// 密码条目发生增删改（含软删除与回收站物理清理）后发出。
     /// 供 AutoFill 身份同步等下游消费者做最终一致刷新。
     static let passwordEntriesDidChange = Notification.Name("VaultCell.passwordEntriesDidChange")
+
+    /// AutoFill 扩展进程通过「保存密码」流程写入了新条目。
+    /// 扩展与主 App 是独立进程，主 App 回到前台比对 App Group 时间戳后发出，
+    /// 供密码列表等界面重新加载（列表本身感知不到跨进程写入）。
+    static let autoFillDidSaveCredential = Notification.Name("VaultCell.autoFillDidSaveCredential")
 }
 
 /// 把所有密码条目注册为系统可识别的自动填充身份（单例）
@@ -223,23 +228,15 @@ final class AutoFillIdentityService {
             let username = entry.username.trimmingCharacters(in: .whitespacesAndNewlines)
             // 无用户名或无站点 URL 的条目系统无法匹配，跳过
             guard !username.isEmpty else { continue }
-            let identifiers = Self.serviceIdentifiers(from: entry.siteURL)
-            guard !identifiers.isEmpty else { continue }
+            // 身份构造走两端共享的实现：扩展保存密码后补登身份用的是同一份逻辑
+            let identities = AutoFillCredentialIdentityFactory.identities(
+                entryID: entry.id,
+                username: username,
+                siteURL: entry.siteURL
+            )
+            guard !identities.isEmpty else { continue }
 
-            let group = identifiers.enumerated().map { index, identifier in
-                // 同一条目注册多条身份时 recordIdentifier 必须唯一：
-                // 系统按它标识"一条凭据"，重复会导致部分身份被丢弃。
-                // 扩展侧取 "#" 前的部分即可还原条目 ID。
-                ASPasswordCredentialIdentity(
-                    serviceIdentifier: identifier,
-                    user: username,
-                    // 记录条目 ID：便于扩展侧按 recordIdentifier 精确定位
-                    recordIdentifier: index == 0
-                        ? entry.id.uuidString
-                        : "\(entry.id.uuidString)#\(index)"
-                )
-            }
-            groups.append(EntryGroup(entry: entry, identities: group))
+            groups.append(EntryGroup(entry: entry, identities: identities))
         }
 
         let totalCount = groups.reduce(0) { $0 + $1.identities.count }
@@ -300,53 +297,6 @@ final class AutoFillIdentityService {
                             budget: budget, droppedEntryCount: droppedEntryCount)
     }
 
-    /// 一条条目要注册的全部 serviceIdentifier。
-    ///
-    /// 真机实测（iOS 26）得到的匹配结论：
-    /// - 用户名域的"登录建议 sheet"只认**精确主机**命中（条目存 apex、页面在子域时不弹）；
-    /// - 父域（apex）身份仍能覆盖子域页面的**密码域键盘建议**；
-    /// - 条目存 apex 时页面常落在 `www.` 主机上，需要保留 www 变体；
-    /// - 带 path 的原样 URL 没有必要：host 级即可命中 Safari 深层登录页。
-    ///
-    /// 因此每条目只登记**两个主机**（各 domain/URL 两型，共 4 条身份）：
-    /// 子域条目 = 精确主机 + 父域；apex 条目 = 精确主机 + www 变体；
-    /// IP / `.android` 这类无法推导变体的只有自身（2 条）。
-    private static func serviceIdentifiers(from siteURL: String?) -> [ASCredentialServiceIdentifier] {
-        guard let host = AutoFillDomainMatcher.hostname(from: siteURL ?? "") else { return [] }
-        // 单标签（如把应用名 "app" 填进 URL 栏）不是可路由站点，注册无意义
-        guard host.contains(".") else { return [] }
-
-        var hosts: [String] = [host]
-        if AutoFillDomainMatcher.isIPv4(host) {
-            // IP 地址没有 www 变体，也不能按域名推导父域（会产出 "0.37" 这类垃圾标识）
-        } else if host.hasSuffix(".android") {
-            // Android 包名（如 com.instagram.android）被误填进 URL：保留原样但不做变体
-        } else if let parent = AutoFillDomainMatcher.registrableDomain(of: host) {
-            // 子域条目：补父域，让同站其它子域的页面至少还能拿到密码域建议
-            hosts.append(parent)
-        } else if !host.hasPrefix("www.") {
-            // apex 条目：hostname 已把 www 剥掉，这里补回来覆盖"页面在 www"的常见场景
-            hosts.append("www." + host)
-        }
-
-        var result: [ASCredentialServiceIdentifier] = []
-        var seen = Set<String>()
-
-        func append(identifier: String, type: ASCredentialServiceIdentifier.IdentifierType) {
-            let key = "\(type == .domain ? "d" : "u")|\(identifier)"
-            guard seen.insert(key).inserted else { return }
-            result.append(ASCredentialServiceIdentifier(identifier: identifier, type: type))
-        }
-
-        for candidate in hosts {
-            // domain 型覆盖 App 侧，URL 型覆盖 Safari 侧（只留 scheme + 主机，不带路径）
-            append(identifier: candidate, type: .domain)
-            append(identifier: "https://\(candidate)", type: .URL)
-        }
-
-        return result
-    }
-
-    // 域名解析/层级判定统一使用共享的 AutoFillDomainMatcher（与扩展侧同源），
-    // 避免注册端与匹配端推导不一致导致键盘建议错位。
+    // serviceIdentifier 的推导统一使用两端共享的 AutoFillCredentialIdentityFactory
+    // （与扩展侧保存密码后补登身份同源），避免注册端与匹配端推导不一致导致键盘建议错位。
 }

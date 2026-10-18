@@ -418,3 +418,227 @@ struct EvaluateTests {
         #expect(report?.usages.count == 1)
     }
 }
+
+// MARK: - 识别 detect(_:phoneEvidence:)
+
+@Suite("识别 detect(_:phoneEvidence:)")
+struct DetectTests {
+
+    @Test("邮箱 → (.email, 归一化键)")
+    func email() {
+        let result = IdentityUsageAuditService.detect("Foo@Example.COM", phoneEvidence: .inferred)
+        #expect(result?.kind == .email)
+        #expect(result?.key == "foo@example.com")
+    }
+
+    @Test("明确手机号 → (.phone, 纯数字键)")
+    func explicitPhone() {
+        let result = IdentityUsageAuditService.detect("+86 138-0013-8000", phoneEvidence: .explicit)
+        #expect(result?.kind == .phone)
+        #expect(result?.key == "8613800138000")
+    }
+
+    @Test("推断模式下 11 位大陆手机号仍被识别")
+    func inferredMainlandMobile() {
+        let result = IdentityUsageAuditService.detect("13800138000", phoneEvidence: .inferred)
+        #expect(result?.kind == .phone)
+        #expect(result?.key == "13800138000")
+    }
+
+    @Test("推断模式下 QQ 号被拒（返回 nil）")
+    func inferredRejectsQQ() {
+        #expect(IdentityUsageAuditService.detect("123456789", phoneEvidence: .inferred) == nil)
+    }
+
+    @Test("明确模式下 QQ 号作为手机号保留（返回键）")
+    func explicitKeepsDigits() {
+        let result = IdentityUsageAuditService.detect("123456789", phoneEvidence: .explicit)
+        #expect(result?.kind == .phone)
+        #expect(result?.key == "123456789")
+    }
+
+    @Test("普通用户名 / 日期 / IP 在推断模式下返回 nil")
+    func inferredRejectsNonPhone() {
+        #expect(IdentityUsageAuditService.detect("notanemail", phoneEvidence: .inferred) == nil)
+        #expect(IdentityUsageAuditService.detect("2026-09-30", phoneEvidence: .inferred) == nil)
+        #expect(IdentityUsageAuditService.detect("192.168.1.1", phoneEvidence: .inferred) == nil)
+    }
+
+    @Test("空输入返回 nil")
+    func emptyReturnsNil() {
+        #expect(IdentityUsageAuditService.detect("   ", phoneEvidence: .explicit) == nil)
+    }
+}
+
+// MARK: - 替代找回通道（hasAlternativeRecovery）
+
+/// 验证「唯一密码重置通道」是否被正确降级：存在与换号无关的 2FA 时，
+/// 该重置通道不再是致命依赖（critical → high）。
+@Suite("替代找回通道 hasAlternativeRecovery")
+struct AlternativeRecoveryTests {
+
+    private let service = IdentityUsageAuditService()
+
+    private func makeEntry(
+        bundleEmailAddress: String? = nil,
+        isPasswordResetEmail: Bool = false,
+        twoFactorConfigs: [TwoFactorConfig] = []
+    ) -> PasswordEntry {
+        PasswordEntry(
+            siteName: "Example",
+            username: "u",
+            password: "pw",
+            bundleEmailAddress: bundleEmailAddress,
+            isPasswordResetEmail: isPasswordResetEmail,
+            twoFactorConfigs: twoFactorConfigs
+        )
+    }
+
+    /// TOTP 这类与换号无关的 2FA → 提供替代通道 → high
+    @Test("TOTP 作为替代通道 → high")
+    func totpIsAlternative() {
+        let entry = makeEntry(
+            bundleEmailAddress: "alice@example.com",
+            isPasswordResetEmail: true,
+            twoFactorConfigs: [TwoFactorConfig(type: .totp, isEnabled: true)]
+        )
+        let usage = service.scan(entries: [entry]).first?.usages.first
+        #expect(usage?.roles.contains(.recovery) == true)
+        #expect(usage?.risk == .high)
+    }
+
+    /// 硬件密钥同样与换号无关 → high
+    @Test("硬件密钥作为替代通道 → high")
+    func hardwareIsAlternative() {
+        let entry = makeEntry(
+            bundleEmailAddress: "alice@example.com",
+            isPasswordResetEmail: true,
+            twoFactorConfigs: [TwoFactorConfig(type: .hardware, isEnabled: true)]
+        )
+        #expect(service.scan(entries: [entry]).first?.usages.first?.risk == .high)
+    }
+
+    /// 邮件 2FA 绑定到「同一个」邮箱 → 不算另一条通道 → 仍 critical
+    @Test("邮件 2FA 绑定本邮箱 → 仍 critical")
+    func email2FASameBindingStaysCritical() {
+        let entry = makeEntry(
+            bundleEmailAddress: "alice@example.com",
+            isPasswordResetEmail: true,
+            twoFactorConfigs: [TwoFactorConfig(type: .email, boundValue: "alice@example.com", isEnabled: true)]
+        )
+        #expect(service.scan(entries: [entry]).first?.usages.first?.risk == .critical)
+    }
+
+    /// 短信 2FA 绑定到「另一个」手机号 → 构成另一条通道 → high
+    @Test("短信 2FA 绑定其他号码 → high")
+    func sms2FADifferentBindingIsHigh() {
+        let entry = makeEntry(
+            bundleEmailAddress: "alice@example.com",
+            isPasswordResetEmail: true,
+            twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "13900139000", isEnabled: true)]
+        )
+        #expect(service.scan(entries: [entry]).first?.usages.first?.risk == .high)
+    }
+}
+
+// MARK: - IdentityReport 汇总属性
+
+@Suite("IdentityReport 汇总属性")
+struct IdentityReportAggregateTests {
+
+    private func usage(risk: IdentityRiskLevel, entryID: UUID = UUID()) -> IdentityUsage {
+        IdentityUsage(
+            entryID: entryID,
+            siteName: "Site",
+            username: "u",
+            roles: [.login],
+            twoFactorTypes: [],
+            risk: risk
+        )
+    }
+
+    @Test("risk 取所有 usage 中的最高等级")
+    func riskIsMax() {
+        let report = IdentityReport(
+            id: "k", kind: .email, value: "k",
+            usages: [usage(risk: .low), usage(risk: .high), usage(risk: .medium)]
+        )
+        #expect(report.risk == .high)
+    }
+
+    @Test("空 usages 时 risk 为 low")
+    func riskEmptyIsLow() {
+        let report = IdentityReport(id: "k", kind: .email, value: "k", usages: [])
+        #expect(report.risk == .low)
+    }
+
+    @Test("blockingUsages 仅含 high / critical")
+    func blockingUsagesFilter() {
+        let report = IdentityReport(
+            id: "k", kind: .email, value: "k",
+            usages: [usage(risk: .low), usage(risk: .high), usage(risk: .critical), usage(risk: .medium)]
+        )
+        #expect(report.blockingUsages.count == 2)
+        #expect(report.blockingUsages.allSatisfy { $0.risk >= .high })
+    }
+
+    @Test("criticalCount 只数 critical")
+    func criticalCount() {
+        let report = IdentityReport(
+            id: "k", kind: .email, value: "k",
+            usages: [usage(risk: .critical), usage(risk: .critical), usage(risk: .high)]
+        )
+        #expect(report.criticalCount == 2)
+    }
+}
+
+// MARK: - 扫描排序
+
+@Suite("扫描排序 scan 顺序")
+struct ScanOrderTests {
+
+    private let service = IdentityUsageAuditService()
+
+    private func makeEntry(
+        siteName: String,
+        bundleEmailAddress: String? = nil,
+        bundlePhoneNumber: String? = nil,
+        isPasswordResetEmail: Bool = false,
+        username: String = ""
+    ) -> PasswordEntry {
+        PasswordEntry(
+            siteName: siteName,
+            username: username,
+            password: "pw",
+            bundlePhoneNumber: bundlePhoneNumber,
+            bundleEmailAddress: bundleEmailAddress,
+            isPasswordResetEmail: isPasswordResetEmail
+        )
+    }
+
+    @Test("风险高的报告排在前面")
+    func higherRiskFirst() {
+        // 邮箱是唯一重置通道 → critical；手机号仅作登录名 → medium
+        let entries = [
+            makeEntry(siteName: "A", bundlePhoneNumber: "13800138000"),
+            makeEntry(siteName: "B", bundleEmailAddress: "alice@example.com", isPasswordResetEmail: true),
+        ]
+        let reports = service.scan(entries: entries)
+        #expect(reports.count == 2)
+        #expect(reports[0].risk == .critical)
+        #expect(reports[1].risk == .medium)
+    }
+
+    @Test("同风险按 usage 数量降序")
+    func sameRiskByUsageCount() {
+        // 两个邮箱都仅作登录名（medium）；一个绑定两条 entry，另一个一条
+        let multi = makeEntry(siteName: "Multi", bundleEmailAddress: "shared@example.com")
+        let single = makeEntry(siteName: "Single", bundleEmailAddress: "shared@example.com")
+        let other = makeEntry(siteName: "Other", bundleEmailAddress: "other@example.com")
+        let reports = service.scan(entries: [multi, single, other])
+        let shared = reports.first { $0.id == "shared@example.com" }
+        let otherReport = reports.first { $0.id == "other@example.com" }
+        #expect(shared?.usages.count == 2)
+        #expect(otherReport?.usages.count == 1)
+    }
+}

@@ -306,7 +306,7 @@ final class VaultSetupViewModel: ObservableObject {
 /// "密码库就绪"首次填充引导页
 ///
 /// 设计语言：与 Onboarding / 认证页一致的浅色空气感背景、渐变图标与错峰入场动效。
-/// signature 元素为"轨道环绕"：中心保险库图标四周，四个条目小圆沿椭圆轨道缓慢公转，
+/// signature 元素为"轨道环绕"：中心密码库图标四周，四个条目小圆沿椭圆轨道缓慢公转，
 /// 隐喻"密码库在等待第一批住户"。
 struct VaultSetupView: View {
     /// 引导完成回调（跳过 / 首个条目保存 / 导入恢复成功后触发）
@@ -645,7 +645,7 @@ private struct SetupCardEntrance: ViewModifier {
 
 // MARK: - 轨道环绕主图标（signature）
 
-/// 中心保险库渐变图标 + 四个条目小圆沿椭圆轨道缓慢公转。
+/// 中心密码库渐变图标 + 四个条目小圆沿椭圆轨道缓慢公转。
 /// 卫星四色取自 Onboarding 四页强调色：蓝 / 青绿 / 紫 / 橙。
 private struct OrbitingVaultHero: View {
     let reduceMotion: Bool
@@ -921,7 +921,7 @@ private struct BackupPasswordPromptView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
-                    // 说明：备份密码独立于当前保险库主密码
+                    // 说明：备份密码独立于当前密码库主密码
                     Label {
                         Text(String(localized: "Enter the password used to encrypt this backup."))
                             .font(.subheadline)

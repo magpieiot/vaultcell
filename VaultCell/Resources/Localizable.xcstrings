@@ -1007,7 +1007,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 个条目通过 OAuth 登录，其安全性依赖于保险库中的源账户。"
+            "value" : "%lld 个条目通过 OAuth 登录，其安全性依赖于密码库中的源账户。"
           }
         }
       }
@@ -5171,7 +5171,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "创建保险库"
+            "value" : "创建密码库"
           }
         }
       }
@@ -7227,7 +7227,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "被标记为已泄露的条目会拉低自身评分并降低保险库总分。"
+            "value" : "被标记为已泄露的条目会拉低自身评分并降低密码库总分。"
           }
         }
       }
@@ -8229,7 +8229,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "生成测试保险库"
+            "value" : "生成测试密码库"
           }
         }
       }
@@ -8269,7 +8269,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "生成测试保险库？"
+            "value" : "生成测试密码库？"
           }
         }
       }
@@ -8310,7 +8310,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在生成测试保险库…"
+            "value" : "正在生成测试密码库…"
           }
         }
       }
@@ -12075,7 +12075,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未在保险库中找到 %@（%@）的 OAuth 源条目，已按降级规则评分。"
+            "value" : "未在密码库中找到 %@（%@）的 OAuth 源条目，已按降级规则评分。"
           }
         }
       }
@@ -14981,7 +14981,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置保险库"
+            "value" : "重置密码库"
           }
         }
       }
@@ -15021,7 +15021,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置保险库 / 清除钥匙串"
+            "value" : "重置密码库 / 清除钥匙串"
           }
         }
       }
@@ -15061,7 +15061,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重置保险库？"
+            "value" : "重置密码库？"
           }
         }
       }
@@ -16441,7 +16441,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "短小、可预测或保护不足的密码会拉低保险库平均分。"
+            "value" : "短小、可预测或保护不足的密码会拉低密码库平均分。"
           }
         }
       }
@@ -17654,7 +17654,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这些模式是导致保险库评分不高的主要原因。"
+            "value" : "这些模式是导致密码库评分不高的主要原因。"
           }
         }
       }
@@ -17998,7 +17998,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这将清除钥匙串和本地保险库数据。此操作无法撤销。"
+            "value" : "这将清除钥匙串和本地密码库数据。此操作无法撤销。"
           }
         }
       }
@@ -19336,7 +19336,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用创建流程添加您的第一个保险库项目。"
+            "value" : "使用创建流程添加您的第一个密码库项目。"
           }
         }
       }
@@ -19587,7 +19587,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保险库"
+            "value" : "密码库"
           }
         }
       }
@@ -19627,7 +19627,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保险库分类"
+            "value" : "密码库分类"
           }
         }
       }
@@ -19707,7 +19707,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保险库健康状况一目了然"
+            "value" : "密码库健康状况一目了然"
           }
         }
       }
@@ -20456,7 +20456,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的主密码加密整个保险库且无法恢复。请妥善保管。"
+            "value" : "您的主密码加密整个密码库且无法恢复。请妥善保管。"
           }
         }
       }
@@ -20496,7 +20496,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "确认此操作需要主密码。这将清除钥匙串与本地保险库数据。"
+            "value" : "确认此操作需要主密码。这将清除钥匙串与本地密码库数据。"
           }
         }
       }
@@ -20536,7 +20536,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的随身密码保险库"
+            "value" : "你的随身密码库"
           }
         }
       }
@@ -20576,7 +20576,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库存在多个高风险模式。请尽快处理最优先项。"
+            "value" : "您的密码库存在多个高风险模式。请尽快处理最优先项。"
           }
         }
       }
@@ -20616,7 +20616,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库处于严重风险中。请立即从已泄露与重复使用的密码入手。"
+            "value" : "您的密码库处于严重风险中。请立即从已泄露与重复使用的密码入手。"
           }
         }
       }
@@ -20656,7 +20656,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库状态极佳。请继续关注重复使用与长期未更换的密码。"
+            "value" : "您的密码库状态极佳。请继续关注重复使用与长期未更换的密码。"
           }
         }
       }
@@ -20696,7 +20696,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "保险库已就绪"
+            "value" : "密码库已就绪"
           }
         }
       }
@@ -20736,7 +20736,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库整体很强，但仍有一些薄弱点拖低分数。"
+            "value" : "您的密码库整体很强，但仍有一些薄弱点拖低分数。"
           }
         }
       }
@@ -20776,7 +20776,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "您的保险库需要关注。修复标出的问题可快速提升分数。"
+            "value" : "您的密码库需要关注。修复标出的问题可快速提升分数。"
           }
         }
       }

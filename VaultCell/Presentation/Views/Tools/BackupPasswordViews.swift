@@ -27,7 +27,7 @@ struct BackupExportPasswordView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
-                    // 说明：备份密码独立于保险库主密码
+                    // 说明：备份密码独立于密码库主密码
                     Label {
                         Text(String(localized: "Set a password to encrypt this backup file. It is separate from your master password."))
                             .font(.subheadline)
@@ -154,7 +154,7 @@ struct BackupRestorePasswordView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
-                    // 说明：备份密码独立于当前保险库主密码
+                    // 说明：备份密码独立于当前密码库主密码
                     Label {
                         Text(String(localized: "Enter the password used to encrypt this backup."))
                             .font(.subheadline)

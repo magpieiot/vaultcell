@@ -306,7 +306,7 @@ struct UnlockView: View {
     }
 }
 
-// MARK: - 创建保险库视图
+// MARK: - 创建密码库视图
 
 struct CreateVaultView: View {
     @ObservedObject var viewModel: AuthenticationViewModel

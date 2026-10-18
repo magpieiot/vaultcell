@@ -39,6 +39,12 @@
 				<true/>
 				<key>SupportsCredentialExchange</key>
 				<true/>
+				<!-- iOS 26.2+ 的"保存密码"入口（performWithoutUserInteractionIfPossible(savePasswordRequest:)
+				     / prepareInterface(for: ASSavePasswordRequest)）的前置声明。
+				     缺失时系统不会把登录后的保存请求路由到本扩展：用户在 Safari 登录
+				     只会看到 iCloud 钥匙串的提示，VaultCell 的保存确认界面永不出现。 -->
+				<key>SupportsSavePasswordCredentials</key>
+				<true/>
 				<key>SupportedCredentialExchangeVersions</key>
 				<array>
 					<string>1.0</string>

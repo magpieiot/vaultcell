@@ -63,6 +63,30 @@ struct CredentialSummary: Identifiable, Hashable {
     let username: String
 }
 
+/// 系统保存密码请求映射出的待写入凭据。
+/// 字段刻意与 `CDPasswordEntry` 的必填项对齐：Core Data 里
+/// `siteName / username / encryptedPassword / categoryID / createdAt / updatedAt`
+/// 均非 optional 且无默认值，写入前必须全部赋值。
+struct CredentialSaveDraft {
+    let siteName: String
+    let siteURL: String?
+    let username: String
+    let password: String
+}
+
+/// 保存结果：区分新建与覆盖更新，供界面给出准确提示
+enum CredentialSaveOutcome {
+    case created(UUID)
+    case updated(UUID)
+
+    /// 涉及条目的 ID（新建为新建条目，更新为被覆盖的条目）
+    var entryID: UUID {
+        switch self {
+        case .created(let id), .updated(let id): return id
+        }
+    }
+}
+
 /// AutoFill 扩展的凭据读取器（单例）
 final class AutoFillCredentialStore {
     static let shared = AutoFillCredentialStore()
@@ -246,6 +270,163 @@ final class AutoFillCredentialStore {
         }
     }
 
+    // MARK: - 凭据保存
+
+    /// 查找与待保存凭据「同站点 + 同用户名」的已有条目。
+    ///
+    /// 只读取明文元数据（不解密），因此**不需要解锁**：界面可以在弹 Face ID
+    /// 之前就告诉用户这次是"新建"还是"覆盖更新"。
+    /// - Returns: 命中条目的 ID；无匹配时 nil
+    func existingEntryID(for draft: CredentialSaveDraft) throws -> UUID? {
+        let service = draft.siteURL ?? ""
+        return try perform { context in
+            let request = NSFetchRequest<CDPasswordEntry>(entityName: "CDPasswordEntry")
+            // 与列表一致：回收站中的条目不参与匹配
+            request.predicate = NSPredicate(format: "deletedAt == nil && username ==[c] %@", draft.username)
+            let candidates = try context.fetch(request)
+            return candidates.first {
+                AutoFillDomainMatcher.matches(service: service, siteURL: $0.siteURL ?? "")
+            }?.id
+        }
+    }
+
+    /// 写入一条凭据：已存在同站点 + 同用户名的条目时更新其密码，否则新建。
+    ///
+    /// 需要已解锁（密码要用 DEK 加密后落库）。写入发生在扩展进程里，直接打开
+    /// 与主 App 同一份 SQLite，因此主 App 下次读库即可看到新条目，无需同步机制。
+    /// - Returns: 新建 / 更新后的条目 ID
+    func saveCredential(_ draft: CredentialSaveDraft) throws -> CredentialSaveOutcome {
+        guard let dek = currentDek() else {
+            throw AutoFillCredentialStoreError.vaultLocked
+        }
+        guard let encryptedPassword = Self.encryptPassword(draft.password, using: dek) else {
+            throw AutoFillCredentialStoreError.invalidData
+        }
+
+        let service = draft.siteURL ?? ""
+
+        // 主 App 可能正持有同一个 SQLite 文件的连接（列表加载、身份同步），
+        // 扩展撞上去会被 SQLite 拒绝（SQLITE_BUSY / database is locked）。
+        // 这类失败是瞬时的，整轮重建对象图重试即可；非瞬时错误立刻抛出。
+        var lastError: Error?
+        for attempt in 0..<Self.saveAttempts {
+            do {
+                let outcome: CredentialSaveOutcome = try perform { context in
+                    let request = NSFetchRequest<CDPasswordEntry>(entityName: "CDPasswordEntry")
+                    request.predicate = NSPredicate(format: "deletedAt == nil && username ==[c] %@", draft.username)
+                    let candidates = try context.fetch(request)
+
+                    if let existing = candidates.first(where: {
+                        AutoFillDomainMatcher.matches(service: service, siteURL: $0.siteURL ?? "")
+                    }) {
+                        existing.username = draft.username
+                        existing.encryptedPassword = encryptedPassword
+                        if draft.siteURL?.isEmpty == false { existing.siteURL = draft.siteURL }
+                        existing.updatedAt = Date()
+                        existing.passwordChangedAt = Date()
+                        try context.save()
+                        return CredentialSaveOutcome.updated(existing.id)
+                    }
+
+                    let entry = CDPasswordEntry(context: context)
+                    entry.id = UUID()
+                    entry.siteName = draft.siteName
+                    entry.siteURL = draft.siteURL
+                    entry.username = draft.username
+                    entry.encryptedPassword = encryptedPassword
+                    // 与主 App 默认分类（Primary）保持一致，否则条目在主 App 里会落到空分类
+                    entry.categoryID = AutoFillCredentialIdentityFactory.defaultCategoryID
+                    let now = Date()
+                    entry.createdAt = now
+                    entry.updatedAt = now
+                    entry.passwordChangedAt = now
+                    Self.applyRequiredDefaults(to: entry)
+                    try context.save()
+                    return CredentialSaveOutcome.created(entry.id)
+                }
+
+                markSavedForHostApp()
+                verifySaved(entryID: outcome.entryID)
+                return outcome
+            } catch {
+                lastError = error
+                guard Self.isTransient(error), attempt < Self.saveAttempts - 1 else { throw error }
+                NSLog("AutoFill: 保存被占用，退避后重试（第 %d 次）：%@", attempt + 1, String(describing: error))
+                Thread.sleep(forTimeInterval: 0.15 * Double(attempt + 1))
+            }
+        }
+        throw lastError ?? AutoFillCredentialStoreError.databaseUnavailable
+    }
+
+    /// 补齐模型中「非 optional」标量字段的默认值。
+    ///
+    /// 这些属性在 .xcdatamodel 里虽然写了 defaultValue，但扩展进程新建对象时
+    /// 默认值并不会落到对象上，保存即失败（NSValidationErrorKey=accountStatusRaw 等）。
+    /// 这里与主 App `CoreDataDataSource.createPasswordEntry` 保持同一套取值：
+    /// - breachStatus = .unknown(0)、accountStatus = .active(0)
+    /// - passwordStrength = .medium(2)、passwordlessLoginType = .none(0)
+    /// - dataSource = .manual(0)、version = 1、isSynced = true
+    private static func applyRequiredDefaults(to entry: CDPasswordEntry) {
+        entry.breachStatusRaw = 0
+        entry.accountStatusRaw = 0
+        entry.passwordStrengthRaw = 2
+        entry.passwordlessLoginTypeRaw = 0
+        entry.version = 1
+        entry.isFavorite = false
+        entry.isSynced = true
+        entry.has2FA = false
+        entry.hasBundleEmail = false
+        entry.hasBundlePhone = false
+        entry.isPasswordResetEmail = false
+        entry.isPasswordResetPhone = false
+        entry.isDuplicatePassword = false
+        entry.dataSourceRaw = 0
+    }
+
+    /// 写入尝试次数（首次 + 两次退避重试）
+    private static let saveAttempts = 3
+
+    /// 是否瞬时错误：SQLite 被其它进程/连接占用时可重试，其余（模型不匹配、
+    /// 校验失败等）重试多少次都一样，直接交给调用方。
+    private static func isTransient(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        // SQLITE_BUSY(5) / SQLITE_LOCKED(6)；Core Data 会把它包成 NSPersistentStoreSaveError
+        if nsError.domain == NSSQLiteErrorDomain { return true }
+        if let underlying = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+           underlying.domain == NSSQLiteErrorDomain {
+            return true
+        }
+        let description = nsError.localizedDescription.lowercased()
+        return description.contains("busy") || description.contains("locked")
+    }
+
+    /// 写入后立即回读校验（诊断用）。
+    ///
+    /// 排查"扩展说保存成功、主 App 却查不到"时，这一步能把问题二分到
+    /// 「根本没写进共享库」还是「写了但主 App 没刷新」。
+    private func verifySaved(entryID: UUID) {
+        let found = try? perform { context -> Bool in
+            let request = NSFetchRequest<CDPasswordEntry>(entityName: "CDPasswordEntry")
+            request.predicate = NSPredicate(format: "id == %@", entryID as CVarArg)
+            request.fetchLimit = 1
+            return (try context.fetch(request).first) != nil
+        }
+        NSLog("AutoFill: 写入回读校验%@（id=%@）", found == true ? "通过" : "失败", entryID.uuidString)
+    }
+
+    /// 通知主 App 密码库已被扩展写入。
+    ///
+    /// 扩展是独立进程，主 App 的列表不会自动感知新增条目。这里在 App Group
+    /// 里留下一个时间戳，主 App 回到前台时比对并触发列表刷新（见
+    /// AppState.handleAppBecameActive）。用时间戳而非布尔值，避免"扩展写了但
+    /// 主 App 恰好没读到"时被下一次读取覆盖掉。
+    private func markSavedForHostApp() {
+        UserDefaults(suiteName: appGroupIdentifier)?.set(
+            Date().timeIntervalSince1970,
+            forKey: AutoFillSharedKeys.savedCredentialAt
+        )
+    }
+
     // MARK: - Private
 
     /// 取当前内存中的 DEK（未解锁时为 nil）
@@ -297,6 +478,14 @@ final class AutoFillCredentialStore {
         let description = NSPersistentStoreDescription(url: storeURL)
         description.shouldMigrateStoreAutomatically = true
         description.shouldInferMappingModelAutomatically = true
+        // 与主 App 对齐：让对方（主 App 连接）能感知本进程的写入
+        description.setOption(true as NSNumber,
+                              forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        // 主 App 可能同时持有该文件的连接，写入撞上会立刻 SQLITE_BUSY；
+        // 给 SQLite 一个等待窗口，而不是马上失败。
+        // 必须用 setOption：setValue(_:forKey:) 会抛 NSUnknownKeyException 闪退
+        description.setOption(["busy_timeout": "5000"] as NSDictionary,
+                              forKey: NSSQLitePragmasOption)
         container.persistentStoreDescriptions = [description]
 
         let loadStart = Date()
@@ -304,7 +493,7 @@ final class AutoFillCredentialStore {
         container.loadPersistentStores { _, error in
             loadError = error
         }
-        NSLog("AutoFill: 共享数据库打开完成（%.2fs）", Date().timeIntervalSince(loadStart))
+        NSLog("AutoFill: 共享数据库打开完成（%.2fs）路径=%@", Date().timeIntervalSince(loadStart), storeURL.path)
 
         if let loadError {
             // 主 App 从未启动过（数据库文件不存在）时给出更友好的提示
@@ -317,6 +506,21 @@ final class AutoFillCredentialStore {
 
         _container = container
         return container
+    }
+
+    /// 加密密码（格式与主 App `EncryptedData.combined` 一致：nonce+tag+ciphertext）。
+    /// 注意顺序：CryptoKit 的 `SealedBox.combined` 是 nonce+ciphertext+tag，与本项目
+    /// 的存储格式不同，因此这里手动拼装，保证主 App 的 `EncryptionService` 能解回来。
+    private static func encryptPassword(_ password: String, using dek: SymmetricKey) -> Data? {
+        guard let plaintext = password.data(using: .utf8),
+              let sealedBox = try? AES.GCM.seal(plaintext, using: dek) else {
+            return nil
+        }
+        var data = Data()
+        data.append(sealedBox.nonce.withUnsafeBytes { Data($0) })
+        data.append(sealedBox.tag)
+        data.append(sealedBox.ciphertext)
+        return data
     }
 
     /// 解密 AES-GCM 密文（格式与主 App EncryptionService 一致：nonce+tag+ciphertext）

@@ -25,6 +25,8 @@ final class VaultListViewModel: ObservableObject {
 
     /// 订阅凭据交换导入完成通知，导入后自动刷新列表
     private var importCancellable: AnyCancellable?
+    /// 订阅 AutoFill 扩展「保存密码」写入通知，回前台时重载列表
+    private var autoFillSaveCancellable: AnyCancellable?
 
     init(
         vaultListService: VaultListServiceProtocol = VaultListService(),
@@ -43,6 +45,16 @@ final class VaultListViewModel: ObservableObject {
         // 列表不会自动感知新增条目，这里通过通知触发重载）
         importCancellable = NotificationCenter.default
             .publisher(for: .credentialExchangeDidImport)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task { await self.loadItems() }
+            }
+
+        // AutoFill 扩展保存密码后刷新列表（扩展写的是同一份共享数据库，
+        // 但主 App 的列表不会自动感知跨进程写入）
+        autoFillSaveCancellable = NotificationCenter.default
+            .publisher(for: .autoFillDidSaveCredential)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self else { return }

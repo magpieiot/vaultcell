@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -271,9 +271,9 @@
 		55A898D31604AB1801FE00B1 /* VaultCell_v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VaultCell_v4.xcdatamodel; sourceTree = "<group>"; };
 		55E1207205D9BBB7E1796907 /* PincodeEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PincodeEntry.swift; sourceTree = "<group>"; };
 		5CE3BA8CF4500F4A958CD01F /* TagColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagColorTests.swift; sourceTree = "<group>"; };
-		5D8100F36C52182A5FD8E775 /* VaultCell.icon */ = {isa = PBXFileReference; path = VaultCell.icon; sourceTree = "<group>"; };
+		5D8100F36C52182A5FD8E775 /* VaultCell.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = VaultCell.icon; sourceTree = "<group>"; };
 		5DB2FB78E8DFA15A5355D79B /* AppCatalogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCatalogService.swift; sourceTree = "<group>"; };
-		5DC4AA9B03A567839B98570B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5DC4AA9B03A567839B98570B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		61346BB7DA1DC3FA5AB5EEDE /* BankcardFormModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankcardFormModel.swift; sourceTree = "<group>"; };
 		62416F816625515FA48C3F13 /* CDSafeNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDSafeNote.swift; sourceTree = "<group>"; };
 		6245B0FCF51298163934B114 /* CachedIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedIconView.swift; sourceTree = "<group>"; };
@@ -893,7 +893,6 @@
 				D7D4C0BE16A8833CA71C22B9 /* Data */,
 				E77EECE60A467ACBCDB6342D /* Domain */,
 				57102AD109E495EB25D3A24E /* Presentation */,
-				576AD5BB35602E985FF9A56E /* Resources */,
 				11F3E4EC4BF6BBDEA2C585C5 /* VaultCell.entitlements */,
 			);
 			path = VaultCell;
@@ -1005,7 +1004,6 @@
 				90EF5235276984E4B7A98735 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				2005E4101CBFFCB3E800E017 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
-			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

@@ -138,6 +138,76 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
         // 配置界面无需实现
     }
 
+    // MARK: - 保存密码（iOS 26.2+）
+
+    /// 免交互保存入口（系统在处理保存请求时优先尝试）。
+    ///
+    /// 调用时扩展界面**不在屏幕上**：既不能发起生物识别（Face ID 会被系统立即取消），
+    /// 也不能展示"是否保存"的确认界面。直接入库等于替用户做了决定，因此一律回
+    /// `userInteractionRequired`，让系统转入交互流程由用户显式确认。
+    @available(iOS 26.2, *)
+    override func performWithoutUserInteractionIfPossible(savePasswordRequest request: ASSavePasswordRequest) {
+        ExtensionLanguage.activate()
+        NSLog("AutoFill: 收到免交互保存请求（site=%@ user=%@），回落交互确认",
+              request.serviceIdentifier.identifier, request.credential.user)
+        extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
+    }
+
+    /// 保存密码的交互入口：展示"是否保存到 VaultCell"的确认界面。
+    ///
+    /// 系统在 Safari / App 里检测到登录表单提交后调用；确认保存后必须调用
+    /// `completeSavePasswordRequest`，取消则回 `userCanceled`。
+    @available(iOS 26.2, *)
+    override func prepareInterface(for savePasswordRequest: ASSavePasswordRequest) {
+        ExtensionLanguage.activate()
+        // 数据库打开与"系统呈现面板 + Face ID"并行，解锁后写入直接命中就绪容器
+        credentialStore.warmUpDatabase()
+        let draft = Self.draft(from: savePasswordRequest)
+        NSLog("AutoFill: 进入保存密码流程（site=%@ user=%@）",
+              draft.siteURL ?? "-", draft.username)
+
+        present(SavePasswordView(
+            draft: draft,
+            store: credentialStore,
+            onSave: { [weak self] in
+                self?.extensionContext.completeSavePasswordRequest()
+            },
+            onCancel: { [weak self] in
+                self?.cancelUserRequest()
+            }
+        ))
+    }
+
+    /// 把系统保存请求映射为待写入凭据。
+    /// - 站点 URL：统一存 `https://host`（与主 App 条目一致，`AutoFillDomainMatcher` 可解析）；
+    /// - 站点名：优先用系统给的页面标题，缺失时退化为可注册域名的首字母大写。
+    @available(iOS 26.2, *)
+    private static func draft(from request: ASSavePasswordRequest) -> CredentialSaveDraft {
+        let identifier = request.serviceIdentifier.identifier
+        let host = AutoFillDomainMatcher.hostname(from: identifier)
+        let siteURL = host.map { "https://\($0)" } ?? (identifier.isEmpty ? nil : identifier)
+
+        let title = request.title?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let siteName: String
+        if let title, !title.isEmpty {
+            siteName = title
+        } else if let host {
+            let domain = AutoFillDomainMatcher.registrableDomain(of: host) ?? host
+            // "ctrip.com" → "Ctrip"：去掉 TLD 后首字母大写，作为可读的站点名
+            let name = domain.split(separator: ".").first.map(String.init) ?? domain
+            siteName = name.prefix(1).uppercased() + name.dropFirst()
+        } else {
+            siteName = identifier
+        }
+
+        return CredentialSaveDraft(
+            siteName: siteName,
+            siteURL: siteURL,
+            username: request.credential.user,
+            password: request.credential.password
+        )
+    }
+
     // MARK: - Private
 
     /// 把 SwiftUI 视图装进扩展视图控制器（扩展只有这一块展示区域）
@@ -534,6 +604,193 @@ struct CredentialUnlockView: View {
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+}
+
+/// 保存密码确认界面（iOS 26.2+ 的保存流程，由 `prepareInterface(for:)` 呈现）。
+///
+/// 确认之前既不解锁也不解密：只展示系统给的站点 / 用户名 / 密码，
+/// 用户点保存后才发起生物识别并写入共享密码库。
+@available(iOS 17.0, *)
+struct SavePasswordView: View {
+    let draft: CredentialSaveDraft
+    let store: AutoFillCredentialStore
+    /// 保存成功后调用（由外层完成系统请求）
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    @State private var isSaving = false
+    @State private var errorMessage: String?
+    @State private var showsPassword = false
+    /// 库中已存在同站点 + 同用户名的条目：保存会覆盖其密码
+    @State private var existingEntryExists = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                VStack(spacing: 6) {
+                    Image(systemName: "lock.square.stack")
+                        .font(.system(size: 40))
+                        .foregroundColor(.blue)
+                    Text("Save this password to VaultCell?")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    row(title: String(localized: "Website"), value: draft.siteName)
+                    row(title: String(localized: "Username"), value: draft.username)
+                    passwordRow
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(12)
+
+                if existingEntryExists {
+                    Text("An item for this site and username already exists. Its password will be updated.")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Spacer(minLength: 0)
+
+                VStack(spacing: 10) {
+                    Button(action: { Task { await save() } }) {
+                        Text(isSaving ? String(localized: "Saving…") : String(localized: "Save Password"))
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(isSaving)
+
+                    Button(action: onCancel) {
+                        Text("Not Now")
+                    }
+                }
+            }
+            .padding()
+            .navigationTitle("Save Password")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                // 系统要求：必须始终提供取消途径
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel", action: onCancel)
+                }
+            }
+        }
+        .task { await checkExistingEntry() }
+    }
+
+    @ViewBuilder
+    private func row(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Text(value.isEmpty ? "—" : value)
+                .font(.subheadline)
+                .lineLimit(2)
+        }
+    }
+
+    private var passwordRow: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(String(localized: "Password"))
+                .font(.caption)
+                .foregroundColor(.secondary)
+            HStack {
+                // 默认遮蔽：扩展界面可能被系统截图，避免明文常驻屏幕
+                Text(showsPassword ? draft.password : String(repeating: "•", count: min(draft.password.count, 12)))
+                    .font(.subheadline.monospaced())
+                    .lineLimit(1)
+                Button(action: { showsPassword.toggle() }) {
+                    Image(systemName: showsPassword ? "eye.slash" : "eye")
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - 加载与保存
+
+    /// 预先判断是新建还是覆盖（只读元数据，不需要解锁）
+    private func checkExistingEntry() async {
+        let existing = await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(returning: (try? self.store.existingEntryID(for: self.draft)) != nil)
+            }
+        }
+        existingEntryExists = existing
+    }
+
+    private func save() async {
+        guard !isSaving else { return }
+        isSaving = true
+        errorMessage = nil
+        defer { isSaving = false }
+
+        do {
+            // 与交互填充路径同因：等系统把扩展界面呈现出来再发起生物识别
+            try? await Task.sleep(nanoseconds: 350_000_000)
+            try await unlockStore()
+            let outcome = try await writeCredential()
+            await registerIdentities(entryID: outcome.entryID)
+            NSLog("AutoFill: 保存密码完成（id=%@ site=%@ url=%@ user=%@）",
+                  outcome.entryID.uuidString, draft.siteName, draft.siteURL ?? "-", draft.username)
+            onSave()
+        } catch let error as AutoFillCredentialStoreError {
+            NSLog("AutoFill: 保存密码失败（store）：%@", String(describing: error))
+            errorMessage = error.localizedDescription
+        } catch {
+            // Core Data 层的错误（NSError）不走上面的分支，必须打到日志里，
+            // 否则现场只会看到一句"请重试"而无从判断原因
+            NSLog("AutoFill: 保存密码失败：%@", String(describing: error))
+            errorMessage = String(localized: "Couldn't save the password. Please try again.")
+                + "\n(\(error.localizedDescription))"
+        }
+    }
+
+    private func unlockStore() async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result<Void, Error> { try self.store.unlock() })
+            }
+        }
+    }
+
+    private func writeCredential() async throws -> CredentialSaveOutcome {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result { try self.store.saveCredential(self.draft) })
+            }
+        }
+    }
+
+    /// 保存后登记身份。
+    ///
+    /// Apple 要求扩展在保存完成后自行更新 `ASCredentialIdentityStore`，否则键盘
+    /// QuickType 不会给出刚保存的条目；用户在系统设置里没启用 VaultCell 时写入
+    /// 会被拒绝，这里静默忽略（主 App 下次同步仍会全量补上）。
+    private func registerIdentities(entryID: UUID) async {
+        let identities = AutoFillCredentialIdentityFactory.identities(
+            entryID: entryID,
+            username: draft.username,
+            siteURL: draft.siteURL
+        )
+        guard !identities.isEmpty else { return }
+        do {
+            try await ASCredentialIdentityStore.shared.saveCredentialIdentities(identities)
+        } catch {
+            NSLog("AutoFill: 保存后身份登记失败：%@", String(describing: error))
         }
     }
 }

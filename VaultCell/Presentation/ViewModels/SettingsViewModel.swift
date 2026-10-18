@@ -128,7 +128,7 @@ enum SettingsAlert: Identifiable {
     }
 }
 
-/// 设置页业务逻辑：回收站计数、Chrome CSV 导入、保险库重置
+/// 设置页业务逻辑：回收站计数、Chrome CSV 导入、密码库重置
 /// （测试库生成的种子数据仍在 SettingsView，正式版本随该功能一并移除）
 @MainActor
 final class SettingsViewModel: ObservableObject {
@@ -187,9 +187,9 @@ final class SettingsViewModel: ObservableObject {
         }
     }
 
-    // MARK: - 重置保险库
+    // MARK: - 重置密码库
 
-    /// 验证主密码后重置保险库
+    /// 验证主密码后重置密码库
     ///
     /// 主密码错误时返回 `false`（不执行重置），验证通过则执行 `resetVault()` 并返回 `true`。
     func verifyAndReset(masterPassword: String) async -> Bool {

@@ -11,7 +11,16 @@ import Foundation
 class CoreDataStack {
     static let shared = CoreDataStack()
     
-    private let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
+    /// 当前构建变体对应的 App Group（CN 变体有独立的 bundle 与共享容器）。
+    /// 必须与 AutoFillProvider 扩展一致，否则两边打开的是不同的数据库文件
+    /// （表现为扩展保存成功、主 App 永远查不到）。
+    private let appGroupIdentifier: String = {
+        #if CN
+        return "group.com.magpie.vaultcell.cn.shared"
+        #else
+        return "group.com.magpie.vaultcell.shared"
+        #endif
+    }()
 
     /// 线程安全的容器访问
     private let lock = NSLock()
@@ -19,6 +28,9 @@ class CoreDataStack {
 
     /// 最近一次加载持久化存储时的错误（nil 表示加载成功）
     private(set) var loadError: Error?
+
+    /// 跨进程（AutoFill 扩展）写入通知观察者；生命周期与单例一致，无需移除
+    private var remoteChangeObserver: NSObjectProtocol?
 
     /// 持久化容器（线程安全懒加载，避免多线程并发初始化导致 "invalid reuse after initialization failure"）
     var container: NSPersistentContainer {
@@ -80,6 +92,9 @@ class CoreDataStack {
             storeURL = supportURL.appendingPathComponent("VaultCell.sqlite")
         }
 
+        // 与扩展侧日志对照可确认两端打开的是同一份数据库（App Group 不一致时两边各存一份）
+        NSLog("CoreData: 数据库路径=%@", storeURL.path)
+
         let description = NSPersistentStoreDescription(url: storeURL)
         // 启用轻量级迁移：支持模型版本升级（如新增 dataSourceRaw 字段）
         description.shouldMigrateStoreAutomatically = true
@@ -87,6 +102,16 @@ class CoreDataStack {
         // 文件级保护：设备锁定时加密 SQLite 文件（含 -wal/-shm），防止物理提取元数据
         description.setOption(FileProtectionType.complete as NSObject,
                               forKey: NSPersistentStoreFileProtectionKey)
+        // 关键：AutoFill 扩展是另一个进程，它写入共享 SQLite 后本进程不会自动感知。
+        // 开启该选项后，本连接会在检测到其它连接（扩展）的提交时发出
+        // NSPersistentStoreRemoteChange 通知，由下方观察者触发列表刷新。
+        description.setOption(true as NSNumber,
+                              forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        // 扩展进程同样会写这个库（保存密码），撞上时给 SQLite 一个等待窗口。
+        // 必须用 setOption：NSPersistentStoreDescription 不是 KVC 容器，
+        // setValue(_:forKey:) 会抛 NSUnknownKeyException 直接闪退。
+        description.setOption(["busy_timeout": "5000"] as NSDictionary,
+                              forKey: NSSQLitePragmasOption)
         container.persistentStoreDescriptions = [description]
 
         // 加载持久化存储
@@ -105,6 +130,25 @@ class CoreDataStack {
 
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        // 跨进程写入感知：扩展保存密码后主 App 的界面必须知道数据变了。
+        // 只靠 AppState 回前台比对时间戳不够——主 App 一直留在前台时不会触发，
+        // 因此这里在收到别的进程提交时直接广播，让列表重新加载。
+        remoteChangeObserver = NotificationCenter.default.addObserver(
+            forName: .NSPersistentStoreRemoteChange,
+            object: container.persistentStoreCoordinator,
+            queue: .main
+        ) { [weak container] _ in
+            NSLog("CoreData: 检测到其它进程写入共享数据库（AutoFill 扩展）")
+            container?.viewContext.perform {
+                guard let context = container?.viewContext else { return }
+                // 主 App 用 viewContext 直接写入并即时保存，正常没有未提交更改；
+                // 万一有（编辑中未保存），不能 refresh，否则会丢掉用户刚输入的内容
+                guard !context.hasChanges else { return }
+                context.refreshAllObjects()
+            }
+            NotificationCenter.default.post(name: .autoFillDidSaveCredential, object: nil)
+        }
 
         return (container, loadError)
     }

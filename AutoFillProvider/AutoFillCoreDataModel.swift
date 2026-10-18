@@ -34,8 +34,43 @@ extension CDPasswordEntry {
     /// 加密后的密码正文（AES-GCM 密文，格式为 nonce+tag+ciphertext）
     @NSManaged public var encryptedPassword: Data
 
+    /// 所属分类（扩展保存密码时写入主 App 的默认分类 Primary）
+    @NSManaged public var categoryID: UUID
+
+    /// 创建时间
+    @NSManaged public var createdAt: Date
+
+    /// 最后更新时间
+    @NSManaged public var updatedAt: Date
+
+    /// 最近一次修改密码的时间
+    @NSManaged public var passwordChangedAt: Date?
+
     /// 软删除时间戳（nil 表示正常条目，非 nil 表示位于回收站）
     @NSManaged public var deletedAt: Date?
+
+    // MARK: - 以下均为模型中「非 optional」的标量字段。
+    //
+    // 为什么必须逐个声明并显式赋值：模型里这些属性虽然写了 defaultValue，
+    // 但扩展进程新建对象时默认值并不生效，保存会直接失败
+    // （实测 NSValidationErrorKey=accountStatusRaw / breachStatusRaw ... "是所需值"）。
+    // 主 App 的 createPasswordEntry 一直逐字段赋值，因此从未暴露这个问题。
+
+    @NSManaged public var accountStatusRaw: Int16
+    @NSManaged public var breachStatusRaw: Int16
+    @NSManaged public var passwordStrengthRaw: Int16
+    @NSManaged public var passwordlessLoginTypeRaw: Int
+    @NSManaged public var version: Int64
+    @NSManaged public var isFavorite: Bool
+    @NSManaged public var isSynced: Bool
+    @NSManaged public var has2FA: Bool
+    @NSManaged public var hasBundleEmail: Bool
+    @NSManaged public var hasBundlePhone: Bool
+    @NSManaged public var isPasswordResetEmail: Bool
+    @NSManaged public var isPasswordResetPhone: Bool
+    @NSManaged public var isDuplicatePassword: Bool
+    /// 数据来源（PasswordDataSource.manual = 0）
+    @NSManaged public var dataSourceRaw: Int16
 }
 
 // MARK: - 以下实体类仅供模型加载完成类名解析，扩展内不会被实例化

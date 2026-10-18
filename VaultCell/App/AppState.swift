@@ -10,7 +10,7 @@ import Combine
 import UIKit
 
 /// 应用全局状态管理类
-/// 负责管理认证状态、锁定状态、保险库的创建/解锁/锁定等核心业务逻辑，
+/// 负责管理认证状态、锁定状态、密码库的创建/解锁/锁定等核心业务逻辑，
 /// 以及应用前后台切换时的自动锁定检测。
 @MainActor
 class AppState: ObservableObject {
@@ -20,7 +20,7 @@ class AppState: ObservableObject {
     /// 当前用户是否已通过认证（登录成功）
     @Published var isAuthenticated: Bool = false
     
-    /// 当前保险库是否处于锁定状态，默认锁定
+    /// 当前密码库是否处于锁定状态，默认锁定
     @Published var isLocked: Bool = true
     
     /// 最后一次用户活动的时间，用于自动锁定超时计算
@@ -37,7 +37,7 @@ class AppState: ObservableObject {
 
     /// 解锁冷却剩余秒数（> 0 表示界面应冻结输入）
     ///
-    /// 平行于 `isLocked`：冻结的是"试密码"这件事，不是保险库的锁定状态，
+    /// 平行于 `isLocked`：冻结的是"试密码"这件事，不是密码库的锁定状态，
     /// 因此不会触发 `clearSensitiveData()`。由冷却计时器每秒刷新。
     @Published var unlockCooldownRemaining: TimeInterval = 0
 
@@ -49,7 +49,7 @@ class AppState: ObservableObject {
     /// 冷却倒计时的驱动任务
     private var cooldownTicker: Task<Void, Never>?
     
-    /// 保险库锁定服务，负责加密/解密和锁定相关操作
+    /// 密码库锁定服务，负责加密/解密和锁定相关操作
     private let lockService: AppLockService
     
     /// 钥匙串服务，用于安全存储敏感凭据
@@ -87,7 +87,7 @@ class AppState: ObservableObject {
         unlockCooldownRemaining = unlockThrottle.remainingCooldown
         startCooldownTicker()
 
-        // 启动时检查是否存在已有保险库
+        // 启动时检查是否存在已有密码库
         checkExistingVault()
         // 订阅密码条目变更，驱动 AutoFill 凭据身份同步（自动填充建议的前置条件）
         AutoFillIdentityService.shared.startObservingChanges()
@@ -99,7 +99,7 @@ class AppState: ObservableObject {
     
     // MARK: - 计算属性
     
-    /// 是否已存在保险库（已设置主密码）
+    /// 是否已存在密码库（已设置主密码）
     var hasExistingVault: Bool {
         lockService.hasExistingVault()
     }
@@ -115,9 +115,9 @@ class AppState: ObservableObject {
         synchronizeAutoFillIdentities()
     }
     
-    // MARK: - 公开方法 - 保险库操作
+    // MARK: - 公开方法 - 密码库操作
     
-    /// 使用主密码创建新的保险库
+    /// 使用主密码创建新的密码库
     ///
     /// 在主线程外执行加密操作，避免阻塞UI。
     /// 创建成功后自动将状态设置为已认证且已解锁。
@@ -151,7 +151,7 @@ class AppState: ObservableObject {
         }
     }
     
-    /// 使用主密码解锁保险库
+    /// 使用主密码解锁密码库
     ///
     /// 在主线程外执行解密验证操作，避免阻塞UI。
     /// 解锁成功后自动将状态设置为已认证且已解锁。
@@ -188,7 +188,7 @@ class AppState: ObservableObject {
     
     /// 仅验证主密码是否正确，不改变认证状态
     ///
-    /// 用于需要确认身份的破坏性操作（如重置保险库）。
+    /// 用于需要确认身份的破坏性操作（如重置密码库）。
     /// 验证成功仅返回，不会调用 `authenticate()` 改变解锁状态。
     ///
     /// - Parameter masterPassword: 用户输入的主密码
@@ -217,7 +217,7 @@ class AppState: ObservableObject {
         }
     }
 
-    /// 使用生物识别（Face ID / Touch ID）解锁保险库
+    /// 使用生物识别（Face ID / Touch ID）解锁密码库
     ///
     /// 首先检查设备是否支持生物识别，然后调用锁定服务进行验证。
     ///
@@ -249,7 +249,7 @@ class AppState: ObservableObject {
     
     // MARK: - 公开方法 - 锁定与注销
     
-    /// 锁定保险库
+    /// 锁定密码库
     ///
     /// 记录锁定时间并清除敏感数据（剪贴板内容、加密密钥等）。
     func lock() {
@@ -389,10 +389,10 @@ class AppState: ObservableObject {
         }
     }
     
-    /// 检查是否已存在保险库
+    /// 检查是否已存在密码库
     ///
-    /// 如果已有保险库，设置为未认证状态并保持最新锁定状态；
-    /// 否则提示需要创建新保险库。
+    /// 如果已有密码库，设置为未认证状态并保持最新锁定状态；
+    /// 否则提示需要创建新密码库。
     private func checkExistingVault() {
         isAuthenticated = false
         isLocked = !hasExistingVault
@@ -413,7 +413,7 @@ class AppState: ObservableObject {
     /// 检查是否需要自动锁定
     ///
     /// 根据 "最后活动时间" 与 "用户设置的自动锁定间隔" 判断是否需要执行自动锁定。
-    /// 如果超出设定间隔，则自动锁定保险库；间隔为 0 表示永不自动锁定。
+    /// 如果超出设定间隔，则自动锁定密码库；间隔为 0 表示永不自动锁定。
     private func checkAutoLock() {
         guard let lastActive = lastActiveTime else {
             return

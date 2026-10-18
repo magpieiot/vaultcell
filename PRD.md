@@ -1302,11 +1302,11 @@ class SecureBuffer {
 
 **拦截点**
 
-三条会校验主密码的链路都汇聚在 `AppState`，闸门统一架在这一层（而不是 ViewModel），否则"重置保险库的二次验证"会变成一条免费的重试通道：
+三条会校验主密码的链路都汇聚在 `AppState`，闸门统一架在这一层（而不是 ViewModel），否则"重置密码库的二次验证"会变成一条免费的重试通道：
 
 ```text
 解锁页         → AuthenticationViewModel.unlock()      → AppState.unlockVault(with:)
-重置保险库验证  → SettingsViewModel.verifyAndReset()    → AppState.verifyMasterPassword(_:)
+重置密码库验证  → SettingsViewModel.verifyAndReset()    → AppState.verifyMasterPassword(_:)
 生物识别       → BiometricButton                       → AppState.unlockWithBiometrics()
 ```
 
@@ -1328,7 +1328,7 @@ class SecureBuffer {
 
 **已知缺口（后续版本）**
 
-1. **B 类防护**：KDF 迭代次数目前是硬编码常量，需先把参数写入保险库才能安全升级，再评估迁移 Argon2id；
+1. **B 类防护**：KDF 迭代次数目前是硬编码常量，需先把参数写入密码库才能安全升级，再评估迁移 Argon2id；
 2. **主密码强度门槛**：当前只看长度与字符类型，`Password123!` 会被判为 Strong，需接入弱口令与模式检测（另见 3.3.2）；
 3. **C 类旁路**：生物识别 DEK 的 ACL 为 `userPresence`，设备数字密码同样可解，需单独设计强制主密码的策略。
 
