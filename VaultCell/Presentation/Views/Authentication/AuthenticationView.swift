@@ -10,10 +10,12 @@ import SwiftUI
 /// 认证页
 ///
 /// 设计语言：清新、优雅 —— 与 Onboarding 共享浅色 airy 背景、渐变品牌图标与
-/// 错峰入场动效；表单采用可见 label + 聚焦描边 + 内联错误；生物识别按钮改用品牌色线性
-/// 图标 + 淡呼吸光效，避免与上方的品牌图标同构，呼应"安全且鲜活"的品牌感受。
+/// 错峰入场动效；表单采用可见 label + 聚焦描边，失败原因（如主密码错误）以 toast 呈现；
+/// 生物识别按钮改用品牌色线性图标 + 淡呼吸光效，避免与上方的品牌图标同构，呼应"安全且鲜活"的品牌感受。
 struct AuthenticationView: View {
     @EnvironmentObject var appState: AppState
+    /// 本页的 toast 中心：认证页没有 MainTabView 的环境对象，这里自行持有一份
+    @StateObject private var toastCenter = ToastCenter()
     @State private var viewModel: AuthenticationViewModel?
 
     /// 冷启动接力：true 时品牌 Logo 先以系统启动屏姿态（180pt、屏幕居中）呈现，随后原地归位
@@ -68,12 +70,14 @@ struct AuthenticationView: View {
         }
         .onAppear {
             if viewModel == nil {
-                viewModel = AuthenticationViewModel(appState: appState)
+                viewModel = AuthenticationViewModel(appState: appState, toastCenter: toastCenter)
             }
         }
         .onChange(of: relaySettled) { _, settled in
             if settled { onRelayFinished?() }
         }
+        // 主密码错误等失败提示统一以 toast 呈现
+        .toast($toastCenter.toast)
     }
 }
 
@@ -278,12 +282,12 @@ struct UnlockView: View {
             ) {
                 Task { await viewModel.unlock() }
             }
-
-            if let error = viewModel.errorMessage {
-                InlineError(error)
-            }
         }
         .padding(.top, 36)
+        .onChange(of: viewModel.masterPassword) { _, _ in
+            // 一旦重新输入就解除错误态：toast 消失后不该还留着红框
+            viewModel.clearError()
+        }
         .onAppear {
             // 有生物识别时不抢焦点；无生物识别时自动聚焦密码框
             if viewModel.biometricType == .none {
@@ -376,9 +380,6 @@ struct CreateVaultView: View {
 
             if !viewModel.validationError.isEmpty {
                 InlineError(viewModel.validationError)
-            }
-            if let error = viewModel.errorMessage {
-                InlineError(error)
             }
         }
         .padding(.top, 28)

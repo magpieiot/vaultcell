@@ -3303,6 +3303,46 @@
         }
       }
     },
+    "Biometric unlock failed. Enter your master password." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biometrisches Entsperren fehlgeschlagen. Gib dein Master-Passwort ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El desbloqueo biométrico falló. Introduce tu contraseña maestra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le déverrouillage biométrique a échoué. Saisissez votre mot de passe principal."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生体認証に失敗しました。マスターパスワードを入力してください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Биометрическая разблокировка не удалась. Введите мастер-пароль."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证未通过，请改用主密码解锁"
+          }
+        }
+      }
+    },
     "Bound contact" : {
       "localizations" : {
         "de" : {
@@ -16690,6 +16730,46 @@
     "Some custom fields are missing a name. Fill in the name or delete the field before saving." : {
 
     },
+    "Something went wrong. Please try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo salió mal. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur s'est produite. Veuillez réessayer."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題が発生しました。もう一度お試しください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что-то пошло не так. Попробуйте снова."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出了点问题，请再试一次"
+          }
+        }
+      }
+    },
     "Sort By" : {
       "localizations" : {
         "de" : {
@@ -17369,6 +17449,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这看起来不是手机号或邮箱地址。"
+          }
+        }
+      }
+    },
+    "That's not the right master password. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist nicht das richtige Master-Passwort. Versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esa no es la contraseña maestra correcta. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce n'est pas le bon mot de passe principal. Réessayez."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マスターパスワードが正しくありません。もう一度お試しください。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Это неверный мастер-пароль. Попробуйте снова."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主密码不对，再试一次"
           }
         }
       }

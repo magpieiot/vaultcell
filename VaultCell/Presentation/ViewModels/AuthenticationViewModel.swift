@@ -8,6 +8,8 @@
 import SwiftUI
 import LocalAuthentication
 import Combine
+import CryptoKit
+import Security
 
 
 
@@ -41,6 +43,8 @@ class AuthenticationViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     
     private let appState: AppState
+    /// 本页的 toast 提示中心：失败原因一律走 toast，不再用内联红字
+    private let toastCenter: ToastCenter
     
     var biometricType: BiometricType {
         switch BiometricService.shared.biometricType {
@@ -84,8 +88,9 @@ class AuthenticationViewModel: ObservableObject {
         !masterPassword.isEmpty
     }
     
-    init(appState: AppState) {
+    init(appState: AppState, toastCenter: ToastCenter) {
         self.appState = appState
+        self.toastCenter = toastCenter
     }
     
     func unlock() async {
@@ -95,7 +100,10 @@ class AuthenticationViewModel: ObservableObject {
         do {
             try await appState.unlockVault(with: masterPassword)
         } catch {
-            self.errorMessage = error.localizedDescription
+            // 密码框标红与 toast 用同一句话，避免两种表述打架
+            let message = Self.friendlyMessage(for: error)
+            errorMessage = message
+            showFailureToast(message)
         }
         
         isLoading = false
@@ -108,7 +116,11 @@ class AuthenticationViewModel: ObservableObject {
         do {
             try await appState.unlockWithBiometrics()
         } catch {
-            self.errorMessage = error.localizedDescription
+            // 生物识别失败不归咎于密码框，只引导改用主密码；
+            // 用户主动放弃（如点了取消）不算失败，不打扰
+            if !Self.isUserCancelled(error) {
+                showFailureToast(String(localized: "Biometric unlock failed. Enter your master password."))
+            }
         }
         
         isLoading = false
@@ -135,9 +147,38 @@ class AuthenticationViewModel: ObservableObject {
         do {
             try await appState.createVault(with: newPassword)
         } catch {
-            self.errorMessage = error.localizedDescription
+            showFailureToast(Self.friendlyMessage(for: error))
         }
         
         isLoading = false
+    }
+
+    /// 用户重新输入主密码时解除错误态：toast 会自行消失，输入框的红框也该一起退场
+    func clearError() {
+        errorMessage = nil
+    }
+
+    // MARK: - 失败提示
+
+    /// 以 toast 呈现失败原因：toast 会自行消失，不长期挤占表单空间
+    private func showFailureToast(_ message: String) {
+        toastCenter.toast = ToastItem(message: message, style: .error, duration: 2.6)
+    }
+
+    /// 把底层错误翻译成用户看得懂的话：只说清"怎么了 + 下一步"，不暴露技术细节
+    private static func friendlyMessage(for error: Error) -> String {
+        // AES-GCM 认证失败即主密码不对（与备份解密的判断口径一致）
+        if let cryptoError = error as? CryptoKitError, case .authenticationFailure = cryptoError {
+            return String(localized: "That's not the right master password. Try again.")
+        }
+        return String(localized: "Something went wrong. Please try again.")
+    }
+
+    /// 用户主动放弃生物识别（系统弹窗取消 / 被系统中断）不算失败
+    private static func isUserCancelled(_ error: Error) -> Bool {
+        guard let keychainError = error as? KeychainError,
+              case .retrieveFailed(let status) = keychainError
+        else { return false }
+        return status == errSecUserCanceled || status == errSecInteractionNotAllowed
     }
 }
