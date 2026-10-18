@@ -49,6 +49,10 @@ struct VaultSecurityAudit: Equatable {
 }
 
 struct VaultSecurityAuditService {
+    /// 参与评分的最少密码条目数：
+    /// 条目太少时加权平均出来的库级分数没有参考意义，此时不评分、也不展示安全分入口。
+    static let minimumEntriesForScore = 5
+
     func calculate(entries: [PasswordEntry], now: Date = Date()) -> VaultSecurityAudit {
         guard !entries.isEmpty else {
             return VaultSecurityAudit(

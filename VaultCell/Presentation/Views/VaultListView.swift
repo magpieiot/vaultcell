@@ -64,9 +64,11 @@ struct VaultListView: View {
         securityAuditService.calculate(entries: viewModel.passwordEntriesForAudit)
     }
 
-    /// 安全分只统计密码条目，过滤器排除密码类型（仅 PIN / 银行卡）时不再展示入口
+    /// 安全分只统计密码条目，过滤器排除密码类型（仅 PIN / 银行卡）时不再展示入口；
+    /// 密码记录少于 `minimumEntriesForScore` 条时不评分，入口一并隐藏。
     private var showsSecurityScoreBadge: Bool {
         viewModel.selectedTypes.contains(.password)
+            && itemCounts.password >= VaultSecurityAuditService.minimumEntriesForScore
     }
 
     var body: some View {
