@@ -247,6 +247,9 @@ struct AuthLogo: View {
 
 struct UnlockView: View {
     @ObservedObject var viewModel: AuthenticationViewModel
+    /// 直接订阅 AppState：冷却倒计时每秒由它推送，
+    /// 若改从 viewModel 转一手（VM 里只是普通强引用），就收不到刷新、只剩打字时才动
+    @EnvironmentObject private var appState: AppState
     @FocusState private var focusedField: UnlockField?
 
     private enum UnlockField { case password }
@@ -275,8 +278,8 @@ struct UnlockView: View {
                 .onSubmit { Task { await viewModel.unlock() } }
             }
 
-            if viewModel.cooldownRemaining > 0 {
-                UnlockCooldownNotice(remaining: viewModel.cooldownRemaining)
+            if appState.unlockCooldownRemaining > 0 {
+                UnlockCooldownNotice(remaining: appState.unlockCooldownRemaining)
             }
 
             PrimaryActionButton(

@@ -84,13 +84,9 @@ class AuthenticationViewModel: ObservableObject {
         passwordStrength.rawValue >= PasswordStrength.medium.rawValue
     }
     
-    /// 解锁冷却剩余秒数：> 0 时界面冻结输入并显示倒计时
-    var cooldownRemaining: TimeInterval {
-        appState.unlockCooldownRemaining
-    }
-
     var canUnlock: Bool {
-        !masterPassword.isEmpty && cooldownRemaining <= 0
+        // 冷却剩余秒数取自 AppState（> 0 时冻结输入）；每秒刷新由界面侧订阅 AppState 完成
+        !masterPassword.isEmpty && appState.unlockCooldownRemaining <= 0
     }
     
     init(appState: AppState, toastCenter: ToastCenter) {

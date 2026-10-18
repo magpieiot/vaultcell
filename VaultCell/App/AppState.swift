@@ -277,7 +277,6 @@ class AppState: ObservableObject {
     /// 证明身份成功：清零失败计数与冷却
     private func noteUnlockSucceeded() {
         unlockThrottle.recordSuccess()
-        stopCooldownTicker()
         unlockCooldownRemaining = 0
     }
 
@@ -287,23 +286,20 @@ class AppState: ObservableObject {
         startCooldownTicker()
     }
 
-    /// 每秒刷新 `unlockCooldownRemaining`，让界面上的倒计时自己走完
+    /// 倒计时心跳：常驻每秒比对一次，只在数值真的变了才推送
+    ///
+    /// 不做"用完即停"——启停记账一旦漏掉（例如后台挂起的旧任务占着位），
+    /// 新冷却就再也起不来，表现成倒计时卡死。空闲时数值恒为 0，不推送就不会触发界面刷新。
     private func startCooldownTicker() {
-        guard unlockCooldownRemaining > 0, cooldownTicker == nil else { return }
+        guard cooldownTicker == nil else { return }
         cooldownTicker = Task { [weak self] in
             while let self, !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
                 let remaining = self.unlockThrottle.remainingCooldown
+                guard self.unlockCooldownRemaining != remaining else { continue }
                 self.unlockCooldownRemaining = remaining
-                if remaining <= 0 { break }
             }
-            self?.stopCooldownTicker()
         }
-    }
-
-    private func stopCooldownTicker() {
-        cooldownTicker?.cancel()
-        cooldownTicker = nil
     }
     
     // MARK: - 公开方法 - 应用生命周期
