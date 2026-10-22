@@ -7,15 +7,14 @@
 
 import SwiftUI
 import AVFoundation
+import UIKit
 
 enum QRCodeScannerError: Error, LocalizedError {
-    case cameraPermissionDenied
     case captureDeviceUnavailable
     case captureSessionFailed
 
     var errorDescription: String? {
         switch self {
-        case .cameraPermissionDenied: return "Camera permission denied. Enable it in Settings."
         case .captureDeviceUnavailable: return "Camera unavailable"
         case .captureSessionFailed: return "Failed to start scanning session"
         }
@@ -28,28 +27,99 @@ enum QRCodeScannerError: Error, LocalizedError {
 struct QRCodeScannerView: View {
     /// 扫描结果回调（扫到即回调并关闭）
     let onScan: (String) -> Void
-    /// 错误回调
+    /// 错误回调（仅采集设备/会话类错误；相机权限问题在页面内就地提示，不再回调给调用方）
     let onError: (Error) -> Void
     /// 关闭回调
     let onCancel: () -> Void
 
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// 相机授权状态。每次进入页面、回到前台都重新读取，
+    /// 所以用户在系统设置里关掉相机权限后再点「扫描二维码」，会看到明确的授权提示
+    @State private var authStatus = AVCaptureDevice.authorizationStatus(for: .video)
+    /// 防止重复发起系统授权弹窗
+    @State private var isRequestingAccess = false
+
     var body: some View {
-        QRScannerRepresentable(
-            onScan: onScan,
-            onError: onError
-        )
-        .ignoresSafeArea()
-        .overlay(scanOverlay)
-        .background(Color.black)
+        Group {
+            switch authStatus {
+            case .authorized:
+                scannerContent
+            case .notDetermined:
+                requestingContent
+            case .denied, .restricted:
+                permissionDeniedContent
+            @unknown default:
+                permissionDeniedContent
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.ignoresSafeArea())
+        .navigationTitle("Scan QR Code")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Cancel") { onCancel() }
                     .foregroundColor(.white)
             }
         }
-        .navigationTitle("Scan QR Code")
-        .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .onAppear {
+            syncAuthorizationStatus(requestIfNeeded: true)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            // 用户去「设置」改完权限回到 App：已开启则立刻开始扫描，被关闭则就地提示
+            guard newPhase == .active else { return }
+            syncAuthorizationStatus(requestIfNeeded: true)
+        }
+    }
+
+    /// 取景控件（仅在已授权时创建，避免权限被关闭后仍白屏无反馈）
+    private var scannerContent: some View {
+        QRScannerRepresentable(
+            onScan: onScan,
+            onError: onError
+        )
+        .ignoresSafeArea()
+        .overlay(scanOverlay)
+    }
+
+    /// 等待系统授权结果
+    private var requestingContent: some View {
+        ProgressView()
+            .progressViewStyle(.circular)
+            .tint(.white)
+    }
+
+    /// 相机权限被关闭/受限时的说明 + 跳转系统设置
+    private var permissionDeniedContent: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "camera.fill")
+                .font(.system(size: 44, weight: .light))
+                .foregroundColor(.white.opacity(0.8))
+
+            Text("Camera Access Required")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            Text("Camera access is turned off. Enable it in Settings to scan QR codes.")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.white.opacity(0.7))
+                .padding(.horizontal, 32)
+
+            Button {
+                openSystemSettings()
+            } label: {
+                Text("Open Settings")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(Color.primaryBrandColor))
+            }
+            .padding(.top, 4)
+        }
     }
 
     /// 取景框 + 提示文字
@@ -81,6 +151,30 @@ struct QRCodeScannerView: View {
 
             Spacer()
         }
+    }
+
+    /// 读取并同步相机授权状态；未决定时发起一次系统授权
+    private func syncAuthorizationStatus(requestIfNeeded: Bool) {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        if authStatus != status {
+            authStatus = status
+        }
+
+        guard requestIfNeeded, status == .notDetermined, !isRequestingAccess else { return }
+
+        isRequestingAccess = true
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                isRequestingAccess = false
+                authStatus = granted ? .authorized : .denied
+            }
+        }
+    }
+
+    /// 跳转系统设置页，用户可在此重新开启相机权限
+    private func openSystemSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 
@@ -131,11 +225,12 @@ final class ScannerViewController: UIViewController {
 
     private let captureSession = AVCaptureSession()
     private var previewLayer: AVCaptureVideoPreviewLayer?
+    /// 会话是否已配置完成，避免 viewDidAppear 多次触发时重复添加 input/output
+    private var isSessionConfigured = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        checkPermissionAndStart()
     }
 
     override func viewDidLayoutSubviews() {
@@ -143,31 +238,19 @@ final class ScannerViewController: UIViewController {
         previewLayer?.frame = view.bounds
     }
 
-    private func checkPermissionAndStart() {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            startSession()
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    guard let self else { return }
-                    if granted {
-                        self.startSession()
-                    } else {
-                        self.delegate?.scanner(self, didFail: QRCodeScannerError.cameraPermissionDenied)
-                    }
-                }
-            }
-        case .denied, .restricted:
-            delegate?.scanner(self, didFail: QRCodeScannerError.cameraPermissionDenied)
-        @unknown default:
-            delegate?.scanner(self, didFail: QRCodeScannerError.cameraPermissionDenied)
-        }
+    /// 授权判断已上移到 QRCodeScannerView（未授权时不会创建本控制器）。
+    /// 这里在视图真正显示后再建会话并启动，避免在弹窗展示过程中同步回调 SwiftUI 状态。
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        configureSessionIfNeeded()
+        startRunningIfNeeded()
     }
 
-    private func startSession() {
+    private func configureSessionIfNeeded() {
+        guard !isSessionConfigured else { return }
+
         guard let device = AVCaptureDevice.default(for: .video) else {
-            delegate?.scanner(self, didFail: QRCodeScannerError.captureDeviceUnavailable)
+            notifyFailure(QRCodeScannerError.captureDeviceUnavailable)
             return
         }
 
@@ -175,14 +258,14 @@ final class ScannerViewController: UIViewController {
             let input = try AVCaptureDeviceInput(device: device)
 
             guard captureSession.canAddInput(input) else {
-                delegate?.scanner(self, didFail: QRCodeScannerError.captureSessionFailed)
+                notifyFailure(QRCodeScannerError.captureSessionFailed)
                 return
             }
             captureSession.addInput(input)
 
             let output = AVCaptureMetadataOutput()
             guard captureSession.canAddOutput(output) else {
-                delegate?.scanner(self, didFail: QRCodeScannerError.captureSessionFailed)
+                notifyFailure(QRCodeScannerError.captureSessionFailed)
                 return
             }
             captureSession.addOutput(output)
@@ -196,11 +279,25 @@ final class ScannerViewController: UIViewController {
             view.layer.insertSublayer(previewLayer, at: 0)
             self.previewLayer = previewLayer
 
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.captureSession.startRunning()
-            }
+            isSessionConfigured = true
         } catch {
-            delegate?.scanner(self, didFail: error)
+            notifyFailure(error)
+        }
+    }
+
+    private func startRunningIfNeeded() {
+        guard isSessionConfigured, !captureSession.isRunning else { return }
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.captureSession.startRunning()
+        }
+    }
+
+    /// 错误统一异步回到主线程投递，避免在 SwiftUI 构建/展示阶段同步改状态导致弹窗状态错乱
+    private func notifyFailure(_ error: Error) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.delegate?.scanner(self, didFail: error)
         }
     }
 
