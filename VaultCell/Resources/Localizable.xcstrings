@@ -1,6 +1,144 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Backup & Restore" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichern & Wiederherstellen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup & Restore"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copias y restauración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegarde et restauration"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップと復元"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Резервные копии и восстановление"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "备份与恢复"
+          }
+        }
+      }
+    },
+    "Encrypted backup file (.vgbackup)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschlüsselte Sicherungsdatei (.vgbackup)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encrypted backup file (.vgbackup)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo de copia cifrado (.vgbackup)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fichier de sauvegarde chiffré (.vgbackup)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暗号化バックアップファイル（.vgbackup）"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зашифрованный файл резервной копии (.vgbackup)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加密备份文件（.vgbackup）"
+          }
+        }
+      }
+    },
+    "Backup files are independent of iCloud sync. You can create an encrypted backup at any time, whether or not iCloud sync is on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sicherungsdateien sind unabhängig von der iCloud-Synchronisierung. Du kannst jederzeit eine verschlüsselte Sicherung erstellen, unabhängig davon, ob die iCloud-Synchronisierung aktiviert ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup files are independent of iCloud sync. You can create an encrypted backup at any time, whether or not iCloud sync is on."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los archivos de copia son independientes de la sincronización con iCloud. Puedes crear una copia cifrada en cualquier momento, tengas o no activada la sincronización."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les fichiers de sauvegarde sont indépendants de la synchronisation iCloud. Vous pouvez créer une sauvegarde chiffrée à tout moment, que la synchronisation iCloud soit activée ou non."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップファイルは iCloud 同期とは独立しています。iCloud 同期のオン / オフに関わらず、いつでも暗号化バックアップを作成できます。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файлы резервных копий не зависят от синхронизации iCloud. Вы можете создать зашифрованную копию в любой момент независимо от того, включена ли синхронизация."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "备份文件独立于 iCloud 同步，供你日后恢复数据。无论是否开启 iCloud 同步，你都可以随时创建加密备份。"
+          }
+        }
+      }
+    },
     "Back" : {
       "localizations" : {
         "de" : {

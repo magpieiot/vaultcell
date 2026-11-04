@@ -7,7 +7,6 @@
 
 import CoreData
 import SwiftUI
-import UniformTypeIdentifiers
 
 /// 自动锁定时间间隔选项
 enum AutoLockInterval: Double, CaseIterable, Identifiable {
@@ -52,9 +51,9 @@ enum ClipboardTimeout: Double, CaseIterable, Identifiable {
 /// 工具中心
 ///
 /// 上半部分是四个工具入口（卡片网格），下半部分是原来的设置项。
-/// 数据管理页已被取消：导入 / 导出 / 备份 / 恢复直接放在一级，
-/// 相关文件选择器与弹窗也随之上移到这里挂载——漏挂会让按钮点了没反应。
-/// iCloud 开关与同步回执收在「同步与备份」子页，这里只留一个入口。
+/// 数据管理页已被取消：导入 / 导出留在一级，备份 / 恢复与 iCloud 同步
+/// 一起收进「同步与备份」子页，这里只留一个入口。
+/// 导入的文件选择器仍挂在这里——漏挂会让按钮点了没反应。
 /// 注意导入与恢复只能共用一个 `fileImporter`（见 `DataFilePickerMode`），
 /// 同层级挂两个时系统只认最后一个。
 struct ToolsView: View {
@@ -121,14 +120,6 @@ struct ToolsView: View {
     /// 被多个账户共用的密码组数量（进入页面时计算一次）
     @State private var reusedGroupCount = 0
 
-    /// 数据操作状态（原 DataManagementView）：加密备份导出走「设密码 → 系统保存面板」两步
-    @State private var showingExportPasswordSheet = false
-    @State private var showingExporter = false
-    @State private var exportDocument: VaultBackupDocument?
-    /// 密码弹窗关闭后待调起保存面板的备份内容
-    @State private var pendingExportDocument: VaultBackupDocument?
-    /// 本次备份生成的文件名（保存面板与结果对话框共用，避免时间戳不一致）
-    @State private var backupFileName = ""
     /// 明文导出（CSV / JSON）的分类勾选界面
     @State private var showingExportSheet = false
 
@@ -152,7 +143,7 @@ struct ToolsView: View {
         }
     }
 
-    /// 数据操作进行中时禁用导入 / 导出 / 备份 / 恢复入口
+    /// 数据操作进行中时禁用导入 / 导出入口
     private var isDataOperationRunning: Bool {
         settingsVM.isImporting || settingsVM.isRestoring
     }
@@ -206,69 +197,14 @@ struct ToolsView: View {
             .sheet(isPresented: $showingExportSheet) {
                 ExportDataView(settingsVM: settingsVM)
             }
-            // 加密备份导出：先设置备份密码
-            .sheet(isPresented: $showingExportPasswordSheet) {
-                BackupExportPasswordView(settingsVM: settingsVM) { document in
-                    pendingExportDocument = document
-                }
-            }
-            .onChange(of: showingExportPasswordSheet) { _, showing in
-                // 密码弹窗关闭后（生成成功），调起系统保存面板
-                if !showing, let document = pendingExportDocument {
-                    pendingExportDocument = nil
-                    exportDocument = document
-                    backupFileName = Self.makeBackupFilename()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        showingExporter = true
-                    }
-                }
-            }
-            // 导入与备份恢复共用一个文件选择器：同一层级挂两个 fileImporter 时，
-            // 系统只认最后一个，导入入口会点了没反应。用途由 filePickerMode 决定。
+            // 导入的文件选择器；备份恢复的选择器挂在「同步与备份」子页，
+            // 两者不在同一视图层级，避免系统只认最后一个 fileImporter。
             .fileImporter(
                 isPresented: $settingsVM.showingFilePicker,
                 allowedContentTypes: settingsVM.filePickerContentTypes,
                 allowsMultipleSelection: false
             ) { result in
                 settingsVM.handleFilePickerResult(result)
-            }
-            // 备份恢复：选择文件后输入备份密码
-            .sheet(isPresented: $settingsVM.showingRestorePasswordSheet) {
-                BackupRestorePasswordView(settingsVM: settingsVM) { password in
-                    Task { await settingsVM.restoreBackup(password: password) }
-                }
-            }
-            .fileExporter(
-                isPresented: $showingExporter,
-                document: exportDocument,
-                contentType: .vaultBackup,
-                defaultFilename: backupFileName
-            ) { result in
-                exportDocument = nil
-                switch result {
-                case .success:
-                    settingsVM.alert = .operationResult(
-                        DataOperationResult(
-                            operation: .backupExport,
-                            succeeded: true,
-                            fileName: backupFileName + ".vgbackup",
-                            itemCount: settingsVM.lastBackupItemCount,
-                            skippedCount: 0,
-                            errorMessage: nil
-                        )
-                    )
-                case .failure(let error):
-                    settingsVM.alert = .operationResult(
-                        DataOperationResult(
-                            operation: .backupExport,
-                            succeeded: false,
-                            fileName: backupFileName + ".vgbackup",
-                            itemCount: 0,
-                            skippedCount: 0,
-                            errorMessage: "Export failed: \(error.localizedDescription)"
-                        )
-                    )
-                }
             }
             .onAppear {
                 // 注入共享服务并刷新回收站计数
@@ -552,7 +488,8 @@ struct ToolsView: View {
 
     // MARK: - 数据
 
-    /// 数据操作：原「数据管理」二级页已取消，六项直接放在一级
+    /// 数据操作：原「数据管理」二级页已取消，导入 / 导出留在一级，
+    /// 备份 / 恢复与 iCloud 同步收在「同步与备份」子页
     private var dataSection: some View {
         Section("Data") {
             // 回收站入口（带数量徽标）
@@ -608,31 +545,7 @@ struct ToolsView: View {
             }
             .disabled(isDataOperationRunning)
 
-            // 加密备份：导出 .vgbackup，用于整机恢复
-            Button {
-                showingExportPasswordSheet = true
-            } label: {
-                CustomLabel(
-                    leadingIcon: "arrow.down.doc.fill", leadingIconColor: .secondaryBrandColor,
-                    text: "Backup")
-            }
-            .disabled(isDataOperationRunning)
-
-            // 恢复：选择 .vgbackup 文件并输入备份密码后导入条目
-            Button {
-                settingsVM.presentRestorePicker()
-            } label: {
-                if settingsVM.isRestoring {
-                    dataOperationRow(title: AppLocale.string("Restoring..."))
-                } else {
-                    CustomLabel(
-                        leadingIcon: "arrow.uturn.left.circle",
-                        leadingIconColor: .secondaryBrandColor,
-                        text: "Restore")
-                }
-            }
-            .disabled(isDataOperationRunning)
-
+            // iCloud 同步、加密备份与恢复的入口都在「同步与备份」子页
             NavigationLink {
                 CloudSyncView()
             } label: {
@@ -651,7 +564,7 @@ struct ToolsView: View {
         }
     }
 
-    /// 导入 / 恢复进行中的占位行（沿用原数据管理页的写法）
+    /// 导入进行中的占位行（沿用原数据管理页的写法）
     private func dataOperationRow(title: String) -> some View {
         HStack(spacing: 8) {
             ProgressView()
@@ -909,12 +822,6 @@ struct ToolsView: View {
     }
     #endif
 
-    /// 备份导出默认文件名（时间戳后缀，避免同名覆盖）
-    private static func makeBackupFilename() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
-        return "VaultCell-Backup-\(formatter.string(from: Date()))"
-    }
 }
 
 #Preview {

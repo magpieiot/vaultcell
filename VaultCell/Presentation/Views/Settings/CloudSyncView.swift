@@ -7,15 +7,31 @@
 
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
-/// 「同步与备份」子页：顶部说明卡片 + iCloud 同步状态卡片。
+/// 「同步与备份」子页：顶部说明卡片 + iCloud 同步状态卡片 + 备份与恢复入口。
 ///
 /// 设置 / 导入 / 导出三个阶段只由 `AppState` 的真实同步回执推导，
 /// 不使用计时器推测云端进度；开关与重试直连现有的 CKSyncEngine 链路。
+/// 加密备份与恢复的全套弹窗也挂在本页，避免由工具中心在被 push 遮住后弹出。
 struct CloudSyncView: View {
 
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var vaultListViewModel: VaultListViewModel
+    @EnvironmentObject private var safeNoteService: SafeNoteVaultService
     @Environment(\.dismiss) private var dismiss
+
+    /// 本页独立持有数据操作 ViewModel，避免与工具中心的导入状态互相串改
+    @StateObject private var settingsVM = SettingsViewModel()
+
+    /// 加密备份导出走「设密码 → 系统保存面板」两步
+    @State private var showingExportPasswordSheet = false
+    @State private var showingExporter = false
+    @State private var exportDocument: VaultBackupDocument?
+    /// 密码弹窗关闭后待调起保存面板的备份内容
+    @State private var pendingExportDocument: VaultBackupDocument?
+    /// 本次备份生成的文件名（保存面板与结果对话框共用，避免时间戳不一致）
+    @State private var backupFileName = ""
 
     /// 参考图中循环箭头的紫色
     private let accent = Color(red: 0.65, green: 0.24, blue: 0.90)
@@ -40,6 +56,8 @@ struct CloudSyncView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 6)
+
+                backupSection
             }
             .padding(.horizontal, 20)
             .padding(.top, 8)
@@ -98,10 +116,8 @@ struct CloudSyncView: View {
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 
-    /// 时钟 + 双箭头的 SF Symbol 若在当前系统缺失，退回普通循环箭头
     private var syncSymbol: String {
-        UIImage(systemName: "clock.arrow.2.circlepath") == nil
-            ? "arrow.triangle.2.circlepath" : "clock.arrow.2.circlepath"
+        safeSymbol("clock.arrow.2.circlepath", fallback: "arrow.triangle.2.circlepath")
     }
 
     // MARK: - 状态卡片
@@ -192,6 +208,173 @@ struct CloudSyncView: View {
 
     private var cardColor: Color {
         Color(uiColor: .secondarySystemGroupedBackground)
+    }
+
+    // MARK: - 备份与恢复
+
+    /// 参考图下半部分：分组标题 + 两行入口卡片 + 灰色说明。
+    /// 入口直接触发原有的加密备份 / 备份恢复流程，不再另建一级页面。
+    private var backupSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Backup & Restore")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(.secondary)
+                .padding(.leading, 6)
+
+            VStack(spacing: 0) {
+                backupEntry(
+                    icon: safeSymbol("arrow.down.doc", fallback: "doc.text"),
+                    title: "Backup",
+                    subtitle: "Encrypted backup file (.vgbackup)"
+                ) {
+                    showingExportPasswordSheet = true
+                }
+
+                rowDivider
+
+                backupEntry(
+                    icon: safeSymbol(
+                        "clock.arrow.circlepath", fallback: "arrow.counterclockwise.circle"),
+                    title: "Restore",
+                    subtitle: nil
+                ) {
+                    settingsVM.presentRestorePicker()
+                }
+            }
+            .background(cardColor)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+
+            Text("Backup files are independent of iCloud sync. You can create an encrypted backup at any time, whether or not iCloud sync is on.")
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 6)
+        }
+        // 相关弹窗挂在备份分组这一层：与工具中心的导入选择器处于不同视图分支，
+        // 避免同一层级挂两个 fileImporter 时系统只认最后一个。
+        .sheet(isPresented: $showingExportPasswordSheet) {
+            BackupExportPasswordView(settingsVM: settingsVM) { document in
+                pendingExportDocument = document
+            }
+        }
+        .onChange(of: showingExportPasswordSheet) { _, showing in
+            // 密码弹窗关闭后（生成成功），调起系统保存面板
+            if !showing, let document = pendingExportDocument {
+                pendingExportDocument = nil
+                exportDocument = document
+                backupFileName = Self.makeBackupFilename()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    showingExporter = true
+                }
+            }
+        }
+        .fileImporter(
+            isPresented: $settingsVM.showingFilePicker,
+            allowedContentTypes: settingsVM.filePickerContentTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            settingsVM.handleFilePickerResult(result)
+        }
+        .sheet(isPresented: $settingsVM.showingRestorePasswordSheet) {
+            BackupRestorePasswordView(settingsVM: settingsVM) { password in
+                Task { await settingsVM.restoreBackup(password: password) }
+            }
+        }
+        .fileExporter(
+            isPresented: $showingExporter,
+            document: exportDocument,
+            contentType: .vaultBackup,
+            defaultFilename: backupFileName
+        ) { result in
+            exportDocument = nil
+            switch result {
+            case .success:
+                settingsVM.alert = .operationResult(
+                    DataOperationResult(
+                        operation: .backupExport,
+                        succeeded: true,
+                        fileName: backupFileName + ".vgbackup",
+                        itemCount: settingsVM.lastBackupItemCount,
+                        skippedCount: 0,
+                        errorMessage: nil
+                    )
+                )
+            case .failure(let error):
+                settingsVM.alert = .operationResult(
+                    DataOperationResult(
+                        operation: .backupExport,
+                        succeeded: false,
+                        fileName: backupFileName + ".vgbackup",
+                        itemCount: 0,
+                        skippedCount: 0,
+                        errorMessage: "Export failed: \(error.localizedDescription)"
+                    )
+                )
+            }
+        }
+        .alert(item: $settingsVM.alert) { alert in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: .default(Text(AppLocale.string("OK")))
+            )
+        }
+        .onAppear {
+            settingsVM.configure(
+                appState: appState,
+                vaultListViewModel: vaultListViewModel,
+                safeNoteService: safeNoteService
+            )
+        }
+    }
+
+    private func backupEntry(
+        icon: String,
+        title: LocalizedStringKey,
+        subtitle: LocalizedStringKey?,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 23))
+                    .foregroundStyle(Color.primaryBrandColor)
+                    .frame(width: 30)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(settingsVM.isRestoring)
+    }
+
+    /// 备份导出默认文件名（时间戳后缀，避免同名覆盖）
+    private static func makeBackupFilename() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return "VaultCell-Backup-\(formatter.string(from: Date()))"
+    }
+
+    /// SF Symbol 在个别系统版本可能缺失，退回同义符号避免出现空白图标
+    private func safeSymbol(_ preferred: String, fallback: String) -> String {
+        UIImage(systemName: preferred) == nil ? fallback : preferred
     }
 
     // MARK: - 状态文案
