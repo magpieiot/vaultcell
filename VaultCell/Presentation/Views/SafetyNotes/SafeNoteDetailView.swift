@@ -43,7 +43,7 @@ struct SafeNoteDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(viewModel.note?.title ?? String(localized: "Note Details"))
+        .navigationTitle(viewModel.note?.title ?? AppLocale.string("Note Details"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .preference(key: TabBarVisibilityKey.self, value: true)

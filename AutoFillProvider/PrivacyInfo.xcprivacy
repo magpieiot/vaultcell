@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<!--
+		扩展是独立 bundle，必须自带隐私清单，否则会收到 ITMS-91053 警告。
+		当前仅用到 Required Reason API 中的 UserDefaults：
+		读主 App 写入的应用内语言（ExtensionLanguage.swift）与
+		写「扩展已保存凭据」时间戳供主 App 消费（AutoFillCredentialStore.swift），
+		两者都通过 App Group 的 UserDefaults(suiteName:) 完成，理由码 CA92.1。
+	-->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

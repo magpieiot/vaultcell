@@ -1,0 +1,139 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add 2FA verification code by scanning QR code with camera" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanne mit der Kamera einen QR-Code, um einen Zwei-Faktor-Code hinzuzufügen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escanea un código QR con la cámara para añadir un código de doble factor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannez un code QR avec l'appareil photo pour ajouter un code à deux facteurs."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カメラで QR コードを読み取り、二段階認証コードを追加します。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сканируйте QR-код камерой, чтобы добавить код двухфакторной аутентификации."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用相机扫描二维码以添加两步验证密钥。"
+          }
+        }
+      }
+    },
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VaultCell"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VaultCell"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add 2FA verification code by scanning QR code with camera"
+          }
+        }
+      }
+    },
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Privacy - Face ID Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use Face ID to quickly and securely unlock your password vault."
+          }
+        }
+      }
+    },
+    "Use Face ID to quickly and securely unlock your password vault." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwende Face ID, um deinen Passwort-Tresor schnell und sicher zu entsperren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Face ID para desbloquear tu caja fuerte de contraseñas de forma rápida y segura."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisez Face ID pour déverrouiller votre coffre de mots de passe rapidement et en toute sécurité."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Face ID を使ってパスワード庫をすばやく安全にロック解除します。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Используйте Face ID для быстрого и безопасного разблокирования сейфа паролей."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用面容 ID 快速、安全地解锁密码库。"
+          }
+        }
+      }
+    },
+    "VaultCell Encrypted Backup" : {
+
+    }
+  },
+  "version" : "1.0"
+}

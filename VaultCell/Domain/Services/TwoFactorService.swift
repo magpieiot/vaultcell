@@ -18,7 +18,7 @@ final class TwoFactorService: ObservableObject {
                 securityScore: 0,
                 typeDistribution: [:],
                 risks: [],
-                suggestions: [String(localized: "No 2FA configuration found. Enable TOTP or hardware keys on important accounts first.")]
+                suggestions: [AppLocale.string("No 2FA configuration found. Enable TOTP or hardware keys on important accounts first.")]
             )
         }
 
@@ -42,9 +42,9 @@ final class TwoFactorService: ObservableObject {
                 SecurityRisk(
                     id: UUID(),
                     severity: .medium,
-                    description: String(localized: "\(config.type.rawValue) is configured but disabled."),
+                    description: AppLocale.string("\(config.type.rawValue) is configured but disabled."),
                     affectedEntryId: entryID,
-                    recommendation: String(localized: "Enable it again or remove the stale configuration.")
+                    recommendation: AppLocale.string("Enable it again or remove the stale configuration.")
                 )
             )
         }
@@ -54,9 +54,9 @@ final class TwoFactorService: ObservableObject {
                 SecurityRisk(
                     id: UUID(),
                     severity: .high,
-                    description: String(localized: "\(config.type.rawValue) has never been verified."),
+                    description: AppLocale.string("\(config.type.rawValue) has never been verified."),
                     affectedEntryId: entryID,
-                    recommendation: String(localized: "Complete one verification cycle and record the verified time.")
+                    recommendation: AppLocale.string("Complete one verification cycle and record the verified time.")
                 )
             )
         }
@@ -66,22 +66,22 @@ final class TwoFactorService: ObservableObject {
                 SecurityRisk(
                     id: UUID(),
                     severity: .medium,
-                    description: String(localized: "\(config.type.rawValue) is weaker than TOTP or hardware keys."),
+                    description: AppLocale.string("\(config.type.rawValue) is weaker than TOTP or hardware keys."),
                     affectedEntryId: entryID,
-                    recommendation: String(localized: "Prefer TOTP or hardware-based 2FA for stronger protection.")
+                    recommendation: AppLocale.string("Prefer TOTP or hardware-based 2FA for stronger protection.")
                 )
             )
         }
 
         var suggestions: [String] = []
         if verified2FA < total2FA {
-            suggestions.append(String(localized: "Verify all enabled 2FA methods so recovery and rotation remain reliable."))
+            suggestions.append(AppLocale.string("Verify all enabled 2FA methods so recovery and rotation remain reliable."))
         }
         if recommendedConfigs.count < total2FA {
-            suggestions.append(String(localized: "Migrate SMS and email codes to TOTP or hardware keys where possible."))
+            suggestions.append(AppLocale.string("Migrate SMS and email codes to TOTP or hardware keys where possible."))
         }
         if enabledConfigs.count < total2FA {
-            suggestions.append(String(localized: "Remove disabled 2FA entries or re-enable the ones still in use."))
+            suggestions.append(AppLocale.string("Remove disabled 2FA entries or re-enable the ones still in use."))
         }
 
         return TwoFactorAudit(

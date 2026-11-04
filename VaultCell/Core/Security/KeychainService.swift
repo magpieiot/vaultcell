@@ -247,6 +247,8 @@ class AppLockService {
         try? keychainService.deleteKey(for: encryptedMasterKeyIdentifier)
         try? keychainService.deleteKey(for: biometricDekIdentifier)
         try? keychainService.deleteKey(for: hasVaultIdentifier)
+        UserDefaults.standard.removeObject(forKey: VaultKey.pendingCloudRestoreDownload)
+        UserDefaults.standard.removeObject(forKey: VaultKey.iCloudSyncEnabled)
     }
     
     func createVault(with masterPassword: String) throws {
@@ -267,10 +269,59 @@ class AppLockService {
         try keychainService.store(true, for: hasVaultIdentifier)
 
         UserDefaults.standard.set(true, forKey: VaultKey.vaultInstalledMarker)
+        UserDefaults.standard.set(UUID().uuidString, forKey: VaultKey.vaultID)
+        UserDefaults.standard.set(1, forKey: VaultKey.cloudKeyRevision)
+        UserDefaults.standard.removeObject(forKey: VaultKey.pendingCloudRestoreDownload)
         
         if let encryptionService = encryptionService as? EncryptionService {
             encryptionService.setEncryptionKey(keys.dataEncryptionKey)
         }
+    }
+
+    var vaultID: UUID {
+        if let raw = UserDefaults.standard.string(forKey: VaultKey.vaultID),
+           let id = UUID(uuidString: raw) {
+            return id
+        }
+        let id = UUID()
+        UserDefaults.standard.set(id.uuidString, forKey: VaultKey.vaultID)
+        return id
+    }
+
+    func exportCloudKeyMaterial() throws -> CloudVaultKeyMaterial {
+        let salt = try keychainService.retrieveKey(for: saltIdentifier)
+        let id = vaultID
+        let revision = max(1, UserDefaults.standard.integer(forKey: VaultKey.cloudKeyRevision))
+        return CloudVaultKeyMaterial(
+            vaultID: id,
+            salt: salt,
+            wrappedDEK: try keychainService.retrieveKey(for: encryptedMasterKeyIdentifier),
+            kdfAlgorithm: CloudVaultKeyMaterial.currentKDF,
+            kdfIterations: KeyDerivationService.pbkdf2Iterations,
+            wrapAlgorithm: CloudVaultKeyMaterial.currentWrap,
+            revision: Int64(revision)
+        )
+    }
+
+    /// 新设备只安装包裹材料，随后仍必须由用户输入原主密码完成真正解锁。
+    func importCloudKeyMaterial(_ material: CloudVaultKeyMaterial) throws {
+        guard material.kdfAlgorithm == CloudVaultKeyMaterial.currentKDF,
+              material.kdfIterations == KeyDerivationService.pbkdf2Iterations,
+              material.wrapAlgorithm == CloudVaultKeyMaterial.currentWrap,
+              material.salt.count == KeyDerivationService.saltSize else {
+            throw CloudSyncError.vaultMismatch
+        }
+        try keychainService.storeKey(material.salt, for: saltIdentifier, requiresUserPresence: false)
+        try keychainService.storeKey(
+            material.wrappedDEK,
+            for: encryptedMasterKeyIdentifier,
+            requiresUserPresence: false
+        )
+        try keychainService.store(true, for: hasVaultIdentifier)
+        UserDefaults.standard.set(material.vaultID.uuidString, forKey: VaultKey.vaultID)
+        UserDefaults.standard.set(Int(material.revision), forKey: VaultKey.cloudKeyRevision)
+        UserDefaults.standard.set(true, forKey: VaultKey.vaultInstalledMarker)
+        UserDefaults.standard.set(true, forKey: VaultKey.pendingCloudRestoreDownload)
     }
     
     func unlockVault(with masterPassword: String) throws {
@@ -297,24 +348,47 @@ class AppLockService {
         }
     }
     
+    /// 修改主密码：用新密码派生的 KEK 重新包裹 DEK
+    ///
+    /// 顺序要点：先解出 DEK 并校验旧密码，再生成新盐与新密文，最后成对写入。
+    /// 两个 Keychain 条目（盐 / 包裹后的 DEK）必须同时更新，任一写入失败都会
+    /// 让旧密码再也解不开 DEK，因此写入失败时回滚到改动前的两份数据。
     func changeMasterPassword(from oldPassword: String, to newPassword: String) throws {
-        let salt = try keyDerivationService.generateSalt()
         let oldSalt = try keychainService.retrieveKey(for: saltIdentifier)
+        let oldEncryptedDekData = try keychainService.retrieveKey(for: encryptedMasterKeyIdentifier)
+
         let oldMasterKey = try keyDerivationService.deriveMasterKey(from: oldPassword, salt: oldSalt)
         let oldKeys = try keyDerivationService.deriveSubKeys(from: oldMasterKey)
-        
-        let encryptedDekData = try keychainService.retrieveKey(for: encryptedMasterKeyIdentifier)
-        let encryptedDek = try EncryptedData.fromCombined(encryptedDekData)
+
+        let encryptedDek = try EncryptedData.fromCombined(oldEncryptedDekData)
+        // 旧密码不对时 AES-GCM 认证失败在此抛出，此时尚未写入任何数据
         let dekData = try encryptionService.decrypt(encryptedDek, using: oldKeys.keyEncryptionKey)
-        
-        let newMasterKey = try keyDerivationService.deriveMasterKey(from: newPassword, salt: salt)
+
+        let newSalt = try keyDerivationService.generateSalt()
+        let newMasterKey = try keyDerivationService.deriveMasterKey(from: newPassword, salt: newSalt)
         let newKeys = try keyDerivationService.deriveSubKeys(from: newMasterKey)
-        
         let newEncryptedDek = try encryptionService.encrypt(dekData, using: newKeys.keyEncryptionKey)
-        
-        try keychainService.storeKey(salt, for: saltIdentifier)
-        try keychainService.storeKey(newEncryptedDek.combined, for: encryptedMasterKeyIdentifier)
-        
+
+        do {
+            try keychainService.storeKey(newSalt, for: saltIdentifier, requiresUserPresence: false)
+            try keychainService.storeKey(
+                newEncryptedDek.combined,
+                for: encryptedMasterKeyIdentifier,
+                requiresUserPresence: false
+            )
+        } catch {
+            try? keychainService.storeKey(oldSalt, for: saltIdentifier, requiresUserPresence: false)
+            try? keychainService.storeKey(
+                oldEncryptedDekData,
+                for: encryptedMasterKeyIdentifier,
+                requiresUserPresence: false
+            )
+            throw error
+        }
+
+        let previousRevision = UserDefaults.standard.integer(forKey: VaultKey.cloudKeyRevision)
+        UserDefaults.standard.set(max(1, previousRevision) + 1, forKey: VaultKey.cloudKeyRevision)
+
         let dek = SymmetricKey(data: dekData)
         if let encryptionService = encryptionService as? EncryptionService {
             encryptionService.setEncryptionKey(dek)

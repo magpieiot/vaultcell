@@ -22,7 +22,13 @@ protocol EncryptedFileStorageProtocol {
 final class EncryptedFileStorage: EncryptedFileStorageProtocol {
     private let fileManager: FileManager
     private let encryptionService: EncryptionServiceProtocol
-    private let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
+    private let appGroupIdentifier: String = {
+        #if CN
+        return "group.com.magpie.vaultcell.cn.shared"
+        #else
+        return "group.com.magpie.vaultcell.shared"
+        #endif
+    }()
 
     init(
         fileManager: FileManager = .default,
@@ -56,6 +62,16 @@ final class EncryptedFileStorage: EncryptedFileStorageProtocol {
         let noteURL = storageDirectoryURL().appendingPathComponent(noteID.uuidString, isDirectory: true)
         guard fileManager.fileExists(atPath: noteURL.path) else { return }
         try fileManager.removeItem(at: noteURL)
+    }
+
+    /// 删除全部安全笔记的加密附件与缩略图（重置密码库时调用）
+    ///
+    /// 附件以文件形式存在 App Group 目录下，不随 Core Data 记录一起消失，
+    /// 重置时若不清掉，新建的库会残留旧库的密文文件。
+    func deleteAllFiles() throws {
+        let directory = storageDirectoryURL()
+        guard fileManager.fileExists(atPath: directory.path) else { return }
+        try fileManager.removeItem(at: directory)
     }
 
     func optimizedImageData(from data: Data, maxDimension: CGFloat = 2000) -> Data? {

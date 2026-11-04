@@ -138,12 +138,10 @@ struct VaultSecurityAuditService {
                 entryIssueList.append(
                     String(
                         format:
-                            String(
-                                localized:
-                                    "OAuth source entry for %@ (%@) was not found in the vault; scored with fallback rules."
+                            AppLocale.string("OAuth source entry for %@ (%@) was not found in the vault; scored with fallback rules."
                             ),
-                        oauth.provider ?? String(localized: "Unknown"),
-                        oauth.boundValue ?? String(localized: "Unknown")
+                        oauth.provider ?? AppLocale.string("Unknown"),
+                        oauth.boundValue ?? AppLocale.string("Unknown")
                     )
                 )
             }
@@ -241,12 +239,10 @@ private extension VaultSecurityAuditService {
                 items.append(
                     String(
                         format:
-                            String(
-                                localized:
-                                    "This account signs in via OAuth (%@ / %@); its security score is inherited from the source entry."
+                            AppLocale.string("This account signs in via OAuth (%@ / %@); its security score is inherited from the source entry."
                             ),
-                        oauth.provider ?? String(localized: "Unknown"),
-                        oauth.boundValue ?? String(localized: "Unknown")
+                        oauth.provider ?? AppLocale.string("Unknown"),
+                        oauth.boundValue ?? AppLocale.string("Unknown")
                     )
                 )
             }
@@ -255,7 +251,7 @@ private extension VaultSecurityAuditService {
 
         let dupCount = duplicateMap[normalizePassword(entry.password), default: 0]
         if dupCount > 1 {
-            items.append(String(format: String(localized: "Password is reused across %lld entries."), dupCount))
+            items.append(String(format: AppLocale.string("Password is reused across %lld entries."), dupCount))
         }
 
         // 泄露检测功能尚未完成，暂不输出泄露类问题
@@ -263,29 +259,29 @@ private extension VaultSecurityAuditService {
 
         let enabledConfigs = (entry.twoFactorConfigs ?? []).filter { $0.isEnabled }
         if !entry.has2FA && enabledConfigs.isEmpty {
-            items.append(String(localized: "2FA is not enabled."))
+            items.append(AppLocale.string("2FA is not enabled."))
         } else if let best = bestTwoFactorConfig(enabledConfigs) {
             if best.type == .sms {
-                items.append(String(localized: "2FA uses SMS, consider switching to an authenticator app."))
+                items.append(AppLocale.string("2FA uses SMS, consider switching to an authenticator app."))
             }
             if best.lastVerifiedAt == nil {
-                items.append(String(localized: "2FA is not verified yet."))
+                items.append(AppLocale.string("2FA is not verified yet."))
             }
         }
 
         let changedAt = entry.passwordChangedAt ?? entry.updatedAt ?? now
         let ageDays = daysBetween(changedAt, now)
         if ageDays > 365 {
-            items.append(String(localized: "Password has not been changed for over a year."))
+            items.append(AppLocale.string("Password has not been changed for over a year."))
         }
 
         if entry.password.count < 12 {
-            items.append(String(localized: "Password is shorter than 12 characters."))
+            items.append(AppLocale.string("Password is shorter than 12 characters."))
         }
 
         let charset = charsetFlags(entry.password)
         if !(charset.hasLower && charset.hasUpper && charset.hasDigit && charset.hasSymbol) {
-            items.append(String(localized: "Password does not use all character types (upper/lower/digit/symbol)."))
+            items.append(AppLocale.string("Password does not use all character types (upper/lower/digit/symbol)."))
         }
 
         return items
@@ -431,7 +427,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: .reusedPasswords,
                     text: String(
-                        format: String(localized: "%lld entries reuse a password. Change them to unique passwords."),
+                        format: AppLocale.string("%lld entries reuse a password. Change them to unique passwords."),
                         duplicateEntriesCount
                     )
                 )
@@ -443,7 +439,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: .compromised,
                     text: String(
-                        format: String(localized: "%lld entries are marked as compromised. Change passwords immediately."),
+                        format: AppLocale.string("%lld entries are marked as compromised. Change passwords immediately."),
                         compromisedEntriesCount
                     )
                 )
@@ -455,7 +451,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: .missing2FA,
                     text: String(
-                        format: String(localized: "Enable 2FA on %lld entries to reduce takeover risk."),
+                        format: AppLocale.string("Enable 2FA on %lld entries to reduce takeover risk."),
                         no2FACount
                     )
                 )
@@ -467,7 +463,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: .stalePassword,
                     text: String(
-                        format: String(localized: "%lld entries have not changed passwords for over a year."),
+                        format: AppLocale.string("%lld entries have not changed passwords for over a year."),
                         staleEntriesCount
                     )
                 )
@@ -479,7 +475,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: .lowScore,
                     text: String(
-                        format: String(localized: "%lld entries have low scores. Consider upgrading them first."),
+                        format: AppLocale.string("%lld entries have low scores. Consider upgrading them first."),
                         weakEntriesCount
                     )
                 )
@@ -491,7 +487,7 @@ private extension VaultSecurityAuditService {
                 VaultSecuritySuggestion(
                     kind: nil,
                     text: String(
-                        format: String(localized: "%lld entries sign in via OAuth. Their security relies on the source accounts in the vault."),
+                        format: AppLocale.string("%lld entries sign in via OAuth. Their security relies on the source accounts in the vault."),
                         oauthEntriesCount
                     )
                 )

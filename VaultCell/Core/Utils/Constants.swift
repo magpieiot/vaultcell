@@ -32,9 +32,43 @@ enum AppStore {
     /// App Store 应用 ID（上架后替换为真实 ID）
     static let appID = "0000000000"
 
-    /// 打开 App Store 写评论页面
+    /// 打开 App Store 写评论页面。
+    /// 占位 ID（0000000000）未替换时返回 nil，避免拼出 id0000000000 的坏链接。
     static var writeReviewURL: URL? {
-        URL(string: "https://apps.apple.com/app/id\(appID)?action=write-review")
+        guard Int(appID) ?? 0 > 0, appID.allSatisfy(\.isNumber) else { return nil }
+        return URL(string: "https://apps.apple.com/app/id\(appID)?action=write-review")
+    }
+
+    /// App ID 是否已是上架后的真实 ID（占位符时为 false）
+    static var hasRealAppID: Bool { writeReviewURL != nil }
+}
+
+/// 法律条款与支持资源
+///
+/// App 内展示的始终是**本地完整内容**（`LegalContent`），离线可读；
+/// 下面的线上地址只决定文档页底部是否多出一个"线上版本"入口。
+/// App Store Connect 的隐私政策 URL 填 `privacyPolicyURL` 同一地址。
+///
+/// 官网（www.magpieai.app）尚未上线前，线上文档托管在 GitHub Pages：
+/// 仓库 magpieiot/vaultcell_web（main 分支根目录），必须保持 public。
+enum Legal {
+    /// 隐私政策线上地址
+    static let privacyPolicyURL: URL? =
+        URL(string: "https://magpieiot.github.io/vaultcell_web/privacy.html")
+    /// 服务条款线上地址
+    static let termsOfServiceURL: URL? =
+        URL(string: "https://magpieiot.github.io/vaultcell_web/terms.html")
+    /// 在线帮助中心地址（官网就绪前留空，App 内帮助页已自足）
+    static let helpCenterURL: URL? = nil
+
+    /// 支持邮箱：同时用于 App 内"Email support"入口与审核备注联系人
+    static let supportEmail = "magpieiot@gmail.com"
+
+    /// 支持邮箱可点击时才有值（未配置 / 仍是占位文案时不显示任何 mailto 入口）
+    static var supportEmailURL: URL? {
+        let mail = supportEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard mail.contains("@"), !mail.hasPrefix("(") else { return nil }
+        return URL(string: "mailto:\(mail)")
     }
 }
 
@@ -44,6 +78,10 @@ enum VaultKey {
     static let biometricDek = "vaultcell.biometricDek"
     static let hasVault = "vaultcell.hasVault"
     static let vaultInstalledMarker = "vaultcell.vaultInstalledMarker"
+    static let vaultID = "vaultcell.vaultID"
+    static let cloudKeyRevision = "vaultcell.cloudKeyRevision"
+    static let iCloudSyncEnabled = "vaultcell.iCloudSyncEnabled"
+    static let pendingCloudRestoreDownload = "vaultcell.pendingCloudRestoreDownload"
     /// 主密码解锁失败限流状态（存 Keychain，keychainService 的 account 名）
     static let unlockThrottle = "vaultcell.unlockThrottle"
     static let settings = "vaultcell.settings"
@@ -75,6 +113,8 @@ enum VaultKey {
     static let showCompromisedInScoreReasons = "vaultcell.showCompromisedInScoreReasons"
     /// 外观模式：AppAppearance 的 rawValue（0 浅色 / 1 深色 / 2 跟随系统）
     static let appearanceMode = "vaultcell.appearanceMode"
+    /// 收藏条目是否置顶显示（默认关闭，保持现有列表顺序不变）
+    static let pinFavoritesToTop = "vaultcell.pinFavoritesToTop"
 }
 
 struct AppTitle {

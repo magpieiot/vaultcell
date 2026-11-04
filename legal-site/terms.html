@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Service — VaultCell</title>
+<meta name="description" content="The agreement covering your use of VaultCell: licence, master password, iCloud sync, AutoFill, fees and liability.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/legal.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="wordmark" href="index.html"><span class="dot" aria-hidden="true"></span>VaultCell</a>
+    <nav class="doc-switch" aria-label="Legal documents">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html" aria-current="page">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell page" id="content">
+  <div class="page-head">
+    <p class="eyebrow">Legal</p>
+    <h1>Terms of Service</h1>
+    <dl class="meta">
+      <div><dt>Last updated</dt><dd>November 2, 2026</dd></div>
+      <div><dt>Applies to</dt><dd>VaultCell for iOS, version 1.0 and later</dd></div>
+    </dl>
+  </div>
+
+  <div class="layout">
+    <details class="toc" id="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#acceptance">1. Acceptance</a></li>
+        <li><a href="#the-service">2. The Service</a></li>
+        <li><a href="#licence-grant">3. Licence Grant</a></li>
+        <li><a href="#your-master-password-read-this-section">4. Your Master Password — Read This Section</a></li>
+        <li><a href="#acceptable-use">5. Acceptable Use</a></li>
+        <li><a href="#icloud-sync">6. iCloud Sync</a></li>
+        <li><a href="#autofill-extension">7. AutoFill Extension</a></li>
+        <li><a href="#intellectual-property">8. Intellectual Property</a></li>
+        <li><a href="#fees">9. Fees</a></li>
+        <li><a href="#apple-app-store-additional-terms">10. Apple App Store — Additional Terms</a></li>
+        <li><a href="#export-control-and-encryption">11. Export Control and Encryption</a></li>
+        <li><a href="#disclaimer-of-warranties">12. Disclaimer of Warranties</a></li>
+        <li><a href="#limitation-of-liability">13. Limitation of Liability</a></li>
+        <li><a href="#indemnity">14. Indemnity</a></li>
+        <li><a href="#termination">15. Termination</a></li>
+        <li><a href="#changes-to-these-terms">16. Changes to These Terms</a></li>
+        <li><a href="#governing-law-and-disputes">17. Governing Law and Disputes</a></li>
+        <li><a href="#general">18. General</a></li>
+        <li><a href="#contact">19. Contact</a></li>
+      </ol>
+    </details>
+    <article class="prose">
+<h2 id="acceptance">1. Acceptance</h2>
+<p>These Terms of Service ("Terms") are a legal agreement between you ("you," "your") and Gavan Wang ("we," "us," "our"), the developer of the VaultCell mobile application and its AutoFill extension (together, the "App").</p>
+<p>By downloading, installing, or using the App, you agree to these Terms. If you do not agree, do not install the App, and if already installed, delete it and your data.</p>
+<p>If you use the App on behalf of an organisation, you represent that you have authority to bind that organisation to these Terms.</p>
+
+<h2 id="the-service">2. The Service</h2>
+<p>VaultCell is a <strong>local-first password manager</strong>. It stores credentials, secure notes, bank card details, and two-factor secrets in an encrypted database on your device. It requires no account and no registration.</p>
+<ul>
+<li><strong>Core functionality works entirely offline.</strong></li>
+<li><strong>Optional iCloud sync</strong> replicates encrypted records across your own devices through your private iCloud database. See Section 6.</li>
+<li><strong>AutoFill</strong> lets you fill credentials in Safari and other apps through an iOS Credential Provider extension.</li>
+</ul>
+<p>The App is provided <strong>free of charge</strong>, with no in-app purchases, no subscriptions, and no advertising. See Section 9.</p>
+<p>We may release updates, change features, or discontinue the App. Features that depend on iOS or on Apple's iCloud service are also subject to Apple's availability.</p>
+
+<h2 id="licence-grant">3. Licence Grant</h2>
+<p>Subject to these Terms, we grant you a personal, non-exclusive, non-transferable, revocable, limited licence to install and use the App on Apple-branded devices that you own or control, as permitted by the App Store Usage Rules.</p>
+<p>You may not:</p>
+<ul>
+<li>Copy, redistribute, sublicense, rent, lease, or lend the App;</li>
+<li>Reverse engineer, decompile, disassemble, or attempt to derive the source code, except to the extent such restriction is prohibited by applicable law;</li>
+<li>Remove or alter any proprietary notices;</li>
+<li>Use the App to build a competing product by extracting its designs, database schema, or encryption implementation.</li>
+</ul>
+<p>This licence terminates automatically if you breach these Terms. Termination does not entitle you to a refund (the App is free), and does not restore access to a vault whose master password has been lost.</p>
+
+<h2 id="your-master-password-read-this-section">4. Your Master Password — Read This Section</h2>
+<p><strong>This is the single most important section of these Terms.</strong></p>
+<ul>
+<li>Your master password is the <strong>only</strong> key to your vault. It is used to derive your encryption key on your device (PBKDF2-SHA256, 600,000 iterations) and is <strong>never stored, never transmitted, and never backed up by us</strong>.</li>
+<li><strong>We cannot reset it, recover it, or bypass it.</strong> There is no account recovery, no support override, no escrow key, and no backdoor. This is intentional: any mechanism that could recover your vault for you could also be used against you.</li>
+<li><strong>If you forget your master password, your data is permanently and irreversibly lost.</strong> No party — including us, including Apple — can restore it.</li>
+<li><strong>You are solely responsible for:</strong></li>
+<li>Choosing a strong, unique master password;</li>
+<li>Remembering it, or recording it somewhere physically secure and separate from your device;</li>
+<li>Creating and safeguarding encrypted backups (<code>.vgbackup</code>) if the data matters to you;</li>
+<li>Keeping the backup password, which is separate from and not recoverable through your master password.</li>
+</ul>
+<p>We will not be liable for data loss resulting from a forgotten master password, a lost or destroyed device, a corrupted backup, or the absence of a backup. This allocation of risk is a fundamental basis of the bargain and is reflected in the fact that the App is free.</p>
+
+<h2 id="acceptable-use">5. Acceptable Use</h2>
+<p>You agree not to use the App to:</p>
+<ul>
+<li>Store or manage credentials you are not lawfully entitled to hold;</li>
+<li>Access systems without authorisation, or store another person's credentials without their consent;</li>
+<li>Violate any applicable law or regulation;</li>
+<li>Circumvent, disable, or interfere with security features of the App or of iOS;</li>
+<li>Distribute malware, or use the App as part of an unlawful service.</li>
+</ul>
+<p>You are responsible for all activity that occurs within your vault.</p>
+
+<h2 id="icloud-sync">6. iCloud Sync</h2>
+<p>Sync is <strong>off by default</strong> and requires your explicit consent plus an Apple ID signed in to the device.</p>
+<p>When enabled:</p>
+<ul>
+<li>Only records <strong>already encrypted on your device</strong> are transmitted, using Apple's CloudKit framework, to a private database in <strong>your own</strong> iCloud account.</li>
+<li>We do not hold credentials to that database and cannot read, query, decrypt, or delete its contents.</li>
+<li>Apple provides the storage and transport. Your use of iCloud is governed by Apple's terms; Apple's role is described in our Privacy Policy.</li>
+<li>Silent push notifications are used to keep devices in step. They carry no credential content.</li>
+<li>Sync is best-effort. Conflict resolution prefers the most recent write. <strong>Sync is not a backup</strong>: a deletion propagates. Keep an independent encrypted backup.</li>
+<li>Disabling sync stops further replication but does not delete records already in iCloud. Remove those through iOS Settings if you want them gone.</li>
+</ul>
+<p>We are not responsible for data loss, duplication, or delay caused by iCloud outages, Apple ID changes, storage limits, or conflict resolution.</p>
+
+<h2 id="autofill-extension">7. AutoFill Extension</h2>
+<p>The AutoFill extension runs inside iOS's credential-request flow and accesses the same encrypted vault as the main App.</p>
+<ul>
+<li>It cannot expose plaintext without you unlocking the vault and selecting an entry.</li>
+<li>It declines requests it cannot satisfy (for example, passkey requests) so that iOS can fall back to your other credential providers.</li>
+<li>Its behaviour depends on iOS and on your enabling VaultCell in iOS Settings → General → AutoFill &amp; Passwords.</li>
+</ul>
+<p>We are not responsible for the security of third-party apps into which you choose to fill credentials, nor for iOS behaviour outside our control.</p>
+
+<h2 id="intellectual-property">8. Intellectual Property</h2>
+<p>The App, including its source code, user interface, visual design, icon set, database schema, and documentation, is owned by us and protected by copyright and other laws. "VaultCell" and its logo are our marks.</p>
+<p>These Terms grant you a licence to use the App; they do not transfer any ownership. All rights not expressly granted are reserved.</p>
+<p>You retain all rights to the content you store in the App. We claim no licence to it — we cannot even read it.</p>
+
+<h2 id="fees">9. Fees</h2>
+<p>The App is free. There are no in-app purchases, no subscriptions, no trials that convert to paid plans, and no advertising. If this ever changes, the change will apply only to future versions and will be disclosed in the App Store listing and in these Terms before any charge is introduced.</p>
+<p>Apple may charge you for iCloud storage beyond the free tier. That transaction is between you and Apple; we receive nothing from it.</p>
+
+<h2 id="apple-app-store-additional-terms">10. Apple App Store — Additional Terms</h2>
+<p>You acknowledge and agree that:</p>
+<ol>
+<li><strong>These Terms are between you and us only, not with Apple.</strong> Apple is not a party to them and bears no obligation to you regarding the App.</li>
+<li><strong>Apple has no obligation to furnish maintenance or support</strong> for the App. All support requests go to us at the address in Section 19.</li>
+<li><strong>Warranty claims.</strong> If the App fails to conform to any applicable warranty, you may notify Apple, and Apple may refund the purchase price to you (there being none, this is nominal). To the maximum extent permitted by law, Apple has no other warranty obligation with respect to the App.</li>
+<li><strong>Claims.</strong> We, not Apple, are responsible for addressing any claims by you or a third party relating to the App or your possession and use of it, including product liability, consumer protection, and intellectual property claims. This does not expand our liability beyond Section 12.</li>
+<li><strong>Legal compliance.</strong> You represent that you are not located in a country subject to a U.S. Government embargo or designated as a "terrorist supporting" country, and that you are not listed on any U.S. Government list of prohibited or restricted parties.</li>
+<li><strong>Third-party beneficiary.</strong> Apple and its subsidiaries are third-party beneficiaries of these Terms and, upon your acceptance, will have the right (and will be deemed to have accepted the right) to enforce them against you.</li>
+</ol>
+
+<h2 id="export-control-and-encryption">11. Export Control and Encryption</h2>
+<p>The App contains cryptographic functionality, including AES-256-GCM and PBKDF2-SHA256, and is subject to export control laws.</p>
+<p>You agree to comply with all applicable export and re-export regulations, including those of the United States and of the jurisdiction in which you obtained the App. You may not export or re-export the App to any prohibited country, entity, or person.</p>
+
+<h2 id="disclaimer-of-warranties">12. Disclaimer of Warranties</h2>
+<blockquote>
+<p><strong>THE APP IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT, ACCURACY, AND NON-INFRINGEMENT.</strong></p>
+<p><strong>WE DO NOT WARRANT THAT THE APP WILL BE ERROR-FREE, UNINTERRUPTED, OR FREE OF VULNERABILITIES; THAT DEFECTS WILL BE CORRECTED; THAT YOUR DATA WILL NEVER BE LOST, CORRUPTED, OR INADVERTENTLY DELETED; THAT SYNC WILL ALWAYS COMPLETE; OR THAT THE APP WILL BE COMPATIBLE WITH EVERY iOS VERSION OR DEVICE.</strong></p>
+<p><strong>NO SOFTWARE IS PERFECTLY SECURE. YOU ACCEPT THE RISK ASSOCIATED WITH USING A DEVICE THAT IS LOST, STOLEN, JAILBROKEN, INFECTED WITH MALWARE, SUBJECT TO PHYSICAL OR REMOTE COMPROMISE, OR ACCESSED BY SOMEONE WHO KNOWS YOUR MASTER PASSWORD OR DEVICE PASSCODE.</strong></p>
+<p><strong>SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO PARTS OF THIS SECTION MAY NOT APPLY TO YOU. NOTHING IN THIS SECTION LIMITS ANY STATUTORY WARRANTY THAT CANNOT BE EXCLUDED.</strong></p>
+</blockquote>
+
+<h2 id="limitation-of-liability">13. Limitation of Liability</h2>
+<blockquote>
+<p><strong>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, OR FOR ANY LOSS OF PROFITS, REVENUE, BUSINESS, GOODWILL, DATA, OR DATA ACCESS, ARISING OUT OF OR RELATING TO THE APP, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</strong></p>
+<p><strong>WHERE LIABILITY CANNOT LAWFULLY BE EXCLUDED, OUR TOTAL AGGREGATE LIABILITY ARISING OUT OF OR RELATING TO THE APP SHALL NOT EXCEED TEN U.S. DOLLARS (USD 10), REFLECTING THE FACT THAT THE APP IS PROVIDED FREE OF CHARGE.</strong></p>
+<p><strong>THESE LIMITS APPLY REGARDLESS OF THE THEORY OF LIABILITY (CONTRACT, TORT, NEGLIGENCE, STRICT LIABILITY, OR OTHERWISE) AND SURVIVE ANY FAILURE OF ESSENTIAL PURPOSE.</strong></p>
+</blockquote>
+<p><strong>Nothing in these Terms excludes or limits our liability for:</strong></p>
+<ul>
+<li>Death or personal injury caused by our negligence;</li>
+<li>Fraud or fraudulent misrepresentation;</li>
+<li>Gross negligence or wilful misconduct;</li>
+<li>Any other liability that cannot be excluded or limited under applicable law.</li>
+</ul>
+<p><strong>If you are a consumer resident in the European Economic Area, the United Kingdom, or Switzerland</strong>, you benefit from mandatory provisions of the law of your country of residence, and nothing in these Terms affects your statutory rights. In particular, clauses that would unfairly exclude liability toward a consumer may not be enforceable against you.</p>
+
+<h2 id="indemnity">14. Indemnity</h2>
+<p>To the extent permitted by law, you agree to indemnify and hold us harmless from claims, damages, and reasonable legal costs arising from your unlawful use of the App or your breach of Section 5. This does not apply to claims caused by our own breach, negligence, or wilful misconduct, and does not apply to consumers in jurisdictions where such indemnities are unenforceable.</p>
+
+<h2 id="termination">15. Termination</h2>
+<p>You may stop using the App at any time and delete it and your data.</p>
+<p>We may suspend or terminate this licence if you materially breach these Terms, or if we discontinue the App. Where practical, we will give notice through the App Store listing or the App's release notes.</p>
+<p>Sections 4, 8, 10, 11, 12, 13, 14, 17, and 18 survive termination.</p>
+
+<h2 id="changes-to-these-terms">16. Changes to These Terms</h2>
+<p>We may revise these Terms as the App evolves. The revised version will be published with a new "Last Updated" date, and material changes will be surfaced in the App's release notes. Continued use after a revision takes effect constitutes acceptance. If you do not accept a revision, stop using the App.</p>
+<p>Because we hold no account or contact record for you, we cannot send you individual notice. The published version is the binding one.</p>
+
+<h2 id="governing-law-and-disputes">17. Governing Law and Disputes</h2>
+<ul>
+<li><strong>Consumers in the EU/UK/EEA:</strong> these Terms are governed by the laws of the country in which you reside, and you may bring proceedings in the courts of that country. Nothing here deprives you of the protection of mandatory consumer law in your place of residence.</li>
+<li><strong>All other users:</strong> these Terms are governed by the laws of the State of Delaware, United States, without regard to its conflict-of-laws rules. You agree to the exclusive jurisdiction of the state and federal courts located in Delaware, except that either party may seek injunctive relief in any competent court to protect intellectual property or prevent misuse.</li>
+</ul>
+<p>Before filing a claim, please contact us at the address in Section 19 and give us 30 days to resolve the matter informally. This is a request, not a condition that limits any right you have under mandatory law.</p>
+<p>The United Nations Convention on Contracts for the International Sale of Goods does not apply.</p>
+
+<h2 id="general">18. General</h2>
+<p><strong>Entire agreement.</strong> These Terms, together with the Privacy Policy, are the complete agreement between you and us regarding the App.</p>
+<p><strong>Severability.</strong> If any provision is held invalid or unenforceable, it will be limited to the minimum extent necessary and the remaining provisions stay in force. If a limitation of liability is unenforceable, the parties intend that a lesser enforceable limitation apply.</p>
+<p><strong>No waiver.</strong> Our failure to enforce a provision is not a waiver of it.</p>
+<p><strong>Assignment.</strong> You may not assign these Terms. We may assign them to a successor in connection with a merger, acquisition, or sale of the App, provided the successor honours them.</p>
+<p><strong>No third-party beneficiaries.</strong> Except for Apple under Section 10, no third party has rights under these Terms.</p>
+<p><strong>Force majeure.</strong> We are not liable for delay or failure caused by events beyond our reasonable control, including Apple service outages.</p>
+<p><strong>Language.</strong> These Terms are drafted in English. Any translation is provided for convenience; the English version controls.</p>
+
+<h2 id="contact">19. Contact</h2>
+<p><strong>Email:</strong> <a href="mailto:magpieiot@gmail.com">magpieiot@gmail.com</a>
+<strong>Website:</strong> <a href="https://www.magpieai.app">www.magpieai.app</a></p>
+
+<p>© 2026 Gavan Wang. All rights reserved.</p>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-inner">
+    <span>&copy; 2026 Gavan Wang &middot; VaultCell</span>
+    <span class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="mailto:magpieiot@gmail.com">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // 桌面端目录常驻展开；移动端默认折叠，点开才占空间
+  (function () {
+    var toc = document.getElementById("toc");
+    if (toc && window.matchMedia("(min-width: 1000px)").matches) toc.open = true;
+  })();
+</script>
+</body>
+</html>

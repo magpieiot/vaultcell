@@ -188,9 +188,9 @@ struct BankcardDetailView: View {
 
     private func cardTypeDisplayName(_ type: CardType) -> String {
         switch type {
-        case .debit: return String(localized: "Debit")
-        case .credit: return String(localized: "Credit")
-        case .quasiCredit: return String(localized: "Quasi-Credit")
+        case .debit: return AppLocale.string("Debit")
+        case .credit: return AppLocale.string("Credit")
+        case .quasiCredit: return AppLocale.string("Quasi-Credit")
         }
     }
 }

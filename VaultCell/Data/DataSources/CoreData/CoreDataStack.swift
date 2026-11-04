@@ -59,7 +59,9 @@ class CoreDataStack {
     }
 
     func newBackgroundContext() -> NSManagedObjectContext {
-        return container.newBackgroundContext()
+        let context = container.newBackgroundContext()
+        context.transactionAuthor = VaultCoreDataStoreConfiguration.hostAuthor
+        return context
     }
 
     func saveContext() {
@@ -96,22 +98,7 @@ class CoreDataStack {
         NSLog("CoreData: 数据库路径=%@", storeURL.path)
 
         let description = NSPersistentStoreDescription(url: storeURL)
-        // 启用轻量级迁移：支持模型版本升级（如新增 dataSourceRaw 字段）
-        description.shouldMigrateStoreAutomatically = true
-        description.shouldInferMappingModelAutomatically = true
-        // 文件级保护：设备锁定时加密 SQLite 文件（含 -wal/-shm），防止物理提取元数据
-        description.setOption(FileProtectionType.complete as NSObject,
-                              forKey: NSPersistentStoreFileProtectionKey)
-        // 关键：AutoFill 扩展是另一个进程，它写入共享 SQLite 后本进程不会自动感知。
-        // 开启该选项后，本连接会在检测到其它连接（扩展）的提交时发出
-        // NSPersistentStoreRemoteChange 通知，由下方观察者触发列表刷新。
-        description.setOption(true as NSNumber,
-                              forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-        // 扩展进程同样会写这个库（保存密码），撞上时给 SQLite 一个等待窗口。
-        // 必须用 setOption：NSPersistentStoreDescription 不是 KVC 容器，
-        // setValue(_:forKey:) 会抛 NSUnknownKeyException 直接闪退。
-        description.setOption(["busy_timeout": "5000"] as NSDictionary,
-                              forKey: NSSQLitePragmasOption)
+        VaultCoreDataStoreConfiguration.configure(description)
         container.persistentStoreDescriptions = [description]
 
         // 加载持久化存储
@@ -130,6 +117,7 @@ class CoreDataStack {
 
         container.viewContext.automaticallyMergesChangesFromParent = true
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.transactionAuthor = VaultCoreDataStoreConfiguration.hostAuthor
 
         // 跨进程写入感知：扩展保存密码后主 App 的界面必须知道数据变了。
         // 只靠 AppState 回前台比对时间戳不够——主 App 一直留在前台时不会触发，
@@ -316,12 +304,33 @@ final class CoreDataDataSource: @unchecked Sendable {
         return cdEntry
     }
     
-    func savePasswordEntry(_ entry: PasswordEntry) throws {
+    func savePasswordEntry(
+        _ entry: PasswordEntry,
+        origin: VaultWriteOrigin = .local
+    ) throws {
+        var persistedEntry = entry
         if let existing = try fetchPassword(by: entry.id) {
-            try updatePasswordEntry(existing, from: entry)
+            if origin == .local {
+                persistedEntry.version = VaultSyncRevision.next(
+                    current: existing.version,
+                    proposed: entry.version
+                )
+                persistedEntry.isSynced = false
+            } else {
+                persistedEntry.isSynced = true
+            }
+            try updatePasswordEntry(existing, from: persistedEntry)
         } else {
-            _ = try createPasswordEntry(from: entry)
+            persistedEntry.version = max(VaultSyncRevision.initial, entry.version)
+            persistedEntry.isSynced = origin == .remote
+            _ = try createPasswordEntry(from: persistedEntry)
         }
+        try saveIfPossible()
+    }
+
+    func markPasswordSynced(_ id: UUID) throws {
+        guard let entry = try fetchPassword(by: id) else { return }
+        entry.isSynced = true
         try saveIfPossible()
     }
     
@@ -425,8 +434,15 @@ final class CoreDataDataSource: @unchecked Sendable {
         }
     }
     
-    func deletePasswordEntry(_ id: UUID) throws {
+    func deletePasswordEntry(_ id: UUID, origin: VaultWriteOrigin = .local) throws {
         if let entry = try fetchPassword(by: id) {
+            if origin == .local {
+                SyncLocalStore.shared.recordTombstone(
+                    itemID: id,
+                    itemKind: .password,
+                    revision: entry.version
+                )
+            }
             context.delete(entry)
             try saveIfPossible()
         }
@@ -686,12 +702,33 @@ final class CoreDataDataSource: @unchecked Sendable {
         return cdNote
     }
 
-    func saveSafeNote(_ note: SafeNote) throws {
+    func saveSafeNote(
+        _ note: SafeNote,
+        origin: VaultWriteOrigin = .local
+    ) throws {
+        var persistedNote = note
         if let existing = try fetchSafeNote(by: note.id) {
-            try updateSafeNote(existing, from: note)
+            if origin == .local {
+                persistedNote.version = VaultSyncRevision.next(
+                    current: existing.version,
+                    proposed: note.version
+                )
+                persistedNote.isSynced = false
+            } else {
+                persistedNote.isSynced = true
+            }
+            try updateSafeNote(existing, from: persistedNote)
         } else {
-            _ = try createSafeNote(from: note)
+            persistedNote.version = max(VaultSyncRevision.initial, note.version)
+            persistedNote.isSynced = origin == .remote
+            _ = try createSafeNote(from: persistedNote)
         }
+        try saveIfPossible()
+    }
+
+    func markSafeNoteSynced(_ id: UUID) throws {
+        guard let note = try fetchSafeNote(by: id) else { return }
+        note.isSynced = true
         try saveIfPossible()
     }
 
@@ -711,8 +748,15 @@ final class CoreDataDataSource: @unchecked Sendable {
         try syncSafeNoteAssets(on: cdNote, from: note.assets)
     }
 
-    func deleteSafeNote(_ id: UUID) throws {
+    func deleteSafeNote(_ id: UUID, origin: VaultWriteOrigin = .local) throws {
         if let note = try fetchSafeNote(by: id) {
+            if origin == .local {
+                SyncLocalStore.shared.recordTombstone(
+                    itemID: id,
+                    itemKind: .safeNote,
+                    revision: note.version
+                )
+            }
             context.delete(note)
             try saveIfPossible()
         }
@@ -759,6 +803,42 @@ final class CoreDataDataSource: @unchecked Sendable {
             context.delete(category)
             try saveIfPossible()
         }
+    }
+
+    /// 把某个分类下的全部条目（密码 / PIN 码 / 银行卡，含回收站中的条目）迁移到目标分类。
+    ///
+    /// 删除自定义分类前调用，避免条目保留指向已删除分类的 `categoryID`。
+    /// - Returns: 实际迁移的条目总数
+    @discardableResult
+    func reassignCategoryEntries(from sourceID: UUID, to targetID: UUID) throws -> Int {
+        guard sourceID != targetID else { return 0 }
+        var migrated = 0
+
+        let passwordRequest: NSFetchRequest<CDPasswordEntry> = CDPasswordEntry.fetchRequest()
+        passwordRequest.predicate = NSPredicate(format: "categoryID == %@", sourceID as CVarArg)
+        for entry in try context.fetch(passwordRequest) {
+            entry.categoryID = targetID
+            migrated += 1
+        }
+
+        let pincodeRequest: NSFetchRequest<CDPincodeEntry> = CDPincodeEntry.fetchRequest()
+        pincodeRequest.predicate = NSPredicate(format: "categoryID == %@", sourceID as CVarArg)
+        for entry in try context.fetch(pincodeRequest) {
+            entry.categoryID = targetID
+            migrated += 1
+        }
+
+        let bankcardRequest: NSFetchRequest<CDBankcardEntry> = CDBankcardEntry.fetchRequest()
+        bankcardRequest.predicate = NSPredicate(format: "categoryID == %@", sourceID as CVarArg)
+        for entry in try context.fetch(bankcardRequest) {
+            entry.categoryID = targetID
+            migrated += 1
+        }
+
+        if migrated > 0 {
+            try saveIfPossible()
+        }
+        return migrated
     }
 
     func convertToPasswordCategory(_ cdCategory: CDPasswordCategory) -> PasswordCategory {

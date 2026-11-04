@@ -58,10 +58,14 @@ targets:
           - "**/.DS_Store"
           # VaultCell.icon 不能被展开成内部的 icon.json / svg 拷进 bundle
           - "Resources/VaultCell.icon/**"
+          # 仓库内的说明文档（如 SafetyNotes/Tags.md）不应被打进 App bundle
+          - "**/*.md"
       # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
       - path: Shared/AutoFillDomainMatcher.swift
       - path: Shared/AutoFillCredentialIdentityFactory.swift
       - path: Shared/AutoFillSharedKeys.swift
+      - path: Shared/VaultWriteSemantics.swift
+      - path: Shared/VaultCoreDataStoreConfiguration.swift
     resources:
       - path: VaultCell/Resources
         excludes:
@@ -72,6 +76,7 @@ targets:
         INFOPLIST_FILE: VaultCell/Resources/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell
         APP_GROUP_ID: com.magpie.vaultcell.shared
+        ICLOUD_CONTAINER_ID: iCloud.com.magpie.vaultcell
         PRODUCT_NAME: VaultCell
         ASSETCATALOG_COMPILER_APPICON_NAME: VaultCell
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -84,14 +89,20 @@ targets:
         Debug:
           SWIFT_OPTIMIZATION_LEVEL: "-Onone"
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          APS_ENVIRONMENT: development
         Release:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
+          APS_ENVIRONMENT: production
         Debug-CN:
           PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn
           APP_GROUP_ID: com.magpie.vaultcell.cn.shared
+          ICLOUD_CONTAINER_ID: iCloud.com.magpie.vaultcell.cn
+          APS_ENVIRONMENT: development
         Release-CN:
           PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn
           APP_GROUP_ID: com.magpie.vaultcell.cn.shared
+          ICLOUD_CONTAINER_ID: iCloud.com.magpie.vaultcell.cn
+          APS_ENVIRONMENT: production
     dependencies:
       - package: SnapKit
       - package: KeychainAccess
@@ -108,6 +119,14 @@ targets:
           - group.$(APP_GROUP_ID)
         keychain-access-groups:
           - $(AppIdentifierPrefix)$(APP_GROUP_ID)
+        com.apple.developer.icloud-services:
+          - CloudKit
+        com.apple.developer.icloud-container-identifiers:
+          - $(ICLOUD_CONTAINER_ID)
+        # CKSyncEngine 的 zone subscription 依赖 APNs 静默推送唤醒多端同步
+        # （AppState.enableCloudSync() 会 registerForRemoteNotifications）。
+        # Debug 走 development、Release 走 production，取值由 APS_ENVIRONMENT 提供。
+        aps-environment: $(APS_ENVIRONMENT)
 
   VaultCellTests:
     type: bundle.unit-test
@@ -132,6 +151,15 @@ targets:
       - path: VaultCell/Core/Security/TOTPService.swift
       # 解锁失败限流的纯策略（仅 Foundation，无 Keychain / UIKit）
       - path: VaultCell/Domain/Services/UnlockThrottleService.swift
+      - path: VaultCell/Domain/Services/Sync/SyncProtocol.swift
+      - path: Shared/VaultWriteSemantics.swift
+      - path: Shared/VaultCoreDataStoreConfiguration.swift
+      # 文案解析：模型层（PasswordEntry / TwoFactorConfig / 审计服务）改用 AppLocale，
+      # 测试 target 需要一并编译 AppLocale 及其语言读取依赖
+      - path: VaultCell/Core/Utils/AppLocale.swift
+      - path: VaultCell/Core/Utils/AppLanguage.swift
+      - path: VaultCell/Core/Utils/Bundle+Language.swift
+      - path: VaultCell/Core/Utils/Constants.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.tests
@@ -152,6 +180,8 @@ targets:
       - path: Shared/AutoFillDomainMatcher.swift
       - path: Shared/AutoFillCredentialIdentityFactory.swift
       - path: Shared/AutoFillSharedKeys.swift
+      - path: Shared/VaultWriteSemantics.swift
+      - path: Shared/VaultCoreDataStoreConfiguration.swift
     settings:
       base:
         INFOPLIST_FILE: AutoFillProvider/Info.plist

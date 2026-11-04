@@ -148,7 +148,7 @@ struct EditSafeNoteView: View {
                 }
             }
             .alert(
-                "Are you sure to DELETE?", 
+                "Delete this note?", 
                 isPresented: $showDeleteAlert
             ) {
                 Button("Delete", role: .destructive) { 

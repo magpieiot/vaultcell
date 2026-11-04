@@ -40,6 +40,23 @@ struct CreateNewItemView: View {
         )
     }
 
+    /// 当前类型下保存按钮是否可用
+    /// - login：用户名与密码均非空
+    /// - pin：Title 与 Pincode 均非空
+    /// - card：银行名称与卡号均非空
+    private var isSaveEnabled: Bool {
+        switch selectedPasswordType {
+        case .login:
+            return !passwordFormModel.username.isEmpty && !passwordFormModel.password.isEmpty
+        case .pin:
+            return pincodeFormModel.isEnabledNextButton
+        case .card:
+            return bankcardFormModel.isEnabledNextButton
+        case .wifi:
+            return true
+        }
+    }
+
     var body: some View {
         VStack {
             Picker("", selection: $selectedPasswordType) {
@@ -49,8 +66,10 @@ struct CreateNewItemView: View {
                     .tag(PasswordType.pin)
                 Text(PasswordType.card.title)
                     .tag(PasswordType.card)
+                /*
                 Text(PasswordType.wifi.title)
                     .tag(PasswordType.wifi)
+                */
             }
             .pickerStyle(.segmented)
             .padding(.horizontal, 32)
@@ -110,6 +129,8 @@ struct CreateNewItemView: View {
                             showNextPage = true
                             break
                         case .pin:
+                            // Title 与 Pincode 为必填项，未填写时不允许保存
+                            guard pincodeFormModel.isEnabledNextButton else { return }
                             let entry = pincodeFormModel.buildDraftEntry()
                             do {
                                 let repo = PincodeRepository()
@@ -122,6 +143,8 @@ struct CreateNewItemView: View {
                             }
                             break
                         case .card:
+                            // 银行名称与卡号为必填项，未填写时不允许保存
+                            guard bankcardFormModel.isEnabledNextButton else { return }
                             let entry = bankcardFormModel.buildDraftEntry()
                             do {
                                 let repo = BankcardRepository()
@@ -148,11 +171,8 @@ struct CreateNewItemView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 // login 页合并详情后：用户名 + 密码均非空才可进入更多详情
-                .disabled(
-                    selectedPasswordType == .login
-                        && (passwordFormModel.username.isEmpty
-                            || passwordFormModel.password.isEmpty)
-                )
+                // pin 页：Title 与 Pincode 均为必填项，任一为空则不可保存
+                .disabled(!isSaveEnabled)
             }
         }
     }

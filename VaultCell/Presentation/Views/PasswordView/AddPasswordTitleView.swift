@@ -61,8 +61,11 @@ struct AddPasswordTitleView: View {
                 .disabled(isTitleEmpty)
 
             /// Passkey 相关条目
+            /// - 仅在 Passkey 模式下展示
+            /*
             passkeySection
                 .disabled(isTitleEmpty)
+            */
 
             /// OAuth 相关条目
             oauthInfoSection
@@ -101,8 +104,7 @@ struct AddPasswordTitleView: View {
         var seen = Set<String>()
         var results: [SuggestionItem] = []
 
-        func append(title: String, url: String?, manualIconURL: String? = nil, categoryID: UUID?)
-        {
+        func append(title: String, url: String?, manualIconURL: String? = nil, categoryID: UUID?) {
             let key = title.lowercased()
             guard seen.insert(key).inserted else { return }
             results.append(
@@ -256,11 +258,29 @@ struct AddPasswordTitleView: View {
                 Image(systemName: "ellipsis.rectangle")
                     .foregroundColor(.blue)
                     .frame(width: 24, height: 24)
-                PasswordEditField("Password", text: $formModel.password, revealDuration: 2.0)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    PasswordEditField(
+                        AppLocale.string("Password"), text: $formModel.password, revealDuration: 2.0
+                    )
                     // 与 PasswordEditField 内部一致：不使用 .password，避免系统弹出"保存密码"提示
                     .textContentType(.oneTimeCode)
+
+                    // 密码强度指示器：仅在已输入内容时展示，避免空态占位
+                    if !formModel.password.isEmpty {
+                        FormPasswordStrengthIndicator(strength: passwordStrength)
+                            .transition(.opacity)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .animation(.easeInOut(duration: 0.2), value: formModel.password.isEmpty)
         }
+    }
+
+    /// 当前输入密码的强度（与密码生成器页使用同一套评级逻辑）
+    private var passwordStrength: PasswordStrength {
+        PasswordStrength.calculate(for: formModel.password)
     }
 
     /// Passkey 相关条目（自 AddPasswordDetailView 合并）
@@ -537,20 +557,4 @@ private struct SuggestionItem: Identifiable {
     let categoryID: UUID?
 }
 
-private struct AddPasswordNextStepPlaceholderView: View {
-    let appName: String
 
-    var body: some View {
-        VStack(spacing: 12) {
-            Text(appName.isEmpty ? String(localized: "No app selected") : appName)
-                .font(.title2.weight(.semibold))
-
-            Text("Next page content coming soon")
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-        .navigationTitle("Next")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}

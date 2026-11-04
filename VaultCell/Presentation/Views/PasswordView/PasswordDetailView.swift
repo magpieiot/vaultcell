@@ -195,7 +195,7 @@ struct PasswordDetailView: View {
         Section {
             // 用户名行：显示并支持复制
             DetailRow(
-                title: String(localized: "Username"), value: entry.username, leadingIcon: "person",
+                title: AppLocale.string("Username"), value: entry.username, leadingIcon: "person",
                 trailingIcon: "doc.on.doc",
                 onTap: {
                     copyToClipboard(entry.username)
@@ -203,8 +203,10 @@ struct PasswordDetailView: View {
             // 密码行：可切换明文/密文，支持复制
             VStack(spacing: 12) {
                 passwordRow2
-                PasswordStrengthIndicator(strength: entry.passwordStrength ?? .medium, isEnabled: !isPasswordEmpty)
-                    .padding(.horizontal, 32)
+                PasswordStrengthIndicator(
+                    strength: entry.passwordStrength ?? .medium, isEnabled: !isPasswordEmpty
+                )
+                .padding(.horizontal, 32)
             }
 
         } header: {
@@ -253,7 +255,8 @@ struct PasswordDetailView: View {
     private var oAuthProviderSection: some View {
         Section("OAuth") {
             DetailRow(
-                title: String(localized: "OAuth"), value: entry.oAuthProvider?.boundValue ?? String(localized: "None"),
+                title: AppLocale.string("OAuth"),
+                value: entry.oAuthProvider?.boundValue ?? AppLocale.string("None"),
                 leadingIcon: "Custom.Oauth",
                 trailingIcon: entry.oAuthProvider?.provider ?? "Custom.Oauth",
                 onTap: {
@@ -269,8 +272,8 @@ struct PasswordDetailView: View {
             // Email 行：显示并支持复制
             if entry.bundleEmailAddress != nil {
                 DetailRow(
-                    title: String(localized: "Email"),
-                    value: entry.bundleEmailAddress ?? String(localized: "None"),
+                    title: AppLocale.string("Email"),
+                    value: entry.bundleEmailAddress ?? AppLocale.string("None"),
                     leadingIcon: "mail",
                     trailingIcon: entry.isPasswordResetEmail ? "Custom.Recycle" : nil
                 )
@@ -279,8 +282,8 @@ struct PasswordDetailView: View {
             // 手机号行：显示并支持复制
             if entry.bundlePhoneNumber != nil {
                 DetailRow(
-                    title: String(localized: "Phone"),
-                    value: entry.bundlePhoneNumber ?? String(localized: "None"),
+                    title: AppLocale.string("Phone"),
+                    value: entry.bundlePhoneNumber ?? AppLocale.string("None"),
                     leadingIcon: "phone",
                     trailingIcon: entry.isPasswordResetPhone ? "Custom.Recycle" : nil,
                 )
@@ -356,19 +359,16 @@ struct PasswordDetailView: View {
                     .foregroundColor(.secondary)
 
                 // 密码内容：明文或掩码（最多 12 个圆点）
+                // 字体统一走 PasswordTypography，与编辑页 / 新增页保持一致；多彩着色保留
                 if isPasswordVisible {
                     PasswordText(entry.password)
-                        .font(.system(.headline, design: .monospaced))
+                        .font(PasswordTypography.font)
                         .letterColor(.primary)
                         .digitColor(.green)
                         .symbolColor(.orange)
-                    /*
-                    Text(entry.password)
-                        .font(.system(.headline, design: .monospaced))
-                    */
                 } else {
                     Text(String(repeating: "•", count: min(entry.password.count, 16)))
-                        .font(.system(.headline, design: .monospaced))
+                        .font(PasswordTypography.font)
                 }
 
             }
@@ -392,7 +392,8 @@ struct PasswordDetailView: View {
                 //print("@@@DEBUG: Copy To Cliboard!")
             }) {
                 Image(systemName: showingCopied ? "checkmark" : "doc.on.doc")
-                    .foregroundColor(isPasswordEmpty ? Color.secondary : (showingCopied ? .green : .blue))
+                    .foregroundColor(
+                        isPasswordEmpty ? Color.secondary : (showingCopied ? .green : .blue))
             }
             .buttonStyle(.borderless)
             .disabled(isPasswordEmpty)
@@ -433,7 +434,7 @@ struct PasswordDetailView: View {
                         */
                     }
                 }
-                .background(Color(.systemBackground))
+                //.background(Color(.systemBackground))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -441,6 +442,7 @@ struct PasswordDetailView: View {
 
     /// 附加信息区域
     /// 按顺序展示：标签、手机号、邮箱、密码找回方式、备注、创建/更新日期
+    /*
     private var additionalInfoSection: some View {
         //VStack(alignment: .leading, spacing: 12) {
         Section("Additional Info") {
@@ -520,6 +522,7 @@ struct PasswordDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
+    */
 
     /// 标签和备注区域
     private var notesSection: some View {
@@ -530,7 +533,7 @@ struct PasswordDetailView: View {
                 Text(notes)
                     .font(.footnote)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemBackground))
+                    //.background(Color(.systemBackground))
                     .cornerRadius(12)
             }
         } header: {

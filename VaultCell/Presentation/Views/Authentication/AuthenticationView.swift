@@ -206,7 +206,7 @@ struct AuthLogo: View {
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
 
-                Text(String(localized: "Securely store all your passwords"))
+                Text(AppLocale.string("Securely store all your passwords"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -261,14 +261,14 @@ struct UnlockView: View {
                     Task { await viewModel.authenticateWithBiometrics() }
                 }
 
-                DividerLabel(String(localized: "or use master password"))
+                DividerLabel(AppLocale.string("or use master password"))
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                FieldLabel(String(localized: "Master Password"))
+                FieldLabel(AppLocale.string("Master Password"))
                 AuthSecureField(
                     text: $viewModel.masterPassword,
-                    placeholder: String(localized: "Enter master password"),
+                    placeholder: AppLocale.string("Enter master password"),
                     isFocused: focusedField == .password,
                     hasError: viewModel.errorMessage != nil
                 )
@@ -283,7 +283,7 @@ struct UnlockView: View {
             }
 
             PrimaryActionButton(
-                title: String(localized: "Unlock"),
+                title: AppLocale.string("Unlock"),
                 isLoading: viewModel.isLoading,
                 isEnabled: viewModel.canUnlock
             ) {
@@ -320,9 +320,7 @@ struct CreateVaultView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label {
                     Text(
-                        String(
-                            localized:
-                                "Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."
+                        AppLocale.string("Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."
                         )
                     )
                     .font(.subheadline)
@@ -338,10 +336,10 @@ struct CreateVaultView: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
 
             VStack(alignment: .leading, spacing: 8) {
-                FieldLabel(String(localized: "Create Master Password"))
+                FieldLabel(AppLocale.string("Create Master Password"))
                 AuthSecureField(
                     text: $viewModel.newPassword,
-                    placeholder: String(localized: "At least 8 characters"),
+                    placeholder: AppLocale.string("At least 8 characters"),
                     isFocused: focusedField == .newPassword,
                     hasError: !viewModel.validationError.isEmpty
                 )
@@ -353,10 +351,10 @@ struct CreateVaultView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                FieldLabel(String(localized: "Confirm Master Password"))
+                FieldLabel(AppLocale.string("Confirm Master Password"))
                 AuthSecureField(
                     text: $viewModel.confirmPassword,
-                    placeholder: String(localized: "Re-enter master password"),
+                    placeholder: AppLocale.string("Re-enter master password"),
                     isFocused: focusedField == .confirmPassword,
                     hasError: !viewModel.validationError.isEmpty
                 )
@@ -378,12 +376,33 @@ struct CreateVaultView: View {
             }
 
             PrimaryActionButton(
-                title: String(localized: "Create Vault"),
+                title: AppLocale.string("Create Vault"),
                 isLoading: viewModel.isLoading,
-                isEnabled: viewModel.canCreateVault
+                isEnabled: viewModel.canCreateVault && !viewModel.isLoading
             ) {
                 Task { await viewModel.createVault() }
             }
+
+            Button {
+                Task { await viewModel.restoreFromICloud() }
+            } label: {
+                HStack(spacing: 8) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "icloud.and.arrow.down")
+                    }
+                    Text(AppLocale.string("Restore from iCloud"))
+                        .font(.subheadline.weight(.semibold))
+                }
+                .foregroundColor(.primaryBrandColor)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 13)
+                .background(Color.primaryBrandColor.opacity(0.08))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .disabled(viewModel.isLoading)
 
             if !viewModel.validationError.isEmpty {
                 InlineError(viewModel.validationError)
@@ -616,7 +635,7 @@ private struct UnlockCooldownNotice: View {
         HStack(spacing: 8) {
             Image(systemName: "timer")
                 .font(.footnote)
-            Text(String(localized: "Too many attempts"))
+            Text(AppLocale.string("Too many attempts"))
                 .font(.footnote)
             Spacer(minLength: 0)
             Text(verbatim: Self.countdownText(remaining))
@@ -661,7 +680,7 @@ struct PasswordStrengthIndicator: View {
                 }
             }
             HStack(spacing: 4) {
-                Text(String(localized: "Strength"))
+                Text(AppLocale.string("Strength"))
                     .foregroundColor(.secondary)
                 Text(strength.localizedName)
                     .foregroundColor(isEnabled ? strengthColor : .secondary)
@@ -685,11 +704,11 @@ struct PasswordStrengthIndicator: View {
 extension PasswordStrength {
     fileprivate var localizedName: String {
         switch self {
-        case .veryWeak: return String(localized: "Very Weak")
-        case .weak: return String(localized: "Weak")
-        case .medium: return String(localized: "Medium")
-        case .strong: return String(localized: "Strong")
-        case .veryStrong: return String(localized: "Very Strong")
+        case .veryWeak: return AppLocale.string("Very Weak")
+        case .weak: return AppLocale.string("Weak")
+        case .medium: return AppLocale.string("Medium")
+        case .strong: return AppLocale.string("Strong")
+        case .veryStrong: return AppLocale.string("Very Strong")
         }
     }
 }

@@ -18,8 +18,8 @@ struct IdentityReviewCenterView: View {
 
     @StateObject private var reviewVM = IdentityReviewViewModel()
     @EnvironmentObject var viewModel: VaultListViewModel
-    /// 监听应用内语言切换：`String(localized:)` 在求值后被缓存，
-    /// 不建立这层依赖时切换语言不会重算标题与列表文案
+    /// 监听应用内语言切换：文案在渲染时由 `AppLocale.string` 求值，
+    /// 不建立这层依赖时视图不会重绘，切换语言后标题与列表文案会停在旧语言
     @EnvironmentObject private var languageManager: AppLanguageManager
 
     @State private var showingManualCheck = false
@@ -64,8 +64,8 @@ struct IdentityReviewCenterView: View {
         .background(SettingsBackground())
         .navigationTitle(
             kind == .phone
-                ? String(localized: "Phone Migration")
-                : String(localized: "Email Migration")
+                ? AppLocale.string("Phone Migration")
+                : AppLocale.string("Email Migration")
         )
         .navigationBarTitleDisplayMode(.inline)
         // 二级页面隐藏底部 TabBar
@@ -104,9 +104,7 @@ struct IdentityReviewCenterView: View {
             .foregroundColor(.primary)
         } footer: {
             Text(
-                String(
-                    localized:
-                        "Before you cancel a number or close an email, see which accounts still depend on it."
+                AppLocale.string("Before you cancel a number or close an email, see which accounts still depend on it."
                 )
             )
         }
@@ -127,20 +125,15 @@ struct IdentityReviewCenterView: View {
     /// 区分三种空态：库里一条联系方式都没有 / 该类型还没有 / 被筛选掉了
     private var emptyText: String {
         if reviewVM.isEmpty {
-            return String(
-                localized:
-                    "No phone numbers or email addresses are saved yet. Add one to an entry and this list will show what depends on it."
+            return AppLocale.string("No phone numbers or email addresses are saved yet. Add one to an entry and this list will show what depends on it."
             )
         }
         if reviewVM.showOnlyActionable {
-            return String(
-                localized:
-                    "Nothing here needs action. Turn off the filter to see every saved identity."
+            return AppLocale.string("Nothing here needs action. Turn off the filter to see every saved identity."
             )
         }
         return String(
-            format: String(
-                localized: "No %@ are saved yet. Add one to an entry and it will show up here."),
+            format: AppLocale.string("No %@ are saved yet. Add one to an entry and it will show up here."),
             kind.pluralDisplayName
         )
     }
@@ -174,7 +167,7 @@ struct IdentityReviewCenterView: View {
                 )
                 .foregroundColor(reviewVM.showOnlyActionable ? .primaryBrandColor : .secondary)
             }
-            .accessibilityLabel(String(localized: "Only show identities that need action"))
+            .accessibilityLabel(AppLocale.string("Only show identities that need action"))
         }
     }
 }
@@ -226,17 +219,17 @@ private struct IdentityReportRow: View {
         let count = report.usages.count
         if report.criticalCount > 0 {
             return String(
-                format: String(localized: "%lld accounts · %lld can’t be recovered"),
+                format: AppLocale.string("%lld accounts · %lld can’t be recovered"),
                 count, report.criticalCount
             )
         }
         if !report.blockingUsages.isEmpty {
             return String(
-                format: String(localized: "%lld accounts · %lld need rebinding"),
+                format: AppLocale.string("%lld accounts · %lld need rebinding"),
                 count, report.blockingUsages.count
             )
         }
-        return String(format: String(localized: "%lld accounts · safe to give up"), count)
+        return String(format: AppLocale.string("%lld accounts · safe to give up"), count)
     }
 }
 
@@ -249,7 +242,7 @@ private struct ManualIdentityCheckView: View {
     let entries: [PasswordEntry]
 
     @Environment(\.dismiss) private var dismiss
-    /// 与评审中心同理：`String(localized:)` 需要这层依赖才会随语言切换重算
+    /// 与评审中心同理：本页文案由 `AppLocale.string` 求值，需要这层依赖才会随语言切换重绘
     @EnvironmentObject private var languageManager: AppLanguageManager
     @FocusState private var isFieldFocused: Bool
 
@@ -262,7 +255,7 @@ private struct ManualIdentityCheckView: View {
         List {
             Section {
                 TextField(
-                    String(localized: "Phone number or email address"),
+                    AppLocale.string("Phone number or email address"),
                     text: $reviewVM.manualText
                 )
                 .textInputAutocapitalization(.never)
@@ -278,9 +271,7 @@ private struct ManualIdentityCheckView: View {
                 }
             } footer: {
                 Text(
-                    String(
-                        localized:
-                            "Nothing is saved. This only checks the entry you typed against your vault."
+                    AppLocale.string("Nothing is saved. This only checks the entry you typed against your vault."
                     )
                 )
             }
@@ -291,7 +282,7 @@ private struct ManualIdentityCheckView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text(String(localized: "Check"))
+                        Text(AppLocale.string("Check"))
                             .fontWeight(.semibold)
                         Spacer()
                     }
@@ -307,11 +298,11 @@ private struct ManualIdentityCheckView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(SettingsBackground())
-        .navigationTitle(String(localized: "Check an Identity"))
+        .navigationTitle(AppLocale.string("Check an Identity"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(String(localized: "Close")) { dismiss() }
+                Button(AppLocale.string("Close")) { dismiss() }
             }
         }
         .onAppear { isFieldFocused = true }
@@ -319,13 +310,11 @@ private struct ManualIdentityCheckView: View {
 
     @ViewBuilder
     private func resultSection(_ report: IdentityReport) -> some View {
-        Section(String(localized: "Result")) {
+        Section(AppLocale.string("Result")) {
             if report.usages.isEmpty {
                 IdentityNote(
                     icon: "checkmark.circle.fill",
-                    text: String(
-                        localized:
-                            "No saved account uses this. If you still use it somewhere, add it to an entry first and check again."
+                    text: AppLocale.string("No saved account uses this. If you still use it somewhere, add it to an entry first and check again."
                     ),
                     tint: .successColor
                 )
@@ -350,9 +339,9 @@ private struct ManualIdentityCheckView: View {
     private func errorMessage(for error: ManualIdentityInputError) -> String {
         switch error {
         case .empty:
-            return String(localized: "Enter a phone number or email address.")
+            return AppLocale.string("Enter a phone number or email address.")
         case .unrecognized:
-            return String(localized: "That does not look like a phone number or email address.")
+            return AppLocale.string("That does not look like a phone number or email address.")
         }
     }
 }

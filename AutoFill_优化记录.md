@@ -104,9 +104,27 @@ AutoFill: 交互路径填充成功（解锁 0.88s，合计 0.89s）
 ### 3.8 扩展多语言
 
 - 新增 `AutoFillProvider/Localizable.xcstrings`（源语言 en，含 zh-Hans / fr / ja / de / es / ru），17 个键覆盖 UI 文案与错误描述
-- 新增 `AutoFillProvider/ExtensionLanguage.swift`：从 App Group 读主 App 持久化的语言覆盖，运行时交换 `Bundle.localizedString`，使 SwiftUI 字面量与 `String(localized:)` 都走覆盖语言；未设置则跟随系统
+- 新增 `AutoFillProvider/ExtensionLanguage.swift`：从 App Group 读主 App 持久化的语言覆盖，运行时交换 `Bundle.localizedString`；未设置则跟随系统
+  - 勘误（2026-10-24）：`String(localized:)` 由 Foundation 按进程语言解析，**不经过** `Bundle.localizedString`，上面的交换覆盖不到它。现在所有 `String` 文案改用 `ExtensionLocale.string(_:)`（显式指定覆盖语言的 lproj Bundle），主 App 侧对应 `AppLocale.string(_:)`
 - 三个入口首行 `ExtensionLanguage.activate()`（幂等）
 - 主 App `AppLanguage.persist` 同步写一份到 App Group（**扩展进程读不到主 App 的 `UserDefaults.standard`**）；`bootstrap()` 补写历史值，保证老用户升级后扩展仍跟随已选语言
+
+### 3.9 Passkey 请求必须显式拒绝（扫码登录卡死）
+
+现象：iPhone 原生相机扫 passkey 二维码（hybrid / caBLE）时，系统把通行密钥请求派发到 VaultCell 扩展，界面卡死。
+
+根因：iOS 17 起 `ASCredentialProviderViewController` 的入口按 `ASCredentialRequest` 统一形态派发：
+
+- `provideCredentialWithoutUserInteraction(for:)` / `prepareInterfaceToProvideCredential(for:)` **也会收到 passkey 断言请求**。旧实现直接当密码处理：`findCredential(for:)` 按 `ASPasswordCredentialRequest` 强转取 identity → 得到 nil → 交互路径弹 Face ID 后报"没找到密码"，系统的 passkey 请求始终没有 complete / cancel。
+- `prepareCredentialList(for:requestParameters:ASPasskeyCredentialRequestParameters)`（passkey 断言列表）与 `prepareInterface(forPasskeyRegistration:)`（注册）在基类里是**空实现**，不 override 就是既不回填也不报错，系统面板一直等扩展。
+
+处理（两端一起做，缺一不可）：
+
+1. 两个统一入口首行 `guard credentialRequest is ASPasswordCredentialRequest`，非密码请求立刻 `rejectPasskeyRequest`：不解锁、不弹认证、不建界面，直接 `cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))`。用 `credentialIdentityNotFound` 而非 `userCanceled`，系统据此移出候选、回落 iCloud 钥匙串 / 安全密钥，不会连用户原本的登录一起打断。
+2. 补上两个 passkey 入口的 override，同样走 `rejectPasskeyRequest`。
+3. `Info.plist` 的 `ProvidesPasskeys` 显式写 `false` 并加注释；`Scripts/verify-entitlements.sh` 新增 `check_false`，一旦被改成 `true` 就让 `xcodegen generate` 失败。
+
+将来真正支持 passkey 时需一并补齐：P-256 密钥生成与存储、`ASPasskeyCredentialIdentity` 注册进 `ASCredentialIdentityStore`、`completeAssertionRequest(withSelectedPasskeyCredential:)` / `completeRegistrationRequest(withSelectedPasskeyCredential:)` 回填，最后才把 `ProvidesPasskeys` 置 `true`。
 
 ---
 

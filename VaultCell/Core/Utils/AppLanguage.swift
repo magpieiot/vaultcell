@@ -10,7 +10,8 @@ import Foundation
 import SwiftUI
 
 /// 应用内语言选择。
-/// 通过 UserDefaults 持久化，配合 Bundle 运行时 swizzling 实现无需重启的即时切换。
+/// 通过 UserDefaults 持久化，配合 Bundle 运行时 swizzling 与 `\.locale` 环境实现无需重启的即时切换；
+/// 需要 `String` 类型文案即时跟随切换时用 `AppLocale.string(_:)`（见 AppLocale.swift）。
 enum AppLanguage: String, CaseIterable, Identifiable, Codable {
     /// 跟随系统 — 不覆盖，回退到系统语言
     case followOS
@@ -50,7 +51,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .followOS:
             // 跟随系统没有“自身文字”，使用当前应用语言的本地化文案
-            return String(localized: "Follow System")
+            return AppLocale.string("Follow System")
         case .english: return "English"
         case .simplifiedChinese: return "简体中文"
         case .french: return "Français"

@@ -129,7 +129,7 @@ struct SecurityIssueEntriesView: View {
         if entries.isEmpty {
             EmptyPanel(
                 icon: "checkmark.circle.fill",
-                text: String(localized: "No entries in this category."),
+                text: AppLocale.string("No entries in this category."),
                 tint: tint
             )
         } else {
@@ -187,10 +187,10 @@ struct SecurityIssueEntriesView: View {
                         audit: audit,
                         reason: VaultScoreReason(
                             kind: .missing2FA,
-                            title: String(localized: "Missing 2FA"),
+                            title: AppLocale.string("Missing 2FA"),
                             count: audit.no2FACount,
-                            countText: String(format: String(localized: "%lld entries"), audit.no2FACount),
-                            detail: String(localized: "Accounts without 2FA are easier to take over even when the password is strong."),
+                            countText: String(format: AppLocale.string("%lld entries"), audit.no2FACount),
+                            detail: AppLocale.string("Accounts without 2FA are easier to take over even when the password is strong."),
                             symbol: "lock.open.fill"
                         )
                     )

@@ -6,6 +6,23 @@
 /// ------------------------------------------------------------------
 
 import SwiftUI
+import UIKit
+
+/// 密码文本统一排版
+///
+/// 密码详情页的展示、各编辑页的输入框共用同一套字体（等宽 / body / regular），
+/// 避免同一串密码在「查看」与「编辑」之间字号、字重、字形不一致。
+/// 需要调整密码文本样式时只改这里。
+enum PasswordTypography {
+    /// SwiftUI 侧字体（用于 Text / SecureField / TextField）
+    static let font: Font = .system(.body, design: .monospaced)
+
+    /// UIKit 侧等价字体（用于 UITextField，跟随 Dynamic Type 缩放）
+    static func uiFont() -> UIFont {
+        UIFontMetrics(forTextStyle: .body).scaledFont(
+            for: UIFont.monospacedSystemFont(ofSize: 17, weight: .regular))
+    }
+}
 
 /// 密码文本显示控件
 /// 类似 Text，但按字符类型（字母 / 数字 / 符号）分别着色。

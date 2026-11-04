@@ -22,13 +22,13 @@ enum BiometricType {
     var displayName: String {
         switch self {
         case .none:
-            return String(localized: "None")
+            return AppLocale.string("None")
         case .faceID:
-            return String(localized: "Face ID")
+            return AppLocale.string("Face ID")
         case .touchID:
-            return String(localized: "Touch ID")
+            return AppLocale.string("Touch ID")
         case .opticID:
-            return String(localized: "Optic ID")
+            return AppLocale.string("Optic ID")
         }
     }
 }
@@ -41,6 +41,7 @@ class AuthenticationViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var validationError: String = ""
     @Published var isLoading: Bool = false
+    @Published private(set) var vaultMaterialInstalled = false
     
     private let appState: AppState
     /// 本页的 toast 提示中心：失败原因一律走 toast，不再用内联红字
@@ -120,7 +121,7 @@ class AuthenticationViewModel: ObservableObject {
             // 生物识别失败不归咎于密码框，只引导改用主密码；
             // 用户主动放弃（如点了取消）不算失败，不打扰
             if !Self.isUserCancelled(error) {
-                showFailureToast(String(localized: "Biometric unlock failed. Enter your master password."))
+                showFailureToast(AppLocale.string("Biometric unlock failed. Enter your master password."))
             }
         }
         
@@ -154,6 +155,26 @@ class AuthenticationViewModel: ObservableObject {
         isLoading = false
     }
 
+    func restoreFromICloud() async {
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            guard let material = try await CloudVaultRestoreService().fetchKeyMaterial() else {
+                showFailureToast(AppLocale.string("No iCloud vault was found for this account."))
+                return
+            }
+            try AppLockService().importCloudKeyMaterial(material)
+            vaultMaterialInstalled = true
+            toastCenter.toast = ToastItem(
+                message: AppLocale.string("Vault restored. Enter your original master password to unlock."),
+                style: .success,
+                duration: 3.2
+            )
+        } catch {
+            showFailureToast(Self.friendlyMessage(for: error))
+        }
+    }
+
     /// 用户重新输入主密码时解除错误态：toast 会自行消失，输入框的红框也该一起退场
     func clearError() {
         errorMessage = nil
@@ -170,12 +191,15 @@ class AuthenticationViewModel: ObservableObject {
     private static func friendlyMessage(for error: Error) -> String {
         // AES-GCM 认证失败即主密码不对（与备份解密的判断口径一致）
         if let cryptoError = error as? CryptoKitError, case .authenticationFailure = cryptoError {
-            return String(localized: "That's not the right master password. Try again.")
+            return AppLocale.string("That's not the right master password. Try again.")
         }
         if error is UnlockThrottledError {
-            return String(localized: "Too many attempts. Try again later.")
+            return AppLocale.string("Too many attempts. Try again later.")
         }
-        return String(localized: "Something went wrong. Please try again.")
+        if let cloudError = error as? CloudSyncError {
+            return cloudError.localizedDescription
+        }
+        return AppLocale.string("Something went wrong. Please try again.")
     }
 
     /// 用户主动放弃生物识别（系统弹窗取消 / 被系统中断）不算失败

@@ -19,8 +19,8 @@ struct IdentityReviewDetailView: View {
     var isManualCheck = false
 
     @EnvironmentObject var viewModel: VaultListViewModel
-    /// 监听应用内语言切换：本页文案由 `String(localized:)` 求值，
-    /// 没有这层依赖时切换语言不会重算标题与结论
+    /// 监听应用内语言切换：本页文案由 `AppLocale.string` 求值，
+    /// 没有这层依赖时视图不会重绘，切换语言后标题与结论会停在旧语言
     @EnvironmentObject private var languageManager: AppLanguageManager
 
     /// 跳转条目详情所需的审计结果（进入页面时计算一次）
@@ -114,7 +114,7 @@ struct IdentityReviewDetailView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if isManualCheck {
-                Text(String(localized: "Checked on demand — this value is not saved as an entry field."))
+                Text(AppLocale.string("Checked on demand — this value is not saved as an entry field."))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -143,33 +143,25 @@ struct IdentityReviewDetailView: View {
 
     private var conclusion: String {
         guard !report.usages.isEmpty else {
-            return String(
-                localized:
-                    "No saved account depends on this. If you still use it somewhere, add it to an entry first."
+            return AppLocale.string("No saved account depends on this. If you still use it somewhere, add it to an entry first."
             )
         }
         if report.criticalCount > 0 {
             return String(
-                format: String(
-                    localized:
-                        "Without it, %lld accounts can’t be recovered. Rebind them before you give it up."
+                format: AppLocale.string("Without it, %lld accounts can’t be recovered. Rebind them before you give it up."
                 ),
                 report.criticalCount
             )
         }
         if !blockingUsages.isEmpty {
             return String(
-                format: String(
-                    localized:
-                        "%lld accounts use it for verification. Rebind those before you give it up."
+                format: AppLocale.string("%lld accounts use it for verification. Rebind those before you give it up."
                 ),
                 blockingUsages.count
             )
         }
         return String(
-            format: String(
-                localized:
-                    "%lld accounts keep it on file, but all of them have another way to recover."
+            format: AppLocale.string("%lld accounts keep it on file, but all of them have another way to recover."
             ),
             report.usages.count
         )
@@ -181,17 +173,15 @@ struct IdentityReviewDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             IdentitySectionHeader(
                 icon: "exclamationmark.shield.fill",
-                title: String(localized: "Before you give it up"),
-                subtitle: String(localized: "Rebind these accounts first."),
+                title: AppLocale.string("Before you give it up"),
+                subtitle: AppLocale.string("Rebind these accounts first."),
                 tint: report.risk.tint
             )
 
             if blockingUsages.isEmpty {
                 IdentityNote(
                     icon: "checkmark.circle.fill",
-                    text: String(
-                        localized:
-                            "Nothing blocks you. No saved account depends on this to get back in."
+                    text: AppLocale.string("Nothing blocks you. No saved account depends on this to get back in."
                     ),
                     tint: .successColor
                 )
@@ -212,8 +202,8 @@ struct IdentityReviewDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             IdentitySectionHeader(
                 icon: "clock.badge.checkmark",
-                title: String(localized: "Can wait"),
-                subtitle: String(localized: "These accounts have another way to recover."),
+                title: AppLocale.string("Can wait"),
+                subtitle: AppLocale.string("These accounts have another way to recover."),
                 tint: .secondary
             )
 
@@ -306,28 +296,28 @@ struct IdentityReviewDetailView: View {
     private func reason(for usage: IdentityUsage) -> String {
         if usage.roles.contains(.recovery) {
             return usage.risk == .critical
-                ? String(localized: "Only way to get back into this account")
-                : String(localized: "Password reset, with another way in")
+                ? AppLocale.string("Only way to get back into this account")
+                : AppLocale.string("Password reset, with another way in")
         }
         if usage.roles.contains(.twoFactor) {
             if usage.twoFactorTypes.contains(.sms) {
-                return String(localized: "Receives SMS sign-in codes")
+                return AppLocale.string("Receives SMS sign-in codes")
             }
             if usage.twoFactorTypes.contains(.email) {
-                return String(localized: "Receives email sign-in codes")
+                return AppLocale.string("Receives email sign-in codes")
             }
-            return String(localized: "Receives sign-in codes")
+            return AppLocale.string("Receives sign-in codes")
         }
         if usage.roles.contains(.oauth) {
-            return String(localized: "Bound to third-party sign-in")
+            return AppLocale.string("Bound to third-party sign-in")
         }
         if usage.roles.contains(.login) {
-            return String(localized: "Used as the login name")
+            return AppLocale.string("Used as the login name")
         }
         if usage.roles.contains(.contact) {
-            return String(localized: "Kept on file as a contact")
+            return AppLocale.string("Kept on file as a contact")
         }
-        return String(localized: "Mentioned in notes or custom fields")
+        return AppLocale.string("Mentioned in notes or custom fields")
     }
 }
 

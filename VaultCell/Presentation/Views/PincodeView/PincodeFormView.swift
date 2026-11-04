@@ -92,7 +92,7 @@ struct PincodeFormView: View {
             AdvancedTextField(
                 iconName: "number.square.fill",
                 iconColor: .orange,
-                title: String(localized: "Title"),
+                title: AppLocale.string("Title"),
                 keyboardType: .default,
                 text: $formModel.title
             )
@@ -134,8 +134,10 @@ struct PincodeFormView: View {
                     if isPincodeVisible {
                         TextField("Pincode", text: $formModel.pincode)
                             .keyboardType(formModel.isNumericOnly ? .numberPad : .default)
+                            .font(.body.monospaced())
                     } else {
                         SecureField("Pincode", text: $formModel.pincode)
+                            .font(.body.monospaced())
                     }
 
                     Button {

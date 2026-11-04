@@ -14,6 +14,8 @@ protocol CategoryRepositoryProtocol {
     func create(_ category: PasswordCategory) async throws
     func update(_ category: PasswordCategory) async throws
     func delete(_ id: UUID) async throws
+    /// 把某个分类下的条目批量迁移到目标分类，返回迁移数量（删除分类前调用）
+    func reassignEntries(from sourceID: UUID, to targetID: UUID) async throws -> Int
     func ensureDefaults() async throws
 }
 
@@ -95,6 +97,20 @@ class CategoryRepository: CategoryRepositoryProtocol {
                 do {
                     try dataSource.deleteCategory(id)
                     continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func reassignEntries(from sourceID: UUID, to targetID: UUID) async throws -> Int {
+        let dataSource = self.dataSource
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
+            dataSource.context.perform {
+                do {
+                    let count = try dataSource.reassignCategoryEntries(from: sourceID, to: targetID)
+                    continuation.resume(returning: count)
                 } catch {
                     continuation.resume(throwing: error)
                 }

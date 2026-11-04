@@ -42,7 +42,7 @@ struct ExportDataView: View {
         NavigationStack {
             content
                 .background(SettingsBackground())
-                .navigationTitle(String(localized: "Export"))
+                .navigationTitle(AppLocale.string("Export"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbarContent }
                 .task { await load() }
@@ -73,10 +73,8 @@ struct ExportDataView: View {
                                 fileName: exportedFileName,
                                 itemCount: 0,
                                 skippedCount: 0,
-                                errorMessage:
-                                    String(
-                                        localized: "Export failed: \(error.localizedDescription)"
-                                    )
+                                errorMessage: AppLocale.string(
+                                    "Export failed: \(error.localizedDescription)")
                             )
                         )
                     }
@@ -95,7 +93,7 @@ struct ExportDataView: View {
         case .loading:
             VStack(spacing: 12) {
                 ProgressView()
-                Text(String(localized: "Reading vault..."))
+                Text(AppLocale.string("Reading vault..."))
                     .font(.footnote)
                     .foregroundColor(.secondary)
             }
@@ -123,7 +121,7 @@ struct ExportDataView: View {
         VStack(spacing: 0) {
             List {
                 Section {
-                    Picker(String(localized: "Format"), selection: $format) {
+                    Picker(AppLocale.string("Format"), selection: $format) {
                         ForEach(VaultExportFormat.allCases) { item in
                             Text(item.displayName).tag(item)
                         }
@@ -147,19 +145,19 @@ struct ExportDataView: View {
                     }
                 } header: {
                     HStack {
-                        Text(String(localized: "Item Types"))
+                        Text(AppLocale.string("Item Types"))
                         Spacer()
                         Button(
                             allSelected
-                                ? String(localized: "Deselect All")
-                                : String(localized: "Select All")
+                                ? AppLocale.string("Deselect All")
+                                : AppLocale.string("Select All")
                         ) {
                             toggleAll()
                         }
                         .disabled(itemTypes.isEmpty)
                     }
                 } footer: {
-                    Text(String(localized: "Items in the Trash are not exported."))
+                    Text(AppLocale.string("Items in the Trash are not exported."))
                 }
             }
             .listStyle(.insetGrouped)
@@ -179,9 +177,8 @@ struct ExportDataView: View {
             } else {
                 Label {
                     Text(
-                        String(
-                            localized:
-                                "Exported files are not encrypted. Keep them somewhere safe and delete them when you are done."
+                        AppLocale.string(
+                            "Exported files are not encrypted. Keep them somewhere safe and delete them when you are done."
                         )
                     )
                     .font(.caption)
@@ -194,8 +191,7 @@ struct ExportDataView: View {
             }
 
             PrimaryActionButton(
-                title: String(
-                    localized: "Export \(snapshot.itemCount(in: selectedItemTypes)) Items"),
+                title: AppLocale.string("Export \(snapshot.itemCount(in: selectedItemTypes)) Items"),
                 isLoading: isPreparing,
                 isEnabled: canExport
             ) {
@@ -213,7 +209,7 @@ struct ExportDataView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            Button(String(localized: "Cancel")) { dismiss() }
+            Button(AppLocale.string("Cancel")) { dismiss() }
         }
     }
 

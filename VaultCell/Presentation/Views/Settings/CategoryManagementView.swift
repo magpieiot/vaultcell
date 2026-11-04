@@ -13,12 +13,11 @@ struct CategoryManagementView: View {
 
     @State private var categories: [PasswordCategory] = []
 
-    private var passwordEntries: [PasswordEntry] {
-        viewModel.items.compactMap {
-            guard case let .password(entry) = $0 else { return nil }
-            return entry
-        }
+    /// 删除自定义分类时，条目迁移到的兜底分类名（与 PasswordCategory.defaultCategoryID 保持一致）
+    private var fallbackCategoryName: String {
+        viewModel.referenceData.category(for: PasswordCategory.defaultCategoryID)?.name ?? "Life"
     }
+
     @State private var showingAddSheet = false
     @State private var categoryToDelete: PasswordCategory?
     @State private var isProcessing = false
@@ -33,7 +32,8 @@ struct CategoryManagementView: View {
                     CategoryRow(
                         category: category,
                         entryCount: entryCount(for: category),
-                        isProcessing: isProcessing
+                        isProcessing: isProcessing,
+                        onDelete: category.isSystem ? nil : { categoryToDelete = category }
                     )
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         if !category.isSystem {
@@ -47,9 +47,9 @@ struct CategoryManagementView: View {
                 }
                 .onMove(perform: move)
             } header: {
-                Text("List（\(categories.count)）")
+                Text("List (\(categories.count))")
             } footer: {
-                Text("Long press and drag to reorder. System default categories cannot be deleted. Deleting a custom category will reassign its entries to \"Other\".")
+                Text("Long press and drag to reorder. System default categories cannot be deleted. Deleting a custom category will reassign its entries to \"\(fallbackCategoryName)\".")
                     .font(.caption)
             }
         }
@@ -73,7 +73,7 @@ struct CategoryManagementView: View {
                 Task { await refresh() }
             }
         }
-        .alert("Delete Category？", isPresented: Binding(
+        .alert("Delete Category?", isPresented: Binding(
             get: { categoryToDelete != nil },
             set: { if !$0 { categoryToDelete = nil } })
         ) {
@@ -87,7 +87,7 @@ struct CategoryManagementView: View {
             if let category = categoryToDelete {
                 let count = entryCount(for: category)
                 if count > 0 {
-                    Text("The category \"\(category.name)\" contains \(count) entries. Deleting it will reassign them to \"Other\". This action cannot be undone.")
+                    Text("The category \"\(category.name)\" contains \(count) entries. Deleting it will reassign them to \"\(fallbackCategoryName)\". This action cannot be undone.")
                 } else {
                     Text("Are you sure to delete the category \"\(category.name)\"? This action cannot be undone.")
                 }
@@ -113,8 +113,9 @@ struct CategoryManagementView: View {
         categories = viewModel.referenceData.categories
     }
 
+    /// 该分类下的条目数量（密码 / PIN 码 / 银行卡合计）
     private func entryCount(for category: PasswordCategory) -> Int {
-        passwordEntries.filter { $0.categoryID == category.id }.count
+        viewModel.items.filter { $0.categoryID == category.id }.count
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -131,11 +132,33 @@ struct CategoryManagementView: View {
     private func deleteCategory(_ category: PasswordCategory) async {
         isProcessing = true
         defer { isProcessing = false }
-        await viewModel.referenceData.deleteCategory(category.id)
+        // 迁移数量需要在删除前统计（删除后条目已归入兜底分类）
+        let movedCount = entryCount(for: category)
+        let fallbackName = fallbackCategoryName
+        let fallbackID = PasswordCategory.defaultCategoryID
+        // 分类下的条目由服务层先行迁移到兜底分类，再删除分类本身
+        let deleted = await viewModel.referenceData.deleteCategory(
+            category.id, reassignTo: fallbackID)
+        categoryToDelete = nil
+        guard deleted else {
+            resultMessage = viewModel.referenceData.errorMessage
+                ?? String(
+                    format: AppLocale.string("Unable to delete the category \"%@\"."),
+                    category.name)
+            return
+        }
+        // 列表正按被删除的分类筛选时清空筛选，避免删除后列表变空且找不到入口
+        if viewModel.selectedCategoryID == category.id {
+            viewModel.selectedCategoryID = nil
+        }
         await viewModel.loadItems()
         await refresh()
-        resultMessage = "Category \"\(category.name)\" has been deleted, and its entries have been reassigned to \"Other\"."
-        categoryToDelete = nil
+        resultMessage = movedCount > 0
+            ? String(
+                format: AppLocale.string("Category \"%@\" has been deleted, and its entries have been reassigned to \"%@\"."
+                ), category.name, fallbackName)
+            : String(
+                format: AppLocale.string("Category \"%@\" has been deleted."), category.name)
     }
 }
 
@@ -143,6 +166,8 @@ private struct CategoryRow: View {
     let category: PasswordCategory
     let entryCount: Int
     let isProcessing: Bool
+    /// 删除回调；系统默认分类传 nil，不显示删除按钮
+    let onDelete: (() -> Void)?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -178,6 +203,17 @@ private struct CategoryRow: View {
 
             if isProcessing {
                 ProgressView()
+            } else if let onDelete {
+                // 行内删除入口：让自定义分类不必依赖滑动手势就能删除
+                Button(role: .destructive, action: onDelete) {
+                    Image(systemName: "trash")
+                        .font(.body)
+                        .foregroundColor(.red)
+                        .frame(width: 32, height: 32)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Delete"))
             }
         }
         .padding(.vertical, 2)

@@ -42,6 +42,8 @@ struct EditPasswordView: View {
     @State private var recentPhoneNumbers: [String] = []
     /// 是否显示删除确认弹窗
     @State private var showDeleteConfirmation = false
+    /// 是否显示移除 TOTP 的二次确认
+    @State private var showRemoveTOTPConfirmation = false
     /// 自定义字段「有值但缺名称」时是否显示阻止保存提示
     @State private var showFieldNameRequiredPrompt = false
 
@@ -149,6 +151,14 @@ struct EditPasswordView: View {
         .onChange(of: viewModel.tags) { _, _ in
             seedSelectedTagsIfNeeded()
         }
+        .alert("Remove TOTP?", isPresented: $showRemoveTOTPConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Remove", role: .destructive) {
+                removeTOTP()
+            }
+        } message: {
+            Text("The TOTP secret will be deleted from this item. You can scan a QR code to add it again.")
+        }
         .customFieldNameRequiredAlert(isPresented: $showFieldNameRequiredPrompt)
     }
 
@@ -159,7 +169,7 @@ struct EditPasswordView: View {
             AdvancedTextField(
                 iconName: "magnifyingglass",
                 iconColor: .blue,
-                title: String(localized: "Title"),
+                title: AppLocale.string("Title"),
                 keyboardType: .default,
                 text: $formModel.siteName
             )
@@ -167,7 +177,7 @@ struct EditPasswordView: View {
             AdvancedTextField(
                 iconName: "link",
                 iconColor: .blue,
-                title: String(localized: "URL"),
+                title: AppLocale.string("URL"),
                 keyboardType: .URL,
                 text: Binding(
                     get: { formModel.siteURL ?? "" },
@@ -202,7 +212,7 @@ struct EditPasswordView: View {
             AdvancedTextField(
                 iconName: "person",
                 iconColor: .blue,
-                title: String(localized: "Username"),
+                title: AppLocale.string("Username"),
                 keyboardType: .default,
                 text: $formModel.username
             )
@@ -220,10 +230,12 @@ struct EditPasswordView: View {
                             .keyboardType(.asciiCapable)
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
+                            .font(PasswordTypography.font)
                     } else {
                         SecureField("Password", text: $formModel.password)
                             .textContentType(.oneTimeCode)
                             .keyboardType(.asciiCapable)
+                            .font(PasswordTypography.font)
                     }
 
                     Button {
@@ -344,7 +356,7 @@ struct EditPasswordView: View {
                 AdvancedTextField(
                     iconName: "mail",
                     iconColor: .blue,
-                    title: String(localized: "Email"),
+                    title: AppLocale.string("Email"),
                     keyboardType: .emailAddress,
                     isItemDeleteEnabled: true,
                     onDeleteItem: {
@@ -375,7 +387,7 @@ struct EditPasswordView: View {
                 AdvancedTextField(
                     iconName: "phone",
                     iconColor: .blue,
-                    title: String(localized: "Phone"),
+                    title: AppLocale.string("Phone"),
                     // .phonePad（而不是 .numberPad）：键盘上的 +*# 键可以打出 "+"，
                     // 用户才能录入 "+86 138…" 这类带区号的写法
                     keyboardType: .phonePad,
@@ -489,10 +501,10 @@ struct EditPasswordView: View {
     private var twoFAInfoSection: some View {
 
         Section {
-            HStack {
+            HStack(spacing: 8) {
                 ///
                 if !isShowRescanQrcode && totpFactorConfig?.secret != nil {
-                    minusButton
+                    totpActionToggleButton
                 }
 
                 Image(systemName: "key.viewfinder")
@@ -507,20 +519,20 @@ struct EditPasswordView: View {
                     } label: {
                         HStack {
                             Image(systemName: "qrcode.viewfinder")
-                            Text(totpFactorConfig?.secret == nil ? "Scan QR Code" : "Rescan")
+                            Text("Scan QR Code")
                         }
                     }
+                } else if isShowRescanQrcode {
+                    // 展开态：隐藏验证码，改为展示「重新扫描 / 移除」操作
+                    rescanQrcodeButton
+                    removeTOTPButton
                 } else {
                     TOTPCodeView(config: totpFactorConfig!)
-                    if isShowRescanQrcode {
-                        //@@
-                        rescanQrcodeButton
-                    }
+                        .transition(.opacity)
                 }
 
             }
-            .padding(.leading, isShowRescanQrcode ? -64 : 0)
-            // 点击行内空白区域收起 Rescan 按钮（不触发扫码）。
+            // 点击行内空白区域收起 TOTP 操作区（不触发扫码）。
             // 手势挂在背景层，避免行级手势抢走 "Scan QR Code" / "Rescan" 按钮的点击。
             .background(
                 Color.clear
@@ -647,13 +659,14 @@ struct EditPasswordView: View {
         }
     }
 
-    // MARK: - Rescan QRCode
+    // MARK: - TOTP 操作（重新扫描 / 移除）
 
-    private var minusButton: some View {
+    /// 折叠态的红色减号：展开 TOTP 操作区（重新扫描 / 移除）。
+    /// 仅用于展开操作，本身不删除任何数据，删除入口是展开后的 trash 按钮。
+    private var totpActionToggleButton: some View {
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 isShowRescanQrcode = true
-                //setFocus(false)
             }
         } label: {
             Image(systemName: "minus")
@@ -663,6 +676,7 @@ struct EditPasswordView: View {
                 .background(Circle().fill(Color.red))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(Text("Rescan or remove TOTP"))
         .transition(.scale.combined(with: .opacity))
     }
 
@@ -683,6 +697,34 @@ struct EditPasswordView: View {
         }
         .buttonStyle(.plain)
         .transition(.move(edge: .trailing).combined(with: .opacity))
+    }
+
+    /// 移除当前条目保存的 TOTP 密钥；二次确认后仅清空编辑态，
+    /// 点保存才会真正从条目中删除（savePassword 会跳过 totp 并重算 has2FA）
+    private var removeTOTPButton: some View {
+        Button {
+            showRemoveTOTPConfirmation = true
+        } label: {
+            Image(systemName: "trash")
+                .font(.body.weight(.regular))
+                .foregroundColor(.white)
+                .frame(width: 32, height: 32)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.red))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("Remove TOTP"))
+        .transition(.move(edge: .trailing).combined(with: .opacity))
+    }
+
+    /// 清空编辑态中的 TOTP 配置并收起操作区
+    private func removeTOTP() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            totpFactorConfig = nil
+            isShowRescanQrcode = false
+        }
+        // 与其他 2FA 配置保持一致：删除后立即刷新 has2FA（保存时会再次重算）
+        formModel.has2FA = !((formModel.twoFactorConfigs ?? []).isEmpty)
+        currentToast = ToastItem(message: AppLocale.string("TOTP removed"), style: .success)
     }
 
     // MARK: - Helpers
@@ -793,18 +835,18 @@ struct EditPasswordView: View {
             totpFactorConfig?.lastVerifiedAt = Date()
             showingScanner = false
             currentToast = ToastItem(
-                message: String(localized: "TOTP key detected"), style: .success)
+                message: AppLocale.string("TOTP key detected"), style: .success)
         } else if !code.isEmpty {
             totpFactorConfig?.secret = code
             totpFactorConfig?.issuer = formModel.siteName
             totpFactorConfig?.boundValue = formModel.username
             showingScanner = false
             currentToast = ToastItem(
-                message: String(localized: "TOTP key detected"), style: .success)
+                message: AppLocale.string("TOTP key detected"), style: .success)
         } else {
             showingScanner = false
             currentToast = ToastItem(
-                message: String(localized: "Unable to recognize QR code"), style: .error)
+                message: AppLocale.string("Unable to recognize QR code"), style: .error)
         }
     }
 

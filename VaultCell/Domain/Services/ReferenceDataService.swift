@@ -163,29 +163,39 @@ final class ReferenceDataService: ObservableObject {
         }
     }
     
-    /// 删除分类
+    /// 删除自定义分类（系统默认分类不可删除）
     ///
-    /// 删除前会校验该分类不是系统分类。
-    /// 注意：删除分类后，原本属于该分类的 entry 的重新分配由调用方
-    /// （持有 entry 仓库的 ViewModel）负责处理。
+    /// 流程：
+    /// 1. 校验分类存在且不是系统分类
+    /// 2. 先把该分类下的条目（密码 / PIN 码 / 银行卡，含回收站）迁移到目标分类
+    /// 3. 再删除分类本身
     ///
     /// - Parameters:
     ///   - categoryID: 待删除的分类 ID
-    ///   - reassignTo: 将该分类下的 entry 迁移到的目标分类 ID，默认使用系统默认分类
-    func deleteCategory(_ categoryID: UUID, reassignTo targetCategoryID: UUID? = nil) async {
+    ///   - reassignTo: 条目迁移的目标分类 ID，默认使用系统兜底分类
+    /// - Returns: 是否删除成功（分类不存在、系统分类或仓库出错时返回 false）
+    @discardableResult
+    func deleteCategory(_ categoryID: UUID, reassignTo targetCategoryID: UUID? = nil) async -> Bool {
         // 校验分类存在且非系统分类
-        guard let category = categories.first(where: { $0.id == categoryID }), !category.isSystem else { return }
-        // 确定迁移目标：用户指定 > 系统默认分类
+        guard let category = categories.first(where: { $0.id == categoryID }), !category.isSystem else {
+            return false
+        }
+        // 确定迁移目标：用户指定 > 系统兜底分类；不允许迁移到被删除的分类本身
         let targetID = targetCategoryID ?? PasswordCategory.defaultCategoryID
+        guard targetID != categoryID else { return false }
+        // 清理上一次操作的遗留错误，保证失败提示与本次操作对应
+        errorMessage = nil
         do {
-            // 从仓库中删除
+            // 先迁移条目，避免删除分类后条目保留悬空的 categoryID
+            _ = try await categoryRepository.reassignEntries(from: categoryID, to: targetID)
+            // 再删除分类本身
             try await categoryRepository.delete(categoryID)
             // 从内存数组中移除
             categories.removeAll { $0.id == categoryID }
-            // 注意：entry 的重新分配由调用方负责，这里仅保留 targetID 供调用方使用
-            _ = targetID
+            return true
         } catch {
             errorMessage = error.localizedDescription
+            return false
         }
     }
     

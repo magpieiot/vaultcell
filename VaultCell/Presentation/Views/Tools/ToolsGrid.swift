@@ -125,7 +125,7 @@ struct ToolsGrid: View {
         switch route {
         case .passwordGenerator:
             PasswordGeneratorView(service: passwordGeneratorService)
-                .navigationTitle(String(localized: "Password Generator"))
+                .navigationTitle(AppLocale.string("Password Generator"))
                 .navigationBarTitleDisplayMode(.inline)
                 // 二级页面隐藏底部 TabBar
                 .preference(key: TabBarVisibilityKey.self, value: true)

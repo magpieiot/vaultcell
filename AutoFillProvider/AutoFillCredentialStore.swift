@@ -41,15 +41,15 @@ enum AutoFillCredentialStoreError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .vaultNotConfigured:
-            return String(localized: "Vault is not set up yet. Open VaultCell to create a vault and save passwords first")
+            return ExtensionLocale.string("Vault is not set up yet. Open VaultCell to create a vault and save passwords first")
         case .vaultLocked:
-            return String(localized: "Vault is locked")
+            return ExtensionLocale.string("Vault is locked")
         case .authenticationFailed:
-            return String(localized: "Authentication failed")
+            return ExtensionLocale.string("Authentication failed")
         case .databaseUnavailable:
-            return String(localized: "Vault data is unavailable")
+            return ExtensionLocale.string("Vault data is unavailable")
         case .invalidData:
-            return String(localized: "Password data is malformed")
+            return ExtensionLocale.string("Password data is malformed")
         }
     }
 }
@@ -324,6 +324,11 @@ final class AutoFillCredentialStore {
                         if draft.siteURL?.isEmpty == false { existing.siteURL = draft.siteURL }
                         existing.updatedAt = Date()
                         existing.passwordChangedAt = Date()
+                        existing.version = VaultSyncRevision.next(
+                            current: existing.version,
+                            proposed: existing.version
+                        )
+                        existing.isSynced = false
                         try context.save()
                         return CredentialSaveOutcome.updated(existing.id)
                     }
@@ -365,15 +370,15 @@ final class AutoFillCredentialStore {
     /// 这里与主 App `CoreDataDataSource.createPasswordEntry` 保持同一套取值：
     /// - breachStatus = .unknown(0)、accountStatus = .active(0)
     /// - passwordStrength = .medium(2)、passwordlessLoginType = .none(0)
-    /// - dataSource = .manual(0)、version = 1、isSynced = true
+    /// - dataSource = .manual(0)、version = 1、isSynced = false
     private static func applyRequiredDefaults(to entry: CDPasswordEntry) {
         entry.breachStatusRaw = 0
         entry.accountStatusRaw = 0
         entry.passwordStrengthRaw = 2
         entry.passwordlessLoginTypeRaw = 0
-        entry.version = 1
+        entry.version = VaultSyncRevision.initial
         entry.isFavorite = false
-        entry.isSynced = true
+        entry.isSynced = false
         entry.has2FA = false
         entry.hasBundleEmail = false
         entry.hasBundlePhone = false
@@ -442,6 +447,7 @@ final class AutoFillCredentialStore {
     private func perform<T>(_ body: (NSManagedObjectContext) throws -> T) throws -> T {
         let container = try persistentContainer()
         let context = container.newBackgroundContext()
+        context.transactionAuthor = VaultCoreDataStoreConfiguration.autoFillAuthor
 
         var outcome: Result<T, Error>?
         context.performAndWait {
@@ -476,16 +482,7 @@ final class AutoFillCredentialStore {
         // 与主 App CoreDataStack 相同的迁移配置，保证任意历史版本可读
         let container = NSPersistentContainer(name: coreDataModelName)
         let description = NSPersistentStoreDescription(url: storeURL)
-        description.shouldMigrateStoreAutomatically = true
-        description.shouldInferMappingModelAutomatically = true
-        // 与主 App 对齐：让对方（主 App 连接）能感知本进程的写入
-        description.setOption(true as NSNumber,
-                              forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-        // 主 App 可能同时持有该文件的连接，写入撞上会立刻 SQLITE_BUSY；
-        // 给 SQLite 一个等待窗口，而不是马上失败。
-        // 必须用 setOption：setValue(_:forKey:) 会抛 NSUnknownKeyException 闪退
-        description.setOption(["busy_timeout": "5000"] as NSDictionary,
-                              forKey: NSSQLitePragmasOption)
+        VaultCoreDataStoreConfiguration.configure(description)
         container.persistentStoreDescriptions = [description]
 
         let loadStart = Date()

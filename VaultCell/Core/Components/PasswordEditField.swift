@@ -17,7 +17,11 @@ struct PasswordEditField: View {
     @State private var revealTrigger = 0
     @StateObject private var generator = PasswordGeneratorService()
 
-    init(_ placeholder: String = "Password", text: Binding<String>, revealDuration: TimeInterval = 2.0) {
+    /// 占位文本以已本地化的字符串传入：UIKit 的 `placeholder` 不做多语言查找
+    init(
+        _ placeholder: String = AppLocale.string("Password"), text: Binding<String>,
+        revealDuration: TimeInterval = 2.0
+    ) {
         self.placeholder = placeholder
         self._text = text
         self.revealDuration = revealDuration
@@ -80,12 +84,16 @@ private struct DelayedSecureTextField: UIViewRepresentable {
         view.borderStyle = .none
         view.clearButtonMode = .never
         view.isSecureTextEntry = true
+        // 等宽字体：明文回显时字符宽度一致，便于用户核对长密码
+        applyMonospacedFont(to: view)
         view.addTarget(context.coordinator, action: #selector(Coordinator.editingChanged(_:)), for: .editingChanged)
         return view
     }
 
     func updateUIView(_ uiView: UITextField, context: Context) {
         context.coordinator.parent = self
+
+        applyMonospacedFont(to: uiView)
 
         if uiView.text != text {
             uiView.text = text
@@ -97,6 +105,12 @@ private struct DelayedSecureTextField: UIViewRepresentable {
 
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
+    }
+
+    /// 统一应用等宽字体（与详情页 / 编辑页共用 `PasswordTypography`）
+    func applyMonospacedFont(to textField: UITextField) {
+        textField.font = PasswordTypography.uiFont()
+        textField.adjustsFontForContentSizeCategory = true
     }
 
     final class Coordinator: NSObject {
@@ -168,6 +182,8 @@ private struct DelayedSecureTextField: UIViewRepresentable {
             if let currentSelectedRange {
                 textField.selectedTextRange = currentSelectedRange
             }
+            // 切换 secure 状态会重置字体，需要重新应用等宽字体
+            parent.applyMonospacedFont(to: textField)
         }
     }
 }

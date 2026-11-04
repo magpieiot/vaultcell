@@ -135,10 +135,10 @@ enum SecurityLevel: Int, Codable, CaseIterable {
     /// 展示名
     var displayName: String {
         switch self {
-        case .low: return String(localized: "Low")
-        case .medium: return String(localized: "Medium")
-        case .high: return String(localized: "High")
-        case .veryHigh: return String(localized: "Very High")
+        case .low: return AppLocale.string("Low")
+        case .medium: return AppLocale.string("Medium")
+        case .high: return AppLocale.string("High")
+        case .veryHigh: return AppLocale.string("Very High")
         }
     }
 

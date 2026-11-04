@@ -27,17 +27,17 @@ enum PasswordCheckRule: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .length:
-            return String(localized: "At least 12 characters")
+            return AppLocale.string("At least 12 characters")
         case .characterVariety:
-            return String(localized: "Uses at least three of: upper, lower, digit, symbol")
+            return AppLocale.string("Uses at least three of: upper, lower, digit, symbol")
         case .commonPassword:
-            return String(localized: "Not a commonly used password")
+            return AppLocale.string("Not a commonly used password")
         case .sequentialPattern:
-            return String(localized: "No keyboard or alphabetic runs (abcd, 1234, qwerty)")
+            return AppLocale.string("No keyboard or alphabetic runs (abcd, 1234, qwerty)")
         case .repeatedPattern:
-            return String(localized: "No long repeated runs (aaaa, 1111)")
+            return AppLocale.string("No long repeated runs (aaaa, 1111)")
         case .vaultUniqueness:
-            return String(localized: "Not already used by another saved entry")
+            return AppLocale.string("Not already used by another saved entry")
         }
     }
 
@@ -45,17 +45,17 @@ enum PasswordCheckRule: String, CaseIterable, Identifiable {
     var guidance: String {
         switch self {
         case .length:
-            return String(localized: "Longer passwords take far more effort to crack. Aim for 16 or more.")
+            return AppLocale.string("Longer passwords take far more effort to crack. Aim for 16 or more.")
         case .characterVariety:
-            return String(localized: "Add a mix of capital letters, digits, and symbols.")
+            return AppLocale.string("Add a mix of capital letters, digits, and symbols.")
         case .commonPassword:
-            return String(localized: "This appears on public breach word lists. Pick something less predictable.")
+            return AppLocale.string("This appears on public breach word lists. Pick something less predictable.")
         case .sequentialPattern:
-            return String(localized: "Runs of neighbouring keys are guessed early by attackers.")
+            return AppLocale.string("Runs of neighbouring keys are guessed early by attackers.")
         case .repeatedPattern:
-            return String(localized: "Repeated characters add length without adding strength.")
+            return AppLocale.string("Repeated characters add length without adding strength.")
         case .vaultUniqueness:
-            return String(localized: "Reusing a password lets one breach unlock every account that shares it.")
+            return AppLocale.string("Reusing a password lets one breach unlock every account that shares it.")
         }
     }
 }

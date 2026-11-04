@@ -76,7 +76,8 @@ struct CustomFieldSection: View {
                     TextField("Value", text: field.value)
                 }
             }
-            .font(.subheadline)
+            // 敏感字段（可切换明文）使用等宽字体，便于逐字核对密钥类内容
+            .font(field.wrappedValue.isSensitive ? .subheadline.monospaced() : .subheadline)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .padding(.horizontal, 12)

@@ -29,7 +29,7 @@ struct BackupExportPasswordView: View {
                 VStack(spacing: 22) {
                     // 说明：备份密码独立于密码库主密码
                     Label {
-                        Text(String(localized: "Set a password to encrypt this backup file. It is separate from your master password."))
+                        Text(AppLocale.string("Set a password to encrypt this backup file. It is separate from your master password."))
                             .font(.subheadline)
                             .foregroundColor(.primary)
                     } icon: {
@@ -42,12 +42,12 @@ struct BackupExportPasswordView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(String(localized: "Backup Password"))
+                        Text(AppLocale.string("Backup Password"))
                             .font(.footnote.weight(.medium))
                             .foregroundColor(.secondary)
                         AuthSecureField(
                             text: $password,
-                            placeholder: String(localized: "At least 8 characters"),
+                            placeholder: AppLocale.string("At least 8 characters"),
                             isFocused: focusedField == .password,
                             hasError: errorMessage != nil
                         )
@@ -58,12 +58,12 @@ struct BackupExportPasswordView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(String(localized: "Confirm Password"))
+                        Text(AppLocale.string("Confirm Password"))
                             .font(.footnote.weight(.medium))
                             .foregroundColor(.secondary)
                         AuthSecureField(
                             text: $confirmPassword,
-                            placeholder: String(localized: "Re-enter backup password"),
+                            placeholder: AppLocale.string("Re-enter backup password"),
                             isFocused: focusedField == .confirmPassword,
                             hasError: errorMessage != nil
                         )
@@ -74,7 +74,7 @@ struct BackupExportPasswordView: View {
                     }
 
                     PrimaryActionButton(
-                        title: String(localized: "Export"),
+                        title: AppLocale.string("Export"),
                         isLoading: isWorking,
                         isEnabled: canSubmit
                     ) {
@@ -93,11 +93,11 @@ struct BackupExportPasswordView: View {
                 .padding(.top, 16)
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Export Encrypted Backup"))
+            .navigationTitle(AppLocale.string("Export Encrypted Backup"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(String(localized: "Cancel")) {
+                    Button(AppLocale.string("Cancel")) {
                         dismiss()
                     }
                 }
@@ -119,11 +119,11 @@ struct BackupExportPasswordView: View {
         guard !isWorking else { return }
 
         guard password.count >= 8 else {
-            errorMessage = String(localized: "Password must be at least 8 characters.")
+            errorMessage = AppLocale.string("Password must be at least 8 characters.")
             return
         }
         guard password == confirmPassword else {
-            errorMessage = String(localized: "Passwords do not match.")
+            errorMessage = AppLocale.string("Passwords do not match.")
             return
         }
         errorMessage = nil
@@ -156,7 +156,7 @@ struct BackupRestorePasswordView: View {
                 VStack(spacing: 22) {
                     // 说明：备份密码独立于当前密码库主密码
                     Label {
-                        Text(String(localized: "Enter the password used to encrypt this backup."))
+                        Text(AppLocale.string("Enter the password used to encrypt this backup."))
                             .font(.subheadline)
                             .foregroundColor(.primary)
                     } icon: {
@@ -169,13 +169,13 @@ struct BackupRestorePasswordView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(String(localized: "Backup Password"))
+                        Text(AppLocale.string("Backup Password"))
                             .font(.footnote.weight(.medium))
                             .foregroundColor(.secondary)
 
                         AuthSecureField(
                             text: $password,
-                            placeholder: String(localized: "Enter backup password"),
+                            placeholder: AppLocale.string("Enter backup password"),
                             isFocused: focused,
                             hasError: settingsVM.restoreError != nil
                         )
@@ -195,7 +195,7 @@ struct BackupRestorePasswordView: View {
                     }
 
                     PrimaryActionButton(
-                        title: String(localized: "Restore"),
+                        title: AppLocale.string("Restore"),
                         isLoading: settingsVM.isRestoring,
                         isEnabled: !password.isEmpty && !settingsVM.isRestoring
                     ) {
@@ -206,11 +206,11 @@ struct BackupRestorePasswordView: View {
                 .padding(.top, 16)
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Restore from backup"))
+            .navigationTitle(AppLocale.string("Restore from backup"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(String(localized: "Cancel")) {
+                    Button(AppLocale.string("Cancel")) {
                         settingsVM.showingRestorePasswordSheet = false
                     }
                 }

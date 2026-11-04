@@ -52,6 +52,10 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchScreens</key>
 	<dict>
 		<key>UIDefaultLaunchScreen</key>
@@ -87,7 +91,7 @@
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

@@ -303,11 +303,11 @@ private extension VaultItemType {
     var displayName: String {
         switch self {
         case .password:
-            return String(localized: "Password")
+            return AppLocale.string("Password")
         case .pincode:
-            return String(localized: "Pincode")
+            return AppLocale.string("Pincode")
         case .bankcard:
-            return String(localized: "BankCard")
+            return AppLocale.string("BankCard")
         }
     }
 

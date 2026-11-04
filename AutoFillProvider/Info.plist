@@ -35,6 +35,14 @@
 				     credential identity 读回也会被过滤为空（实测主 App / 扩展进程均读 0 条）。 -->
 				<key>ProvidesPasswords</key>
 				<true/>
+				<!-- 通行密钥：本 App 尚未支持，必须保持 false。
+				     true 会让系统把 passkey 断言/注册请求派发进来，而扩展并不实现
+				     passkey 的 complete/cancel，扫码登录会卡死。
+				     真正支持时需要：生成 P-256 密钥、注册 ASPasskeyCredentialIdentity、
+				     用 completeAssertionRequest(withSelectedPasskeyCredential:) 回填。
+				     Scripts/verify-entitlements.sh 会校验本键不为 true。 -->
+				<key>ProvidesPasskeys</key>
+				<false/>
 				<key>SupportsAutoFill</key>
 				<true/>
 				<key>SupportsCredentialExchange</key>

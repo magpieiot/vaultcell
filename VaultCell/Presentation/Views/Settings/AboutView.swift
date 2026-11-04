@@ -9,8 +9,16 @@ import StoreKit
 import SwiftUI
 
 /// 关于子页：评分/评论、帮助与反馈、隐私政策、服务条款、版本信息
-/// （帮助/隐私/条款为占位页面，正式版本接入实现）
+///
+/// 帮助与反馈仍是 App 内的本地文档页（`Settings/Legal/`）；
+/// 隐私政策与服务条款只在线上维护，点击直接用系统浏览器打开 `Legal.*URL`，
+/// 避免同一份条款在 App 内和线上各存一份、改一处漏一处。
 struct AboutView: View {
+
+    @Environment(\.openURL) private var openURL
+
+    /// 离线时点击线上条款的提示（条款只在线上维护，离线读不到）
+    @State private var showingOfflineAlert = false
 
     var body: some View {
         List {
@@ -35,22 +43,27 @@ struct AboutView: View {
                 }
                 */
 
-                NavigationLink(destination: Text(String(localized: "Help & Feedback"))) {
+                NavigationLink(destination: HelpFeedbackView()) {
                     CustomLabel(
                         leadingIcon: "questionmark.circle", leadingIconColor: .secondary,
                         text: "Help & Feedback")
                 }
 
-                NavigationLink(destination: Text(String(localized: "Privacy Policy"))) {
+                // 隐私政策 / 服务条款：只维护线上版本，点击交给系统浏览器
+                Button {
+                    openOnline(Legal.privacyPolicyURL)
+                } label: {
                     CustomLabel(
                         leadingIcon: "hand.raised.fill", leadingIconColor: .secondary,
-                        text: "Privacy Policy")
+                        trailingIcon: "arrow.up.right", text: "Privacy Policy")
                 }
 
-                NavigationLink(destination: Text(String(localized: "Terms of Service"))) {
+                Button {
+                    openOnline(Legal.termsOfServiceURL)
+                } label: {
                     CustomLabel(
                         leadingIcon: "doc.text.fill", leadingIconColor: .secondary,
-                        text: "Terms of Service")
+                        trailingIcon: "arrow.up.right", text: "Terms of Service")
                 }
 
                 HStack {
@@ -65,7 +78,12 @@ struct AboutView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(SettingsBackground())
-        .navigationTitle(String(localized: "About"))
+        .alert("You're Offline", isPresented: $showingOfflineAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("This document opens in your browser, so it needs a network connection. Connect to the internet and try again.")
+        }
+        .navigationTitle(AppLocale.string("About"))
         .navigationBarTitleDisplayMode(.inline)
         // 二级页面隐藏底部 TabBar
         .preference(key: TabBarVisibilityKey.self, value: true)
@@ -91,5 +109,21 @@ struct AboutView: View {
     private func openWriteReview() {
         guard let url = AppStore.writeReviewURL else { return }
         UIApplication.shared.open(url)
+    }
+
+    /// 用系统浏览器打开线上条款页。
+    ///
+    /// 条款只在线上维护，离线时无法阅读，因此先做一次可达性判断：
+    /// 离线给 App 内提示，而不是把用户丢到 Safari 的错误页；
+    /// `Legal.*URL` 未配置时什么也不做。
+    private func openOnline(_ url: URL?) {
+        guard let url else { return }
+        Task { @MainActor in
+            guard await NetworkReachability.isOnline() else {
+                showingOfflineAlert = true
+                return
+            }
+            openURL(url)
+        }
     }
 }

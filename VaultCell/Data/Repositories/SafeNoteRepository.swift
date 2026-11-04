@@ -8,6 +8,10 @@
 import CoreGraphics
 import Foundation
 
+extension Notification.Name {
+    static let safeNotesDidChange = Notification.Name("VaultCell.safeNotesDidChange")
+}
+
 protocol SafeNoteRepositoryProtocol {
     func fetchAll() async throws -> [SafeNote]
     /// 获取全部未删除笔记的完整内容（含正文与附件元数据），用于备份导出
@@ -103,6 +107,28 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
         }
     }
 
+    func fetchAllForSync() async throws -> [SafeNote] {
+        try await perform {
+            try self.dataSource.fetchAllSafeNotes().map {
+                try self.dataSource.convertToSafeNote($0)
+            }
+        }
+    }
+
+    func markSynced(_ id: UUID) async throws {
+        try await perform { try self.dataSource.markSafeNoteSynced(id) }
+    }
+
+    func applyRemote(_ note: SafeNote, draftAssets: [SafeNoteDraftAsset]) async throws {
+        try await persist(note, draftAssets: draftAssets, isUpdate: true, origin: .remote)
+    }
+
+    func deleteRemote(_ id: UUID) async throws {
+        try await perform {
+            try self.dataSource.deleteSafeNote(id, origin: .remote)
+        }
+    }
+
     func search(title query: String) async throws -> [SafeNote] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
@@ -134,14 +160,18 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
             }
             try? self.fileStorage.deleteFiles(for: id)
         }
+        notifyNotesChanged()
     }
 
     func softDelete(_ id: UUID) async throws {
         try await perform {
             guard let cdNote = try self.dataSource.fetchSafeNote(by: id) else { return }
             cdNote.deletedAt = Date()
+            cdNote.version = VaultSyncRevision.next(current: cdNote.version, proposed: cdNote.version)
+            cdNote.isSynced = false
             try self.dataSource.saveIfPossible()
         }
+        notifyNotesChanged()
     }
 
     func fetchTrashed() async throws -> [SafeNote] {
@@ -163,15 +193,20 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
     }
 
     func purgeExpired(retentionDays: Int) async throws -> [UUID] {
-        try await perform {
+        let purgedIDs = try await perform {
             let cutoff = Date().addingTimeInterval(-Double(retentionDays) * 86400)
             let cdNotes = try self.dataSource.fetchAllSafeNotes()
             var purgedIDs: [UUID] = []
             for cdNote in cdNotes {
                 if let deletedAt = cdNote.deletedAt, deletedAt < cutoff {
                     let id = cdNote.id
-                    // 物理删除前清理关联加密文件
+                    // 物理删除前清理关联加密文件，并留下跨设备永久删除墓碑
                     let existingNote = try? self.dataSource.convertToSafeNote(cdNote)
+                    SyncLocalStore.shared.recordTombstone(
+                        itemID: id,
+                        itemKind: .safeNote,
+                        revision: cdNote.version
+                    )
                     self.dataSource.context.delete(cdNote)
                     for asset in existingNote?.assets ?? [] {
                         try? self.fileStorage.deleteFile(at: asset.encryptedFilePath)
@@ -186,9 +221,18 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
             }
             return purgedIDs
         }
+        if !purgedIDs.isEmpty {
+            notifyNotesChanged()
+        }
+        return purgedIDs
     }
 
-    private func persist(_ note: SafeNote, draftAssets: [SafeNoteDraftAsset], isUpdate: Bool) async throws {
+    private func persist(
+        _ note: SafeNote,
+        draftAssets: [SafeNoteDraftAsset],
+        isUpdate: Bool,
+        origin: VaultWriteOrigin = .local
+    ) async throws {
         try await perform {
             let existingNote = try self.dataSource.fetchSafeNote(by: note.id).map { try self.dataSource.convertToSafeNote($0) }
             var newlyWrittenPaths: [String] = []
@@ -211,7 +255,7 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
                     persistedNote.createdAt = note.createdAt
                 }
 
-                try self.dataSource.saveSafeNote(persistedNote)
+                try self.dataSource.saveSafeNote(persistedNote, origin: origin)
 
                 if let existingNote {
                     let removedAssets = existingNote.assets.filter { oldAsset in
@@ -229,6 +273,11 @@ final class SafeNoteRepository: SafeNoteRepositoryProtocol {
                 throw error
             }
         }
+        notifyNotesChanged()
+    }
+
+    private func notifyNotesChanged() {
+        NotificationCenter.default.post(name: .safeNotesDidChange, object: nil)
     }
 
     private func makePersistedAssets(

@@ -34,15 +34,11 @@ final class BankcardFormModel: ObservableObject {
     @Published var tagSelection: TagSelectionViewModel
     @Published var customFields: [CustomField] = []
 
+    /// 银行名称与卡号为必填项，任一为空时保存按钮不可用
     var isEnabledNextButton: Bool {
         let trimmedBank = bankName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedCard = cardNumber.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedHolder = cardholder.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedExpiry = expiryDate.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !trimmedBank.isEmpty
-            && !trimmedCard.isEmpty
-            && !trimmedHolder.isEmpty
-            && !trimmedExpiry.isEmpty
+        return !trimmedBank.isEmpty && !trimmedCard.isEmpty
     }
 
     init(

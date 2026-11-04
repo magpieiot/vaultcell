@@ -73,6 +73,12 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
     /// 因此回退为"需要用户交互"，由系统转入交互流程。
     override func provideCredentialWithoutUserInteraction(for credentialRequest: ASCredentialRequest) {
         ExtensionLanguage.activate()
+        // passkey 断言请求也会走这个统一入口（参数类型是 ASCredentialRequest），
+        // 必须在碰密码库之前就拒绝：下面的解锁/查找全是密码语义，接住它只会卡住系统
+        guard credentialRequest is ASPasswordCredentialRequest else {
+            rejectPasskeyRequest(stage: "非交互断言")
+            return
+        }
         // 共享数据库的首次打开与本方法内的 Keychain 读取/查找并行：
         // 免交互路径若成功则直接命中就绪容器；若回落交互路径，容器也已就绪
         credentialStore.warmUpDatabase()
@@ -105,6 +111,12 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
     /// 系统随后收起扩展面板，表现为"闪一下空白列表又缩回、什么都没填"。
     override func prepareInterfaceToProvideCredential(for credentialRequest: ASCredentialRequest) {
         ExtensionLanguage.activate()
+        // 同上：passkey 断言落进来时若继续走密码界面，会弹 Face ID 再报"没找到密码"，
+        // 而系统那边的 passkey 请求始终等不到 complete/cancel —— 用户看到的就是卡死
+        guard credentialRequest is ASPasswordCredentialRequest else {
+            rejectPasskeyRequest(stage: "交互断言")
+            return
+        }
         // 关键优化：共享数据库的首次打开（模型加载 + 迁移检查 + WAL 恢复）
         // 在此立刻后台触发，与"系统呈现扩展面板 + Face ID 认证"完全并行，
         // 解锁成功后的单条读取直接命中就绪容器
@@ -136,6 +148,42 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
 
     override func prepareInterfaceForExtensionConfiguration() {
         // 配置界面无需实现
+    }
+
+    // MARK: - Passkey（本 App 尚未支持：必须显式拒绝）
+
+    /// passkey 断言的"列表"入口（iOS 17+）。
+    ///
+    /// 系统在"选择通行密钥"面板里调用它，扫码登录（hybrid / QR）也走这条路。
+    /// 基类是**空实现**：既不 complete 也不 cancel，系统面板只能一直等扩展 ——
+    /// 用户看到的就是扫 passkey 二维码后界面卡死。
+    override func prepareCredentialList(
+        for serviceIdentifiers: [ASCredentialServiceIdentifier],
+        requestParameters: ASPasskeyCredentialRequestParameters
+    ) {
+        ExtensionLanguage.activate()
+        rejectPasskeyRequest(stage: "断言列表（\(serviceIdentifiers.count) 个服务标识）")
+    }
+
+    /// passkey 注册入口（iOS 17+）。同理：不让面板空等。
+    override func prepareInterface(forPasskeyRegistration registrationRequest: ASCredentialRequest) {
+        ExtensionLanguage.activate()
+        rejectPasskeyRequest(stage: "注册")
+    }
+
+    /// 非密码请求的统一起手式：不解锁、不弹认证、不放界面，立刻回 `credentialIdentityNotFound`。
+    ///
+    /// 为什么不能"忽略"：`provideCredentialWithoutUserInteraction(for:)` 与
+    /// `prepareInterfaceToProvideCredential(for:)` 的参数是 `ASCredentialRequest`，
+    /// iOS 17 起 passkey 断言同样会派发到这两个入口。若落到密码流程里，
+    /// `findCredential(for:)` 只会按密码查：查不到 → 交互路径弹 Face ID 并提示
+    /// "没有找到密码"，而系统的 passkey 请求永远等不到 complete/cancel，整条流程卡死。
+    ///
+    /// 回 `credentialIdentityNotFound` 而不是 `userCanceled`：前者让系统把我们移出候选，
+    /// 继续交给 iCloud 钥匙串 / 安全密钥，不至于连用户原本的登录一起失败。
+    private func rejectPasskeyRequest(stage: String) {
+        NSLog("AutoFill: 收到 passkey 请求（%@），本 App 尚未支持通行密钥，直接拒绝", stage)
+        extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
     }
 
     // MARK: - 保存密码（iOS 26.2+）
@@ -308,7 +356,7 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
 /// 在交互路径上再次回该错误会让系统直接收起面板，用户什么都看不到。
 private struct CredentialLookupError: LocalizedError {
     var errorDescription: String? {
-        String(localized: "No password found for this site. Make sure the item is saved in VaultCell and has a username.")
+        ExtensionLocale.string("No password found for this site. Make sure the item is saved in VaultCell and has a username.")
     }
 }
 
@@ -387,8 +435,8 @@ struct CredentialListView: View {
                         .font(.system(size: 44))
                         .foregroundColor(.secondary)
                     Text(credentials.isEmpty
-                         ? String(localized: "No passwords available")
-                         : String(localized: "No matching passwords"))
+                         ? ExtensionLocale.string("No passwords available")
+                         : ExtensionLocale.string("No matching passwords"))
                         .font(.headline)
                     Text("Save a password in VaultCell first")
                         .font(.subheadline)
@@ -472,9 +520,9 @@ struct CredentialListView: View {
             credentials = []
             phase = .loaded
         case .authenticationFailed:
-            phase = .failed(String(localized: "Authentication failed. Please try again."))
+            phase = .failed(ExtensionLocale.string("Authentication failed. Please try again."))
         case .vaultLocked:
-            phase = .failed(String(localized: "The vault is locked. Please try again."))
+            phase = .failed(ExtensionLocale.string("The vault is locked. Please try again."))
         case .databaseUnavailable, .invalidData:
             phase = .failed(error.localizedDescription)
         }
@@ -511,7 +559,7 @@ struct CredentialListView: View {
         Task {
             do {
                 guard let resolved = try await resolveCredential(credential.id) else {
-                    phase = .failed(String(localized: "Couldn't read this item's password. It may have been deleted or moved in VaultCell."))
+                    phase = .failed(ExtensionLocale.string("Couldn't read this item's password. It may have been deleted or moved in VaultCell."))
                     return
                 }
                 onSelect(ASPasswordCredential(user: resolved.username, password: resolved.password))
@@ -639,8 +687,8 @@ struct SavePasswordView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    row(title: String(localized: "Website"), value: draft.siteName)
-                    row(title: String(localized: "Username"), value: draft.username)
+                    row(title: ExtensionLocale.string("Website"), value: draft.siteName)
+                    row(title: ExtensionLocale.string("Username"), value: draft.username)
                     passwordRow
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -665,7 +713,7 @@ struct SavePasswordView: View {
 
                 VStack(spacing: 10) {
                     Button(action: { Task { await save() } }) {
-                        Text(isSaving ? String(localized: "Saving…") : String(localized: "Save Password"))
+                        Text(isSaving ? ExtensionLocale.string("Saving…") : ExtensionLocale.string("Save Password"))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -703,7 +751,7 @@ struct SavePasswordView: View {
 
     private var passwordRow: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(String(localized: "Password"))
+            Text(ExtensionLocale.string("Password"))
                 .font(.caption)
                 .foregroundColor(.secondary)
             HStack {
@@ -754,7 +802,7 @@ struct SavePasswordView: View {
             // Core Data 层的错误（NSError）不走上面的分支，必须打到日志里，
             // 否则现场只会看到一句"请重试"而无从判断原因
             NSLog("AutoFill: 保存密码失败：%@", String(describing: error))
-            errorMessage = String(localized: "Couldn't save the password. Please try again.")
+            errorMessage = ExtensionLocale.string("Couldn't save the password. Please try again.")
                 + "\n(\(error.localizedDescription))"
         }
     }

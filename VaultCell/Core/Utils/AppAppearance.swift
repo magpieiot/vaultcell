@@ -33,9 +33,9 @@ enum AppAppearance: Int, CaseIterable, Identifiable {
     /// 选择器条目文案（复用已有本地化 key）
     var localizedTitle: String {
         switch self {
-        case .light: return String(localized: "Light")
-        case .dark: return String(localized: "Dark")
-        case .system: return String(localized: "Follow System")
+        case .light: return AppLocale.string("Light")
+        case .dark: return AppLocale.string("Dark")
+        case .system: return AppLocale.string("Follow System")
         }
     }
 }

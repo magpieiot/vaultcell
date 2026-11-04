@@ -143,13 +143,13 @@ enum PasswordDataSource: Int, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .manual: return String(localized: "Manual")
-        case .chromeImport: return String(localized: "Chrome Import")
-        case .safariImport: return String(localized: "Safari Import")
-        case .firefoxImport: return String(localized: "Firefox Import")
-        case .backupRestore: return String(localized: "Backup Restore")
-        case .testSeed: return String(localized: "Test Seed")
-        case .credentialExchange: return String(localized: "Credential Exchange Import")
+        case .manual: return AppLocale.string("Manual")
+        case .chromeImport: return AppLocale.string("Chrome Import")
+        case .safariImport: return AppLocale.string("Safari Import")
+        case .firefoxImport: return AppLocale.string("Firefox Import")
+        case .backupRestore: return AppLocale.string("Backup Restore")
+        case .testSeed: return AppLocale.string("Test Seed")
+        case .credentialExchange: return AppLocale.string("Credential Exchange Import")
         }
     }
 
@@ -201,9 +201,9 @@ enum BreachStatus: Int, Codable, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .unknown: return String(localized: "Unknown")
-        case .safe: return String(localized: "Safe")
-        case .compromised: return String(localized: "Compromised")
+        case .unknown: return AppLocale.string("Unknown")
+        case .safe: return AppLocale.string("Safe")
+        case .compromised: return AppLocale.string("Compromised")
         }
     }
 }
@@ -217,10 +217,10 @@ enum AccountStatus: Int, Codable, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .active: return String(localized: "Active")
-        case .inactive: return String(localized: "Inactive")
-        case .suspended: return String(localized: "Suspended")
-        case .closed: return String(localized: "Closed")
+        case .active: return AppLocale.string("Active")
+        case .inactive: return AppLocale.string("Inactive")
+        case .suspended: return AppLocale.string("Suspended")
+        case .closed: return AppLocale.string("Closed")
         }
     }
 }
@@ -254,11 +254,11 @@ enum PasswordStrength: Int, Codable, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .veryWeak: return String(localized: "Very Weak")
-        case .weak: return String(localized: "Weak")
-        case .medium: return String(localized: "Medium")
-        case .strong: return String(localized: "Strong")
-        case .veryStrong: return String(localized: "Very Strong")
+        case .veryWeak: return AppLocale.string("Very Weak")
+        case .weak: return AppLocale.string("Weak")
+        case .medium: return AppLocale.string("Medium")
+        case .strong: return AppLocale.string("Strong")
+        case .veryStrong: return AppLocale.string("Very Strong")
         }
     }
     

@@ -26,10 +26,10 @@ struct TrashItem: Identifiable {
 
         var displayName: String {
             switch self {
-            case .password: return String(localized: "Password")
-            case .pincode: return String(localized: "Pincode")
-            case .bankcard: return String(localized: "BankCard")
-            case .safeNote: return String(localized: "Safe Note")
+            case .password: return AppLocale.string("Password")
+            case .pincode: return AppLocale.string("Pincode")
+            case .bankcard: return AppLocale.string("BankCard")
+            case .safeNote: return AppLocale.string("Safe Note")
             }
         }
     }
@@ -75,7 +75,7 @@ struct TrashView: View {
                 }
             }
             .presentationDetents([(trashItems.isEmpty ? .medium : .large)])
-            .alert("Are you sure to Empty Trash", isPresented: $showingClearConfirmation) {
+            .alert("Empty the Trash?", isPresented: $showingClearConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Empty", role: .destructive) {
                     Task { await clearAll() }

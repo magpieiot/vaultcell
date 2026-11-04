@@ -37,10 +37,10 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     kind: .reusedPasswords,
-                    title: String(localized: "Reused Passwords"),
+                    title: AppLocale.string("Reused Passwords"),
                     count: audit.duplicateEntriesCount,
-                    countText: String(format: String(localized: "%lld entries"), audit.duplicateEntriesCount),
-                    detail: String(localized: "Reusing passwords increases the blast radius of a single leak."),
+                    countText: String(format: AppLocale.string("%lld entries"), audit.duplicateEntriesCount),
+                    detail: AppLocale.string("Reusing passwords increases the blast radius of a single leak."),
                     symbol: "arrow.triangle.2.circlepath"
                 )
             )
@@ -51,10 +51,10 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     kind: .compromised,
-                    title: String(localized: "Compromised Entries"),
+                    title: AppLocale.string("Compromised Entries"),
                     count: audit.compromisedEntriesCount,
-                    countText: String(format: String(localized: "%lld entries"), audit.compromisedEntriesCount),
-                    detail: String(localized: "Breach detection is not available yet, so these entries do not affect the score right now."),
+                    countText: String(format: AppLocale.string("%lld entries"), audit.compromisedEntriesCount),
+                    detail: AppLocale.string("Breach detection is not available yet, so these entries do not affect the score right now."),
                     symbol: "flame.fill"
                 )
             )
@@ -64,10 +64,10 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     kind: .missing2FA,
-                    title: String(localized: "Missing 2FA"),
+                    title: AppLocale.string("Missing 2FA"),
                     count: audit.no2FACount,
-                    countText: String(format: String(localized: "%lld entries"), audit.no2FACount),
-                    detail: String(localized: "Accounts without 2FA are easier to take over even when the password is strong."),
+                    countText: String(format: AppLocale.string("%lld entries"), audit.no2FACount),
+                    detail: AppLocale.string("Accounts without 2FA are easier to take over even when the password is strong."),
                     symbol: "lock.open.fill"
                 )
             )
@@ -77,10 +77,10 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     kind: .stalePassword,
-                    title: String(localized: "Old Passwords"),
+                    title: AppLocale.string("Old Passwords"),
                     count: audit.staleEntriesCount,
-                    countText: String(format: String(localized: "%lld entries"), audit.staleEntriesCount),
-                    detail: String(localized: "Passwords that have not changed for over a year lose freshness points."),
+                    countText: String(format: AppLocale.string("%lld entries"), audit.staleEntriesCount),
+                    detail: AppLocale.string("Passwords that have not changed for over a year lose freshness points."),
                     symbol: "clock.fill"
                 )
             )
@@ -90,10 +90,10 @@ struct SecurityScoreDetailView: View {
             reasons.append(
                 VaultScoreReason(
                     kind: .lowScore,
-                    title: String(localized: "Low Entry Scores"),
+                    title: AppLocale.string("Low Entry Scores"),
                     count: audit.weakEntriesCount,
-                    countText: String(format: String(localized: "%lld entries"), audit.weakEntriesCount),
-                    detail: String(localized: "Short, predictable, or poorly protected passwords drag the vault average down."),
+                    countText: String(format: AppLocale.string("%lld entries"), audit.weakEntriesCount),
+                    detail: AppLocale.string("Short, predictable, or poorly protected passwords drag the vault average down."),
                     symbol: "chart.bar.fill"
                 )
             )
@@ -240,14 +240,14 @@ struct SecurityScoreDetailView: View {
 
     private var heroMetrics: some View {
         VStack(alignment: .leading, spacing: 10) {
-            MetricPill(icon: "tray.full", title: String(localized: "Total Entries"), value: "\(passwordEntries.count)", tint: scoreColor)
-            MetricPill(icon: "exclamationmark.triangle.fill", title: String(localized: "Low Scores"), value: "\(audit.weakEntriesCount)", tint: scoreColor)
+            MetricPill(icon: "tray.full", title: AppLocale.string("Total Entries"), value: "\(passwordEntries.count)", tint: scoreColor)
+            MetricPill(icon: "exclamationmark.triangle.fill", title: AppLocale.string("Low Scores"), value: "\(audit.weakEntriesCount)", tint: scoreColor)
             // 与"为何被扣分"里的"已泄露"卡片共用同一个开关
             if audit.compromisedEntriesCount > 0 && showCompromisedReason {
-                MetricPill(icon: "shield.slash.fill", title: String(localized: "Compromised"), value: "\(audit.compromisedEntriesCount)", tint: scoreColor)
+                MetricPill(icon: "shield.slash.fill", title: AppLocale.string("Compromised"), value: "\(audit.compromisedEntriesCount)", tint: scoreColor)
             }
             if audit.oauthEntriesCount > 0 {
-                MetricPill(icon: "person.2.fill", title: String(localized: "OAuth Sign-ins"), value: "\(audit.oauthEntriesCount)", tint: scoreColor)
+                MetricPill(icon: "person.2.fill", title: AppLocale.string("OAuth Sign-ins"), value: "\(audit.oauthEntriesCount)", tint: scoreColor)
             }
         }
     }
@@ -260,15 +260,15 @@ struct SecurityScoreDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeaderView(
                 icon: "exclamationmark.shield.fill",
-                title: String(localized: "Why points were lost"),
-                subtitle: String(localized: "These patterns are the biggest reasons your vault score is not higher."),
+                title: AppLocale.string("Why points were lost"),
+                subtitle: AppLocale.string("These patterns are the biggest reasons your vault score is not higher."),
                 tint: scoreColor
             )
 
             if scoreReasons.isEmpty {
                 EmptyPanel(
                     icon: "checkmark.circle.fill",
-                    text: String(localized: "No active deduction reasons were found."),
+                    text: AppLocale.string("No active deduction reasons were found."),
                     tint: scoreColor
                 )
             } else {
@@ -303,15 +303,15 @@ struct SecurityScoreDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeaderView(
                 icon: "checkmark.seal.fill",
-                title: String(localized: "Recommended next steps"),
-                subtitle: String(localized: "Focus on the highest-impact fixes first."),
+                title: AppLocale.string("Recommended next steps"),
+                subtitle: AppLocale.string("Focus on the highest-impact fixes first."),
                 tint: scoreColor
             )
 
             if visibleSuggestions.isEmpty {
                 EmptyPanel(
                     icon: "checkmark.circle.fill",
-                    text: String(localized: "No recommendations right now."),
+                    text: AppLocale.string("No recommendations right now."),
                     tint: scoreColor
                 )
             } else {
@@ -339,15 +339,15 @@ struct SecurityScoreDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             SectionHeaderView(
                 icon: "person.crop.circle.badge.exclamationmark",
-                title: String(localized: "Accounts to improve first"),
-                subtitle: String(localized: "Start with the lowest scores and the most severe issues."),
+                title: AppLocale.string("Accounts to improve first"),
+                subtitle: AppLocale.string("Start with the lowest scores and the most severe issues."),
                 tint: scoreColor
             )
 
             if riskyEntries.isEmpty {
                 EmptyPanel(
                     icon: "checkmark.circle.fill",
-                    text: String(localized: "No risky entries were found."),
+                    text: AppLocale.string("No risky entries were found."),
                     tint: scoreColor
                 )
             } else {
@@ -371,22 +371,18 @@ struct SecurityScoreDetailView: View {
     private var heroSubtitle: String {
         switch audit.vaultScore {
         case 90...100:
-            return String(localized: "Your vault is in excellent shape. Keep monitoring reused and aging passwords.")
+            return AppLocale.string("Your vault is in excellent shape. Keep monitoring reused and aging passwords.")
         case 75...89:
-            return String(
-                localized: "Your vault is strong overall, but a few weak spots are still dragging the score down."
+            return AppLocale.string("Your vault is strong overall, but a few weak spots are still dragging the score down."
             )
         case 60...74:
-            return String(
-                localized: "Your vault needs attention. Fix the highlighted issues to raise the score quickly."
+            return AppLocale.string("Your vault needs attention. Fix the highlighted issues to raise the score quickly."
             )
         case 40...59:
-            return String(
-                localized: "Your vault has several high-risk patterns. Address the top items as soon as possible."
+            return AppLocale.string("Your vault has several high-risk patterns. Address the top items as soon as possible."
             )
         default:
-            return String(
-                localized: "Your vault is at critical risk. Start with compromised and reused passwords immediately."
+            return AppLocale.string("Your vault is at critical risk. Start with compromised and reused passwords immediately."
             )
         }
     }
@@ -538,7 +534,7 @@ struct ImpactReasonRow: View {
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
-        .accessibilityHint(String(localized: "Shows the entries in this category"))
+        .accessibilityHint(AppLocale.string("Shows the entries in this category"))
     }
 }
 

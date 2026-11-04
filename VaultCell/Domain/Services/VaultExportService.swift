@@ -37,8 +37,8 @@ enum VaultExportFormat: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .csv: return String(localized: "CSV")
-        case .json: return String(localized: "JSON")
+        case .csv: return AppLocale.string("CSV")
+        case .json: return AppLocale.string("JSON")
         }
     }
 
@@ -46,11 +46,10 @@ enum VaultExportFormat: String, CaseIterable, Identifiable {
     var detail: String {
         switch self {
         case .csv:
-            return String(
-                localized: "Each item type is grouped in its own block with matching columns. Opens in Numbers / Excel."
+            return AppLocale.string("Each item type is grouped in its own block with matching columns. Opens in Numbers / Excel."
             )
         case .json:
-            return String(localized: "Keeps every field. Use this to move data back into VaultCell.")
+            return AppLocale.string("Keeps every field. Use this to move data back into VaultCell.")
         }
     }
 
@@ -104,10 +103,10 @@ enum VaultExportItemType: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .password: return String(localized: "Password")
-        case .pincode: return String(localized: "Pincode")
-        case .bankcard: return String(localized: "BankCard")
-        case .wifi: return String(localized: "Wifi")
+        case .password: return AppLocale.string("Password")
+        case .pincode: return AppLocale.string("Pincode")
+        case .bankcard: return AppLocale.string("BankCard")
+        case .wifi: return AppLocale.string("Wi-Fi")
         }
     }
 
@@ -185,9 +184,9 @@ enum VaultExportError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .nothingSelected:
-            return String(localized: "Select at least one item type to export.")
+            return AppLocale.string("Select at least one item type to export.")
         case .noItemsInSelection:
-            return String(localized: "The selected item types contain no items.")
+            return AppLocale.string("The selected item types contain no items.")
         }
     }
 }
@@ -238,7 +237,7 @@ struct VaultExportService {
             snapshotCategories.append(
                 PasswordCategory(
                     id: VaultExportSnapshot.uncategorizedID,
-                    name: String(localized: "Uncategorized"),
+                    name: AppLocale.string("Uncategorized"),
                     icon: "folder.fill",
                     hexColor: "#8E8E93",
                     isSystem: true,

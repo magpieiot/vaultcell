@@ -24,9 +24,9 @@ enum VaultImportSource {
 
     var displayName: String {
         switch self {
-        case .vaultCellJSON: return String(localized: "VaultCell JSON")
-        case .vaultCellCSV: return String(localized: "VaultCell CSV")
-        case .chromeCSV: return String(localized: "Chrome CSV")
+        case .vaultCellJSON: return AppLocale.string("VaultCell JSON")
+        case .vaultCellCSV: return AppLocale.string("VaultCell CSV")
+        case .chromeCSV: return AppLocale.string("Chrome CSV")
         }
     }
 }
@@ -59,14 +59,13 @@ enum VaultImportError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidEncoding:
-            return String(localized: "Unable to detect file encoding. Please use a UTF-8 encoded file.")
+            return AppLocale.string("Unable to detect file encoding. Please use a UTF-8 encoded file.")
         case .emptyFile:
-            return String(localized: "File is empty.")
+            return AppLocale.string("File is empty.")
         case .invalidJSON:
-            return String(localized: "This JSON file is not a valid VaultCell export.")
+            return AppLocale.string("This JSON file is not a valid VaultCell export.")
         case .unrecognizedFormat:
-            return String(
-                localized: "Unrecognized file format. Please import a VaultCell export (CSV/JSON) or a Chrome passwords CSV.")
+            return AppLocale.string("Unrecognized file format. Please import a VaultCell export (CSV/JSON) or a Chrome passwords CSV.")
         }
     }
 }

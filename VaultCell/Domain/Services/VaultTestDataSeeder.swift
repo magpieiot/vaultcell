@@ -7,14 +7,48 @@
 
 import Foundation
 
+#if DEBUG
 /// 测试库种子数据构造
 ///
 /// 原本写在设置页里，随工具中心改造抽出来：这一块有三百多行纯数据构造，
-/// 混在页面代码里会让页面无法阅读。正式版本随"生成测试库"功能一并移除。
+/// 混在页面代码里会让页面无法阅读。
+/// 上架包不包含该功能：整个文件以 `#if DEBUG` 隔离，Release / Release-CN 不编译，
+/// 包内也就没有测试数据入口（避免审核判定为半成品，也避免污染用户密码库）。
 enum VaultTestDataSeeder {
 
     /// 种子条目标记：写入备注，用于判断测试库是否已经生成过
     static let seedNotesMarker = "[VaultCell Seed]"
+
+    // MARK: - 手机号
+
+    /// 测试库固定使用的 3 个手机号
+    ///
+    /// 真实用户不会给每个账号各绑一个号。之前种子数据里铺了十个不同的号码，
+    /// "身份复用"报告看起来像人工造的。现在只留主号 / 备用号 / 旧号三个，
+    /// 交叉分配给不同分类的条目：既贴近真实，也保留"同一号码被多个站点复用"的可测场景。
+    private enum SeedPhone {
+        /// 主号：微信、微博、京东等日常账号
+        static let primary = "+8613800009999"
+        /// 备用号：支付宝、12306、企业微信、淘宝等
+        static let backup = "+8613800008888"
+        /// 旧号：Google、Amazon、携程、QQ 等早期注册的老账号
+        static let legacy = "+8613800001234"
+    }
+
+    // MARK: - 邮箱
+
+    /// 测试库固定使用的 3 个邮箱：工作邮箱 / 生活邮箱 / 备用邮箱
+    ///
+    /// 和手机号同理：真实用户注册几十个站点也只会用两三个邮箱。
+    /// 之前几乎每条一个邮箱，身份复用报告里每个邮箱都只出现一次，测不出东西。
+    private enum SeedEmail {
+        /// 工作邮箱：企业账号、办公协作、差旅
+        static let work = "gavan.work@example.com"
+        /// 生活邮箱：Apple ID、Google 主账号等个人主邮箱
+        static let life = "gavan.life@example.com"
+        /// 备用邮箱：购物、论坛、娱乐和早期注册的老账号
+        static let backup = "gavan.backup@example.com"
+    }
 
     // MARK: - 是否已生成
 
@@ -46,9 +80,9 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Apple",
                 siteURL: "https://appleid.apple.com",
-                username: "apple.user@example.com",
+                username: SeedEmail.life,
                 password: "Apple@2026#Secure!",
-                bundleEmailAddress: "apple.user@example.com",
+                bundleEmailAddress: SeedEmail.life,
                 notes: "Apple ID 主账号，用于 App Store、iCloud、iMessage",
                 categoryID: PasswordCategory.systemDefaults[0].id,  // Primary
                 tags: ["apple", "id", "icloud"],
@@ -56,11 +90,9 @@ enum VaultTestDataSeeder {
                 has2FA: true,
                 twoFactorConfigs: [
                     TwoFactorConfig(
-                        type: .totp, issuer: "Apple", boundValue: "apple.user@example.com"),
+                        type: .totp, issuer: "Apple", boundValue: SeedEmail.life),
                     TwoFactorConfig(type: .push, issuer: "Apple", boundValue: "iPhone 15 Pro"),
                 ],
-                oAuthProvider: OAuthProviderConfig(
-                    provider: "apple", boundValue: "apple.user@example.com"),
                 passwordHistory: [
                     PasswordHistoryEntry(password: "Apple@2025#Pass", changedAt: threeMonthsAgo),
                     PasswordHistoryEntry(password: "Apple@2024#Old", changedAt: oneYearAgo),
@@ -83,10 +115,10 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Google",
                 siteURL: "https://accounts.google.com",
-                username: "gmail.user@example.com",
+                username: SeedEmail.life,
                 password: "Google!2026@Complex",
-                bundlePhoneNumber: "+8613800001111",
-                bundleEmailAddress: "gmail.user@example.com",
+                bundlePhoneNumber: SeedPhone.legacy,
+                bundleEmailAddress: SeedEmail.life,
                 notes: "个人主邮箱，已开启高级保护计划，禁止第三方应用访问",
                 categoryID: PasswordCategory.systemDefaults[0].id,  // Primary
                 tags: ["google", "mail", "advanced-protection"],
@@ -94,17 +126,15 @@ enum VaultTestDataSeeder {
                 has2FA: true,
                 twoFactorConfigs: [
                     TwoFactorConfig(
-                        type: .totp, issuer: "Google", boundValue: "gmail.user@example.com"),
+                        type: .totp, issuer: "Google", boundValue: SeedEmail.life),
                     TwoFactorConfig(type: .hardware, issuer: "YubiKey", boundValue: "YubiKey 5C"),
                 ],
-                oAuthProvider: OAuthProviderConfig(
-                    provider: "google", boundValue: "gmail.user@example.com"),
                 passwordHistory: [
                     PasswordHistoryEntry(password: "Google2025!Pass", changedAt: threeMonthsAgo)
                 ],
                 passwordChangedAt: threeMonthsAgo,
                 customFields: [
-                    CustomField(name: "恢复邮箱", value: "backup.user@example.com", isSensitive: true)
+                    CustomField(name: "恢复邮箱", value: SeedEmail.backup, isSensitive: true)
                 ],
                 version: 2,
                 isSynced: true,
@@ -119,9 +149,9 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "GitHub",
                 siteURL: "https://github.com",
-                username: "octocat@example.com",
+                username: SeedEmail.work,
                 password: "GitHub#2026!DevPass",
-                bundleEmailAddress: "octocat@example.com",
+                bundleEmailAddress: SeedEmail.work,
                 notes: "公司代码托管，已配置 SSH Key 和 GPG 签名",
                 categoryID: PasswordCategory.systemDefaults[3].id,  // Work
                 tags: ["dev", "code", "git"],
@@ -129,10 +159,8 @@ enum VaultTestDataSeeder {
                 has2FA: true,
                 twoFactorConfigs: [
                     TwoFactorConfig(
-                        type: .totp, issuer: "GitHub", boundValue: "octocat@example.com")
+                        type: .totp, issuer: "GitHub", boundValue: SeedEmail.work)
                 ],
-                oAuthProvider: OAuthProviderConfig(
-                    provider: "github", boundValue: "octocat@example.com"),
                 passwordHistory: [
                     PasswordHistoryEntry(password: "GitHub2025#Old", changedAt: oneYearAgo),
                     PasswordHistoryEntry(
@@ -157,19 +185,17 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Microsoft",
                 siteURL: "https://login.microsoftonline.com",
-                username: "ms.user@example.com",
+                username: SeedEmail.work,
                 password: "Microsoft@2026!Work",
-                bundleEmailAddress: "ms.user@example.com",
+                bundleEmailAddress: SeedEmail.work,
                 notes: "企业 Office 365 账号，包含 Outlook、Teams、SharePoint",
                 categoryID: PasswordCategory.systemDefaults[0].id,  // Primary
                 tags: ["work", "office", "microsoft"],
                 has2FA: true,
                 twoFactorConfigs: [
                     TwoFactorConfig(
-                        type: .totp, issuer: "Microsoft", boundValue: "ms.user@example.com")
+                        type: .totp, issuer: "Microsoft", boundValue: SeedEmail.work)
                 ],
-                oAuthProvider: OAuthProviderConfig(
-                    provider: "microsoft", boundValue: "ms.user@example.com"),
                 customFields: [CustomField(name: "部门", value: "研发部", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -184,15 +210,15 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "微信",
                 siteURL: "https://weixin.qq.com",
-                username: "+8613800009999",
+                username: SeedPhone.primary,
                 password: "WeChat@2026#Secure",
-                bundlePhoneNumber: "+8613800009999",
+                bundlePhoneNumber: SeedPhone.primary,
                 notes: "已实名认证，绑定银行卡、零钱通、微信支付",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["message", "payment", "wechat"],
                 isFavorite: true,
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800009999")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.primary)],
                 passwordHistory: [
                     PasswordHistoryEntry(password: "WeChat2025#Old", changedAt: ninetyDaysAgo)
                 ],
@@ -214,19 +240,19 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "支付宝",
                 siteURL: "https://alipay.com",
-                username: "+8613800008888",
+                username: SeedPhone.backup,
                 password: "Alipay@2026#Money",
-                bundlePhoneNumber: "+8613800008888",
-                bundleEmailAddress: "alipay.user@example.com",
+                bundlePhoneNumber: SeedPhone.backup,
+                bundleEmailAddress: SeedEmail.life,
                 notes: "余额宝 + 基金定投 + 蚂蚁花呗，需定期修改支付密码",
                 categoryID: PasswordCategory.systemDefaults[2].id,  // Finance
                 tags: ["payment", "bank", "alipay"],
                 isFavorite: true,
                 has2FA: true,
                 twoFactorConfigs: [
-                    TwoFactorConfig(type: .sms, boundValue: "+8613800008888"),
+                    TwoFactorConfig(type: .sms, boundValue: SeedPhone.backup),
                     TwoFactorConfig(
-                        type: .totp, issuer: "Alipay", boundValue: "alipay.user@example.com"),
+                        type: .totp, issuer: "Alipay", boundValue: SeedEmail.life),
                 ],
                 passwordHistory: [
                     PasswordHistoryEntry(password: "Alipay2025#Old", changedAt: ninetyDaysAgo)
@@ -250,14 +276,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Amazon",
                 siteURL: "https://amazon.com",
-                username: "shopper@example.com",
+                username: SeedEmail.backup,
                 password: "Amazon#2026!Shop",
-                bundlePhoneNumber: "+8613800002222",
+                bundlePhoneNumber: SeedPhone.legacy,
                 notes: "Prime 会员，绑定招行 Visa 卡，自动续费",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["shopping", "prime", "amazon"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800002222")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.legacy)],
                 customFields: [
                     CustomField(name: "会员到期时间", value: "2027-06-17", isSensitive: false)
                 ],
@@ -275,15 +301,15 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Netflix",
                 siteURL: "https://netflix.com",
-                username: "movie.night@example.com",
+                username: SeedEmail.life,
                 password: "Netflix@2026!TV",
-                bundleEmailAddress: "movie.night@example.com",
+                bundleEmailAddress: SeedEmail.life,
                 notes: "4K 高级套餐，5 人共享，家庭计划",
                 categoryID: PasswordCategory.systemDefaults[5].id,  // Media
                 tags: ["streaming", "movie", "netflix"],
                 has2FA: true,
                 twoFactorConfigs: [
-                    TwoFactorConfig(type: .email, boundValue: "movie.night@example.com")
+                    TwoFactorConfig(type: .email, boundValue: SeedEmail.life)
                 ],
                 customFields: [CustomField(name: "共享人数", value: "5人", isSensitive: false)],
                 version: 1,
@@ -300,14 +326,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "微博",
                 siteURL: "https://weibo.com",
-                username: "weibo.user@example.com",
+                username: SeedEmail.life,
                 password: "Weibo@2026!Hot",
-                bundlePhoneNumber: "+8613800006666",
+                bundlePhoneNumber: SeedPhone.primary,
                 notes: "实名认证账号，粉丝数 1.2 万",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["social", "weibo", "china"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800006666")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.primary)],
                 customFields: [CustomField(name: "粉丝数", value: "12,000", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -322,16 +348,16 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "知乎",
                 siteURL: "https://zhihu.com",
-                username: "zhihu.user@example.com",
+                username: SeedEmail.backup,
                 password: "Zhihu@2026!Q&A",
-                bundleEmailAddress: "zhihu.user@example.com",
+                bundleEmailAddress: SeedEmail.backup,
                 notes: "盐选会员，累计回答 50+，获赞 2 万",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["qa", "knowledge", "zhihu"],
                 has2FA: true,
                 twoFactorConfigs: [
                     TwoFactorConfig(
-                        type: .totp, issuer: "Zhihu", boundValue: "zhihu.user@example.com")
+                        type: .totp, issuer: "Zhihu", boundValue: SeedEmail.backup)
                 ],
                 customFields: [CustomField(name: "获赞数", value: "20,000", isSensitive: false)],
                 version: 1,
@@ -347,9 +373,9 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "豆瓣",
                 siteURL: "https://douban.com",
-                username: "douban.user@example.com",
+                username: SeedEmail.backup,
                 password: "Douban@2026!Book",
-                bundleEmailAddress: "douban.user@example.com",
+                bundleEmailAddress: SeedEmail.backup,
                 notes: "书影音爱好者，已标记 500+ 书籍",
                 categoryID: PasswordCategory.systemDefaults[5].id,  // Media
                 tags: ["book", "movie", "music", "douban"],
@@ -367,14 +393,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "携程",
                 siteURL: "https://ctrip.com",
-                username: "ctrip.user@example.com",
+                username: SeedEmail.work,
                 password: "Ctrip@2026!Trip",
-                bundlePhoneNumber: "+8613800007777",
+                bundlePhoneNumber: SeedPhone.legacy,
                 notes: "黄金会员，积分 5 万，绑定企业差旅",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["travel", "hotel", "flight"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800007777")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.legacy)],
                 customFields: [CustomField(name: "积分", value: "50,000", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -389,14 +415,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "12306",
                 siteURL: "https://12306.cn",
-                username: "railway.user@example.com",
+                username: SeedEmail.life,
                 password: "12306@2026!Train",
-                bundlePhoneNumber: "+8613800008888",
+                bundlePhoneNumber: SeedPhone.backup,
                 notes: "已实名认证，常用联系人 5 人",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["train", "china", "travel"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800008888")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.backup)],
                 customFields: [CustomField(name: "常用联系人", value: "5人", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -413,12 +439,12 @@ enum VaultTestDataSeeder {
                 siteURL: "https://im.qq.com",
                 username: "123456789",
                 password: "QQ@2026!Old",
-                bundlePhoneNumber: "+8613800001234",
+                bundlePhoneNumber: SeedPhone.legacy,
                 notes: "注册多年的老账号，已绑定微信",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["message", "qq", "tencent"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800001234")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.legacy)],
                 customFields: [CustomField(name: "QQ等级", value: "48级", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -433,14 +459,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "钉钉",
                 siteURL: "https://dingtalk.com",
-                username: "dingtalk.user@example.com",
+                username: SeedEmail.work,
                 password: "DingTalk@2026!Work",
-                bundleEmailAddress: "dingtalk.user@example.com",
+                bundleEmailAddress: SeedEmail.work,
                 notes: "公司内部沟通工具，已加入 3 个企业",
                 categoryID: PasswordCategory.systemDefaults[3].id,  // Work
                 tags: ["work", "team", "dingtalk"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800009999")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.primary)],
                 customFields: [CustomField(name: "所属企业", value: "科技有限公司", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -455,14 +481,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "企业微信",
                 siteURL: "https://work.weixin.qq.com",
-                username: "work.user@example.com",
+                username: SeedEmail.work,
                 password: "WorkWeChat@2026!",
-                bundlePhoneNumber: "+8613800005555",
+                bundlePhoneNumber: SeedPhone.backup,
                 notes: "企业内部账号，用于审批、会议、文档协作",
                 categoryID: PasswordCategory.systemDefaults[3].id,  // Work
                 tags: ["work", "enterprise", "wechat"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800005555")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.backup)],
                 customFields: [CustomField(name: "部门", value: "技术部", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -477,14 +503,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "京东",
                 siteURL: "https://jd.com",
-                username: "jd.user@example.com",
+                username: SeedEmail.backup,
                 password: "JD@2026!Shop",
-                bundlePhoneNumber: "+8613800003333",
+                bundlePhoneNumber: SeedPhone.primary,
                 notes: "Plus 会员，绑定京东白条",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["shopping", "jd", "china"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800003333")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.primary)],
                 customFields: [CustomField(name: "白条额度", value: "¥10,000", isSensitive: true)],
                 version: 1,
                 isSynced: true,
@@ -500,14 +526,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "淘宝",
                 siteURL: "https://taobao.com",
-                username: "taobao.user@example.com",
+                username: SeedEmail.life,
                 password: "Taobao@2026!Buy",
-                bundlePhoneNumber: "+8613800004444",
+                bundlePhoneNumber: SeedPhone.backup,
                 notes: "淘宝达人，淘气值 2000+，绑定花呗",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["shopping", "taobao", "alipay"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800004444")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.backup)],
                 customFields: [CustomField(name: "淘气值", value: "2150", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -522,14 +548,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "抖音",
                 siteURL: "https://douyin.com",
-                username: "douyin.user@example.com",
+                username: SeedEmail.backup,
                 password: "Douyin@2026!Video",
-                bundlePhoneNumber: "+8613800006666",
+                bundlePhoneNumber: SeedPhone.primary,
                 notes: "创作者账号，粉丝 5 万，开通直播权限",
                 categoryID: PasswordCategory.systemDefaults[5].id,  // Media
                 tags: ["video", "shortvideo", "douyin"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800006666")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.primary)],
                 customFields: [CustomField(name: "粉丝数", value: "50,000", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -544,14 +570,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "小红书",
                 siteURL: "https://xiaohongshu.com",
-                username: "xiaohongshu.user@example.com",
+                username: SeedEmail.backup,
                 password: "XiaoHongShu@2026!",
-                bundleEmailAddress: "xiaohongshu.user@example.com",
+                bundleEmailAddress: SeedEmail.backup,
                 notes: "美妆博主，粉丝 3 万，笔记获赞 10 万",
                 categoryID: PasswordCategory.systemDefaults[4].id,  // Life
                 tags: ["social", "beauty", "china"],
                 has2FA: true,
-                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: "+8613800007777")],
+                twoFactorConfigs: [TwoFactorConfig(type: .sms, boundValue: SeedPhone.legacy)],
                 customFields: [CustomField(name: "粉丝数", value: "30,000", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -566,14 +592,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Slack",
                 siteURL: "https://slack.com",
-                username: "workspace.user@example.com",
+                username: SeedEmail.work,
                 password: "Slack@2026!Team",
-                bundleEmailAddress: "workspace.user@example.com",
+                bundleEmailAddress: SeedEmail.work,
                 notes: "团队协作工具，已加入 5 个频道，每日活跃。通过 Google 账户登录",
                 categoryID: PasswordCategory.systemDefaults[3].id,  // Work
                 tags: ["team", "work", "slack"],
                 oAuthProvider: OAuthProviderConfig(
-                    provider: "google", boundValue: "gmail.user@example.com"),
+                    provider: "google", boundValue: SeedEmail.life),
                 customFields: [CustomField(name: "所属团队", value: "VaultCell", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -588,14 +614,14 @@ enum VaultTestDataSeeder {
             seedEntry(
                 siteName: "Notion",
                 siteURL: "https://notion.so",
-                username: "notes.user@example.com",
+                username: SeedEmail.work,
                 password: "Notion@2026!Docs",
-                bundleEmailAddress: "notes.user@example.com",
+                bundleEmailAddress: SeedEmail.work,
                 notes: "个人知识库，包含 100+ 页面，多个数据库。通过 Apple 账户登录",
                 categoryID: PasswordCategory.systemDefaults[3].id,  // Work
                 tags: ["notes", "docs", "productivity"],
                 oAuthProvider: OAuthProviderConfig(
-                    provider: "apple", boundValue: "apple.user@example.com"),
+                    provider: "apple", boundValue: SeedEmail.life),
                 customFields: [CustomField(name: "页面数", value: "127", isSensitive: false)],
                 version: 1,
                 isSynced: true,
@@ -605,6 +631,72 @@ enum VaultTestDataSeeder {
                 createdAt: oneYearAgo,
                 updatedAt: oneYearAgo,
                 lastUsedAt: now.addingTimeInterval(-3 * 60 * 60)
+            ),
+
+            // MARK: 简单密码条目
+            // 下面几条故意使用简单密码，覆盖弱密码提示、密码复用（「123456」出现两次）、
+            // 未开 2FA、已停用账号等场景。不要为了好看把它们改成强密码——
+            // 那正是这几条的测试价值所在。
+            seedEntry(
+                siteName: "旅行论坛",
+                siteURL: "https://bbs.travel-example.com",
+                username: SeedEmail.backup,
+                password: "123456",
+                bundleEmailAddress: SeedEmail.backup,
+                notes: "简单密码：注册时图省事设的纯数字密码，用于验证弱密码提示",
+                categoryID: PasswordCategory.systemDefaults[4].id,  // Life
+                tags: ["forum", "travel", "seed"],
+                isDuplicatePassword: true,
+                breachStatus: .compromised,
+                accountStatus: .active,
+                createdAt: oneYearAgo.addingTimeInterval(-365 * 24 * 60 * 60),
+                updatedAt: oneYearAgo,
+                lastUsedAt: now.addingTimeInterval(-20 * 24 * 60 * 60)
+            ),
+
+            seedEntry(
+                siteName: "健身房约课",
+                siteURL: "https://gym.example.com",
+                username: SeedEmail.life,
+                password: "123456",
+                bundlePhoneNumber: SeedPhone.legacy,
+                notes: "简单密码：和「旅行论坛」同一个密码，用于验证密码复用检测",
+                categoryID: PasswordCategory.systemDefaults[4].id,  // Life
+                tags: ["gym", "life", "seed"],
+                isDuplicatePassword: true,
+                accountStatus: .active,
+                createdAt: threeMonthsAgo,
+                updatedAt: now,
+                lastUsedAt: now.addingTimeInterval(-3 * 24 * 60 * 60)
+            ),
+
+            seedEntry(
+                siteName: "家用路由器",
+                siteURL: "http://192.168.1.1",
+                username: "admin",
+                password: "admin123",
+                notes: "简单密码：后台默认口令一直没改，用于验证弱密码 + 未开 2FA 的扣分",
+                categoryID: PasswordCategory.systemDefaults[4].id,  // Life
+                tags: ["router", "home", "seed"],
+                accountStatus: .active,
+                createdAt: oneYearAgo.addingTimeInterval(-1095 * 24 * 60 * 60),
+                updatedAt: oneYearAgo
+            ),
+
+            seedEntry(
+                siteName: "旧版论坛",
+                siteURL: "https://old-forum.example.com",
+                username: SeedEmail.backup,
+                password: "qwerty123",
+                bundleEmailAddress: SeedEmail.backup,
+                notes: "简单密码：已停用的老账号，密码是键盘顺序，用于验证停用账号的弱密码评分",
+                categoryID: PasswordCategory.systemDefaults[4].id,  // Life
+                tags: ["forum", "legacy", "seed"],
+                breachStatus: .compromised,
+                accountStatus: .inactive,
+                createdAt: oneYearAgo.addingTimeInterval(-2190 * 24 * 60 * 60),
+                updatedAt: oneYearAgo,
+                lastUsedAt: now.addingTimeInterval(-400 * 24 * 60 * 60)
             ),
         ]
 
@@ -832,13 +924,30 @@ enum VaultTestDataSeeder {
         }
     }
 
+    /// 按分类挑选登录邮箱：办公类用工作邮箱，主账号用生活邮箱，其余用备用邮箱
+    private static func seedEmail(for appTitle: String) -> String {
+        let categoryID = seedCategoryID(for: appTitle)
+        if categoryID == PasswordCategory.systemDefaults[3].id {
+            return SeedEmail.work
+        }
+        if categoryID == PasswordCategory.systemDefaults[0].id
+            || categoryID == PasswordCategory.systemDefaults[2].id
+        {
+            return SeedEmail.life
+        }
+        return SeedEmail.backup
+    }
+
     private static func makeFamousAppSeedEntry(_ app: AppTitle, usernameIndex: Int) -> PasswordEntry
     {
         let slug = seedSlug(app.title)
-        let suffix = usernameIndex == 0 ? "" : ".\(usernameIndex)"
-        let username = "seed+\(slug)\(suffix)@vaultcell.test"
+        let username = seedEmail(for: app.title)
         let password = "VaultCell@2026#\(slug.prefix(4).uppercased())\(usernameIndex)"
-        let isOAuth = oauthProviders.contains {
+        // 支持 OAuth 登录的那批应用，这里改成"已开启验证器 App"，不再挂 OAuth 配置：
+        // 邮箱收敛成 3 个后，自引用 OAuth（provider 就是站点自己）会被审计的源账户匹配
+        // 当成"从同邮箱的别的条目继承"，分数会串到不相干的站点上。
+        // OAuth 继承的演示交给 Slack → Google、Notion → Apple 这两条真实场景。
+        let usesAuthenticator = oauthProviders.contains {
             $0.caseInsensitiveCompare(app.title) == .orderedSame
         }
 
@@ -850,10 +959,9 @@ enum VaultTestDataSeeder {
             notes: "\(seedNotesMarker) \(app.title)",
             categoryID: seedCategoryID(for: app.title),
             tags: [slug, "seed"],
-            has2FA: isOAuth,
-            twoFactorConfigs: isOAuth
-                ? [TwoFactorConfig(type: .totp, issuer: app.title, boundValue: username)] : [],
-            oAuthProvider: isOAuth ? OAuthProviderConfig(provider: slug, boundValue: username) : nil
+            has2FA: usesAuthenticator,
+            twoFactorConfigs: usesAuthenticator
+                ? [TwoFactorConfig(type: .totp, issuer: app.title, boundValue: username)] : []
         )
     }
 
@@ -1017,3 +1125,5 @@ enum VaultTestDataSeeder {
         )
     }
 }
+
+#endif

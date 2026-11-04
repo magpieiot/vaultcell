@@ -82,6 +82,32 @@ class PasswordRepository: PasswordRepositoryProtocol {
             return nil
         }
     }
+
+    func fetchAllForSync() async throws -> [PasswordEntry] {
+        try await perform {
+            try self.dataSource.fetchAllPasswords().map {
+                try self.dataSource.convertToPasswordEntry($0)
+            }
+        }
+    }
+
+    func markSynced(_ id: UUID) async throws {
+        try await perform { try self.dataSource.markPasswordSynced(id) }
+    }
+
+    func applyRemote(_ entry: PasswordEntry) async throws {
+        try await perform {
+            try self.dataSource.savePasswordEntry(entry, origin: .remote)
+        }
+        notifyEntriesChanged()
+    }
+
+    func deleteRemote(_ id: UUID) async throws {
+        try await perform {
+            try self.dataSource.deletePasswordEntry(id, origin: .remote)
+        }
+        notifyEntriesChanged()
+    }
     
     func search(query: String) async throws -> [PasswordEntry] {
         try await perform {
@@ -132,6 +158,8 @@ class PasswordRepository: PasswordRepositoryProtocol {
         try await perform {
             guard let cdEntry = try self.dataSource.fetchPassword(by: id) else { return }
             cdEntry.deletedAt = Date()
+            cdEntry.version = VaultSyncRevision.next(current: cdEntry.version, proposed: cdEntry.version)
+            cdEntry.isSynced = false
             try self.dataSource.saveIfPossible()
         }
         notifyEntriesChanged()
@@ -163,6 +191,11 @@ class PasswordRepository: PasswordRepositoryProtocol {
             for cdEntry in cdEntries {
                 if let deletedAt = cdEntry.deletedAt, deletedAt < cutoff {
                     let id = cdEntry.id
+                    SyncLocalStore.shared.recordTombstone(
+                        itemID: id,
+                        itemKind: .password,
+                        revision: cdEntry.version
+                    )
                     self.dataSource.context.delete(cdEntry)
                     purgedIDs.append(id)
                 }

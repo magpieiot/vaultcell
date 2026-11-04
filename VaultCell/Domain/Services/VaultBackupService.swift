@@ -51,11 +51,11 @@ enum VaultBackupError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidFormat:
-            return String(localized: "This file is not a valid VaultCell backup.")
+            return AppLocale.string("This file is not a valid VaultCell backup.")
         case .wrongPassword:
-            return String(localized: "Wrong backup password.")
+            return AppLocale.string("Wrong backup password.")
         case .backupTooLarge:
-            return String(localized: "A note is too large to include in the backup.")
+            return AppLocale.string("A note is too large to include in the backup.")
         }
     }
 }

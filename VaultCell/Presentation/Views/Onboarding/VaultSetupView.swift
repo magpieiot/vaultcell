@@ -106,7 +106,7 @@ final class VaultSetupViewModel: ObservableObject {
     /// 读取并导入文件，自动识别来源：本 app 导出的 CSV / JSON、Chrome CSV
     /// （识别与去重逻辑与设置页导入一致）
     func importFile(from url: URL) async -> VaultSetupImportOutcome {
-        guard !isImporting else { return .failure(String(localized: "Import is already in progress.")) }
+        guard !isImporting else { return .failure(AppLocale.string("Import is already in progress.")) }
         isImporting = true
         defer { isImporting = false }
 
@@ -119,7 +119,7 @@ final class VaultSetupViewModel: ObservableObject {
 
             guard result.totalCount > 0 else {
                 return .nothingImported(
-                    String(localized: "No valid records were found to import in the file (skipped \(result.skippedCount) empty rows)."))
+                    AppLocale.string("No valid records were found to import in the file (skipped \(result.skippedCount) empty rows)."))
             }
 
             let insertedCount = try await VaultImportService.persist(
@@ -136,7 +136,7 @@ final class VaultSetupViewModel: ObservableObject {
                     inserted: insertedCount,
                     skipped: result.totalCount - insertedCount + result.skippedCount)
             }
-            return .nothingImported(String(localized: "All records already exist in your vault."))
+            return .nothingImported(AppLocale.string("All records already exist in your vault."))
         } catch {
             await listViewModel.loadItems()
             return .failure("Import failed: \(error.localizedDescription)")
@@ -147,7 +147,7 @@ final class VaultSetupViewModel: ObservableObject {
 
     /// 从加密备份文件恢复密码条目
     func restoreBackup(from url: URL, password: String) async -> VaultSetupImportOutcome {
-        guard !isRestoring else { return .failure(String(localized: "Restore is already in progress.")) }
+        guard !isRestoring else { return .failure(AppLocale.string("Restore is already in progress.")) }
         isRestoring = true
         defer { isRestoring = false }
 
@@ -165,7 +165,7 @@ final class VaultSetupViewModel: ObservableObject {
             }.value
 
             if reader.isEmpty {
-                return .nothingImported(String(localized: "This backup contains no entries."))
+                return .nothingImported(AppLocale.string("This backup contains no entries."))
             }
 
             let insertedCount = try await insertRestored(reader: reader)
@@ -174,7 +174,7 @@ final class VaultSetupViewModel: ObservableObject {
             if insertedCount > 0 {
                 return .success(inserted: insertedCount, skipped: reader.totalCount - insertedCount)
             }
-            return .nothingImported(String(localized: "All records already exist in your vault."))
+            return .nothingImported(AppLocale.string("All records already exist in your vault."))
         } catch let error as VaultBackupError {
             return .failure(error.localizedDescription)
         } catch {
@@ -391,13 +391,13 @@ struct VaultSetupView: View {
             }
         }
         .alert(
-            String(localized: "Import Result"),
+            AppLocale.string("Import Result"),
             isPresented: Binding(
                 get: { viewModel.importResultMessage != nil },
                 set: { if !$0 { viewModel.importResultMessage = nil } }
             )
         ) {
-            Button(String(localized: "OK"), role: .cancel) {}
+            Button(AppLocale.string("OK"), role: .cancel) {}
         } message: {
             Text(viewModel.importResultMessage ?? "")
         }
@@ -414,7 +414,7 @@ struct VaultSetupView: View {
         HStack(spacing: 6) {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 13, weight: .semibold))
-            Text(String(localized: "Vault created"))
+            Text(AppLocale.string("Vault created"))
                 .font(.footnote.weight(.semibold))
         }
         .foregroundColor(.successColor)
@@ -426,12 +426,12 @@ struct VaultSetupView: View {
 
     private var titleSection: some View {
         VStack(spacing: 10) {
-            Text(String(localized: "Your vault is ready"))
+            Text(AppLocale.string("Your vault is ready"))
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
 
-            Text(String(localized: "Add your first item to get started"))
+            Text(AppLocale.string("Add your first item to get started"))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -445,10 +445,10 @@ struct VaultSetupView: View {
             SetupActionCard(
                 icon: "plus",
                 iconStyle: .gradient,
-                title: String(localized: "Create item"),
-                subtitle: String(localized: "Passwords, cards, secure notes and more"),
+                title: AppLocale.string("Create item"),
+                subtitle: AppLocale.string("Passwords, cards, secure notes and more"),
                 isLoading: false,
-                loadingText: String(localized: "Importing..."),
+                loadingText: AppLocale.string("Importing..."),
                 isEnabled: !viewModel.isImporting && !viewModel.isRestoring
             ) {
                 viewModel.listViewModel.isPresentingAddFlow = true
@@ -458,10 +458,10 @@ struct VaultSetupView: View {
             SetupActionCard(
                 icon: "tray.and.arrow.down",
                 iconStyle: .tinted(Color(red: 0.30, green: 0.78, blue: 0.68)),
-                title: String(localized: "Import passwords"),
-                subtitle: String(localized: "VaultCell exports or Chrome CSV backups"),
+                title: AppLocale.string("Import passwords"),
+                subtitle: AppLocale.string("VaultCell exports or Chrome CSV backups"),
                 isLoading: viewModel.isImporting,
-                loadingText: String(localized: "Importing..."),
+                loadingText: AppLocale.string("Importing..."),
                 isEnabled: !viewModel.isImporting && !viewModel.isRestoring
             ) {
                 startImporter(.csv)
@@ -471,10 +471,10 @@ struct VaultSetupView: View {
             SetupActionCard(
                 icon: "arrow.uturn.left",
                 iconStyle: .tinted(Color(red: 0.55, green: 0.50, blue: 0.95)),
-                title: String(localized: "Restore from backup"),
-                subtitle: String(localized: "Restore from an encrypted VaultCell backup file"),
+                title: AppLocale.string("Restore from backup"),
+                subtitle: AppLocale.string("Restore from an encrypted VaultCell backup file"),
                 isLoading: viewModel.isRestoring && !viewModel.showingRestorePasswordSheet,
-                loadingText: String(localized: "Restoring..."),
+                loadingText: AppLocale.string("Restoring..."),
                 isEnabled: !viewModel.isImporting && !viewModel.isRestoring
             ) {
                 startImporter(.backup)
@@ -487,7 +487,7 @@ struct VaultSetupView: View {
         Button {
             finishSetup()
         } label: {
-            Text(String(localized: "Skip for now"))
+            Text(AppLocale.string("Skip for now"))
                 .font(.subheadline.weight(.medium))
                 .foregroundColor(.secondary)
                 .frame(minHeight: 44)
@@ -549,7 +549,7 @@ struct VaultSetupView: View {
         case .success(let inserted, _):
             finishSetup(
                 withToast: ToastItem(
-                    message: String(localized: "Imported \(inserted) items"),
+                    message: AppLocale.string("Imported \(inserted) items"),
                     style: .success
                 )
             )
@@ -569,7 +569,7 @@ struct VaultSetupView: View {
             viewModel.showingRestorePasswordSheet = false
             finishSetup(
                 withToast: ToastItem(
-                    message: String(localized: "Restored \(inserted) items"),
+                    message: AppLocale.string("Restored \(inserted) items"),
                     style: .success
                 )
             )
@@ -923,7 +923,7 @@ private struct BackupPasswordPromptView: View {
                 VStack(spacing: 22) {
                     // 说明：备份密码独立于当前密码库主密码
                     Label {
-                        Text(String(localized: "Enter the password used to encrypt this backup."))
+                        Text(AppLocale.string("Enter the password used to encrypt this backup."))
                             .font(.subheadline)
                             .foregroundColor(.primary)
                     } icon: {
@@ -936,13 +936,13 @@ private struct BackupPasswordPromptView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(String(localized: "Backup Password"))
+                        Text(AppLocale.string("Backup Password"))
                             .font(.footnote.weight(.medium))
                             .foregroundColor(.secondary)
 
                         AuthSecureField(
                             text: $password,
-                            placeholder: String(localized: "Enter backup password"),
+                            placeholder: AppLocale.string("Enter backup password"),
                             isFocused: focused,
                             hasError: viewModel.restoreError != nil
                         )
@@ -962,7 +962,7 @@ private struct BackupPasswordPromptView: View {
                     }
 
                     PrimaryActionButton(
-                        title: String(localized: "Restore"),
+                        title: AppLocale.string("Restore"),
                         isLoading: viewModel.isRestoring,
                         isEnabled: !password.isEmpty && !viewModel.isRestoring
                     ) {
@@ -973,11 +973,11 @@ private struct BackupPasswordPromptView: View {
                 .padding(.top, 16)
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Restore from backup"))
+            .navigationTitle(AppLocale.string("Restore from backup"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(String(localized: "Cancel")) {
+                    Button(AppLocale.string("Cancel")) {
                         viewModel.showingRestorePasswordSheet = false
                     }
                 }

@@ -8,6 +8,7 @@
 import Combine
 import CoreData
 import Foundation
+import UniformTypeIdentifiers
 
 /// 数据操作类型：导入 / 恢复 / 备份导出 / 明文导出
 enum DataOperationKind {
@@ -38,14 +39,14 @@ struct DataOperationResult {
 
     var title: String {
         switch (operation, succeeded) {
-        case (.importItems, true): return String(localized: "Import Successful")
-        case (.importItems, false): return String(localized: "Import Failed")
-        case (.restoreItems, true): return String(localized: "Restore Successful")
-        case (.restoreItems, false): return String(localized: "Restore Failed")
-        case (.backupExport, true): return String(localized: "Backup Successful")
-        case (.backupExport, false): return String(localized: "Backup Failed")
-        case (.dataExport, true): return String(localized: "Export Successful")
-        case (.dataExport, false): return String(localized: "Export Failed")
+        case (.importItems, true): return AppLocale.string("Import Successful")
+        case (.importItems, false): return AppLocale.string("Import Failed")
+        case (.restoreItems, true): return AppLocale.string("Restore Successful")
+        case (.restoreItems, false): return AppLocale.string("Restore Failed")
+        case (.backupExport, true): return AppLocale.string("Backup Successful")
+        case (.backupExport, false): return AppLocale.string("Backup Failed")
+        case (.dataExport, true): return AppLocale.string("Export Successful")
+        case (.dataExport, false): return AppLocale.string("Export Failed")
         }
     }
 
@@ -56,41 +57,60 @@ struct DataOperationResult {
         switch operation {
         case .importItems:
             if skippedCount > 0 {
-                return String(
-                    localized:
-                        "Imported \(itemCount) records from \(fileName). \(skippedCount) duplicate or invalid records skipped.")
+                return AppLocale.string("Imported \(itemCount) records from \(fileName). \(skippedCount) duplicate or invalid records skipped.")
             }
-            return String(localized: "Imported \(itemCount) records from \(fileName).")
+            return AppLocale.string("Imported \(itemCount) records from \(fileName).")
         case .restoreItems:
             if skippedCount > 0 {
-                return String(
-                    localized:
-                        "Restored \(itemCount) records from \(fileName). \(skippedCount) duplicate records skipped.")
+                return AppLocale.string("Restored \(itemCount) records from \(fileName). \(skippedCount) duplicate records skipped.")
             }
-            return String(localized: "Restored \(itemCount) records from \(fileName).")
+            return AppLocale.string("Restored \(itemCount) records from \(fileName).")
         case .backupExport:
-            return String(
-                localized: "Backup file \(fileName) with \(itemCount) records exported successfully.")
+            return AppLocale.string("Backup file \(fileName) with \(itemCount) records exported successfully.")
         case .dataExport:
-            return String(localized: "Exported \(itemCount) records to \(fileName).")
+            return AppLocale.string("Exported \(itemCount) records to \(fileName).")
         }
     }
+}
+
+/// 文件选择器的用途：导入与备份恢复**共用**同一个 `fileImporter`
+///
+/// 同一层级挂两个 `fileImporter` 时，系统只认最后一个（导入入口点了没有反应），
+/// 因此统一成一个选择器，按用途切换可选文件类型并路由回调。
+enum DataFilePickerMode {
+    /// 导入条目（自动识别本 app 导出的 CSV / JSON 与 Chrome CSV）
+    case importFile
+    /// 选择 .vgbackup 备份文件用于恢复
+    case restoreBackup
+}
+
+/// 重置密码库的结果
+enum ResetVaultOutcome {
+    /// 已清空钥匙串与本地数据并注销，App 回到「创建密码库」流程
+    case reset
+    /// 主密码错误，未做任何破坏性操作
+    case incorrectPassword
+    /// 钥匙串清除失败：密码库保持原样，界面提示原因
+    case failed(String)
 }
 
 /// 设置页弹窗状态：收敛重置/测试库/数据操作相关的确认框与结果提示
 enum SettingsAlert: Identifiable {
     case resetConfirm
-    case resetFailed(String)
+    #if DEBUG
+    /// 生成测试库（仅 Debug 包）
     case seedConfirm
     case seedResult(String)
+    #endif
     case operationResult(DataOperationResult)
 
     var id: String {
         switch self {
         case .resetConfirm: return "resetConfirm"
-        case .resetFailed: return "resetFailed"
+        #if DEBUG
         case .seedConfirm: return "seedConfirm"
         case .seedResult: return "seedResult"
+        #endif
         case .operationResult: return "operationResult"
         }
     }
@@ -98,13 +118,13 @@ enum SettingsAlert: Identifiable {
     var title: String {
         switch self {
         case .resetConfirm:
-            return String(localized: "Reset Vault?")
-        case .resetFailed:
-            return String(localized: "Reset Failed")
+            return AppLocale.string("Reset Vault?")
+        #if DEBUG
         case .seedConfirm:
-            return String(localized: "Generate Test Vault?")
+            return AppLocale.string("Generate Test Vault?")
         case .seedResult:
-            return String(localized: "Test Data Result")
+            return AppLocale.string("Test Data Result")
+        #endif
         case .operationResult(let result):
             return result.title
         }
@@ -113,15 +133,13 @@ enum SettingsAlert: Identifiable {
     var message: String {
         switch self {
         case .resetConfirm:
-            return String(
-                localized: "This will clear Keychain and local vault data. This action cannot be undone.")
-        case .resetFailed(let message):
-            return message
+            return AppLocale.string("This will clear Keychain and local vault data. This action cannot be undone.")
+        #if DEBUG
         case .seedConfirm:
-            return String(
-                localized: "This will generate 40+ test entries (passwords, pincodes, and bank cards), at least one for each common app, and will not generate duplicates if they already exist.")
+            return AppLocale.string("This will generate 40+ test entries (passwords, pincodes, and bank cards), at least one for each common app, and will not generate duplicates if they already exist.")
         case .seedResult(let message):
             return message
+        #endif
         case .operationResult(let result):
             return result.message
         }
@@ -136,15 +154,19 @@ final class SettingsViewModel: ObservableObject {
     // MARK: - 状态
 
     @Published var isImporting = false
-    @Published var showingImportPicker = false
     @Published var trashedCount = 0
     @Published var alert: SettingsAlert?
     /// 最近一次加密备份包含的条目总数（供备份导出结果提示使用）
     @Published private(set) var lastBackupItemCount = 0
 
+    // MARK: 文件选择器状态
+
+    @Published var showingFilePicker = false
+    /// 当前文件选择器用途（回调时先读取再清除）
+    @Published var filePickerMode: DataFilePickerMode?
+
     // MARK: 备份恢复状态
 
-    @Published var showingRestorePicker = false
     @Published var restoreFileURL: URL?
     @Published var isRestoring = false
     @Published var restoreError: String?
@@ -191,71 +213,167 @@ final class SettingsViewModel: ObservableObject {
 
     /// 验证主密码后重置密码库
     ///
-    /// 主密码错误时返回 `false`（不执行重置），验证通过则执行 `resetVault()` 并返回 `true`。
-    func verifyAndReset(masterPassword: String) async -> Bool {
+    /// 只有主密码验证通过才进入破坏性流程；验证失败不做任何改动。
+    func verifyAndReset(masterPassword: String) async -> ResetVaultOutcome {
         do {
             try await appState?.verifyMasterPassword(masterPassword)
         } catch {
-            return false
+            return .incorrectPassword
         }
-        await resetVault()
-        return true
+        return await resetVault()
     }
 
-    func resetVault() async {
+    /// 重置密码库：清空钥匙串 + 全部本地数据，并把 App 带回「创建密码库」流程
+    ///
+    /// 两步的顺序与容错是这里的关键：
+    /// 1. 钥匙串是「密码库是否存在」的唯一凭据，也是唯一不可回滚的一步。
+    ///    它清除失败说明库还完好，此时绝不能再碰数据，直接报错返回。
+    /// 2. 钥匙串一旦清除，旧库就再也解不开，因此后续清理即使部分失败也必须
+    ///    继续走完并注销——否则会停在「已解锁、密钥已丢、数据还在」的僵尸状态。
+    @discardableResult
+    func resetVault() async -> ResetVaultOutcome {
+        // 先断开 iCloud 同步：重置过程中不该再有同步任务读写即将被清空的库
+        await appState?.setCloudSyncEnabled(false)
+
         do {
             try KeychainService().clearAll()
-            UserDefaults.standard.removeObject(forKey: VaultKey.vaultInstalledMarker)
-            try clearPasswordStore()
-            Self.setSeedTestVaultGenerated(false)
-            appState?.logout()
         } catch {
-            alert = .resetFailed(error.localizedDescription)
+            return .failed(error.localizedDescription)
+        }
+
+        clearLocalVaultData()
+        clearVaultScopedState()
+
+        // 系统侧自动填充身份是库内容的镜像，库清空后重新同步即为移除
+        Task { await AutoFillIdentityService.shared.synchronize() }
+
+        appState?.logout()
+        return .reset
+    }
+
+    /// 清空全部本地密码库数据（密码 / 2FA / OAuth / PIN / 银行卡 / 标签 / 安全笔记 / 分类）
+    ///
+    /// 顺序不能随意：2FA 与 OAuth 配置是从属于密码条目的子实体，直接批量删除它们会触发
+    /// Core Data 的 `Constraint trigger violation: ... mandatory OTO nullify inverse`（134050），
+    /// 整条重置链就此中断——历史 bug 正是这样「报错弹窗 + 钥匙串已被清空」。
+    /// 因此先删父实体（由模型的 Cascade 规则带走子实体与标签关联），再兜底删一遍残留子实体。
+    /// 单项失败只记录不中断：钥匙串已经清了，此时回滚没有任何意义。
+    private func clearLocalVaultData() {
+        let entities = [
+            "CDPasswordEntry",  // 级联带走 2FA / OAuth / 标签关联
+            "CDTwoFactorConfig",  // 兜底：孤儿 2FA 配置
+            "CDOAuthProvider",  // 兜底：孤儿 OAuth 配置
+            "CDPincodeEntry",
+            "CDBankcardEntry",
+            "CDTag",
+            "CDSafeNote",  // 级联带走附件记录
+            "CDSafeNoteAsset",  // 兜底：孤儿附件记录
+            "CDPasswordCategory",  // 下次加载分类时由 ensureDefaults 重建系统分类
+        ]
+
+        for entity in entities {
+            do {
+                try batchDelete(entity)
+            } catch {
+                NSLog("Reset: 清空 %@ 失败（继续后续步骤）: %@", entity, error.localizedDescription)
+            }
+        }
+
+        // 笔记附件的密文存在 App Group 目录里，不会随 Core Data 记录一起消失
+        do {
+            try EncryptedFileStorage().deleteAllFiles()
+        } catch {
+            NSLog("Reset: 清空安全笔记附件失败: %@", error.localizedDescription)
         }
     }
 
-    /// 批量清空密码相关的 Core Data 存储（条目、2FA 配置、标签）
-    private func clearPasswordStore() throws {
+    /// 批量删除单个实体并同步到 viewContext（让界面立即感知删除）
+    private func batchDelete(_ entityName: String) throws {
         let context = CoreDataStack.shared.viewContext
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        deleteRequest.resultType = .resultTypeObjectIDs
 
-        let deleteTwoFactor = NSBatchDeleteRequest(fetchRequest: CDTwoFactorConfig.fetchRequest())
-        deleteTwoFactor.resultType = .resultTypeObjectIDs
-        if let result = try context.execute(deleteTwoFactor) as? NSBatchDeleteResult,
+        guard let result = try context.execute(deleteRequest) as? NSBatchDeleteResult,
             let objectIDs = result.result as? [NSManagedObjectID]
-        {
-            NSManagedObjectContext.mergeChanges(
-                fromRemoteContextSave: [NSDeletedObjectsKey: objectIDs],
-                into: [context]
-            )
+        else {
+            return
         }
 
-        let deletePasswords = NSBatchDeleteRequest(fetchRequest: CDPasswordEntry.fetchRequest())
-        deletePasswords.resultType = .resultTypeObjectIDs
-        if let result = try context.execute(deletePasswords) as? NSBatchDeleteResult,
-            let objectIDs = result.result as? [NSManagedObjectID]
-        {
-            NSManagedObjectContext.mergeChanges(
-                fromRemoteContextSave: [NSDeletedObjectsKey: objectIDs],
-                into: [context]
-            )
+        NSManagedObjectContext.mergeChanges(
+            fromRemoteContextSave: [NSDeletedObjectsKey: objectIDs],
+            into: [context]
+        )
+    }
+
+    /// 清空与「这一个密码库」绑定的本地状态：安装标记、库标识、同步游标、搜索历史
+    ///
+    /// 漏清 vaultID / 同步状态会让新建的库继承旧库的 CloudKit zone 与删除记录。
+    private func clearVaultScopedState() {
+        let defaults = UserDefaults.standard
+        let keys = [
+            VaultKey.vaultInstalledMarker,
+            VaultKey.vaultID,
+            VaultKey.cloudKeyRevision,
+            VaultKey.iCloudSyncEnabled,
+            VaultKey.pendingCloudRestoreDownload,
+        ]
+        for key in keys {
+            defaults.removeObject(forKey: key)
         }
 
-        let deleteTags = NSBatchDeleteRequest(fetchRequest: CDTag.fetchRequest())
-        deleteTags.resultType = .resultTypeObjectIDs
-        if let result = try context.execute(deleteTags) as? NSBatchDeleteResult,
-            let objectIDs = result.result as? [NSManagedObjectID]
-        {
-            NSManagedObjectContext.mergeChanges(
-                fromRemoteContextSave: [NSDeletedObjectsKey: objectIDs],
-                into: [context]
-            )
+        SyncLocalStore.shared.resetForVaultReset()
+        // 搜索历史里留着旧库的站点名，一并清掉
+        SearchHistoryStore.clearAll()
+        Self.setSeedTestVaultGenerated(false)
+    }
+
+    // MARK: - 文件选择器
+
+    /// 文件选择器可选类型：随用途切换
+    var filePickerContentTypes: [UTType] {
+        switch filePickerMode {
+        case .importFile:
+            // 自动识别本 app 导出的 CSV / JSON 与 Chrome CSV
+            return [.commaSeparatedText, .text, .json, .data]
+        case .restoreBackup:
+            return [.vaultBackup, .data, .item]
+        case nil:
+            // 不会展示，取最宽松的类型兜底，避免空数组触发断言
+            return [.data]
+        }
+    }
+
+    /// 调起文件选择器：导入
+    func presentImportPicker() {
+        filePickerMode = .importFile
+        showingFilePicker = true
+    }
+
+    /// 调起文件选择器：备份恢复
+    func presentRestorePicker() {
+        filePickerMode = .restoreBackup
+        showingFilePicker = true
+    }
+
+    /// 文件选择器回调：按用途分流（先取用途再清除，避免读取到 nil）
+    func handleFilePickerResult(_ result: Result<[URL], Error>) {
+        let mode = filePickerMode
+        filePickerMode = nil
+        switch mode {
+        case .importFile:
+            handleImportResult(result)
+        case .restoreBackup:
+            handleRestorePickerResult(result)
+        case nil:
+            break
         }
     }
 
     // MARK: - 导入
 
     /// 处理文件选择器的结果
-    func handleImportResult(_ result: Result<[URL], Error>) {
+    private func handleImportResult(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
@@ -361,7 +479,7 @@ final class SettingsViewModel: ObservableObject {
     // MARK: - 备份恢复
 
     /// 处理备份文件选择器的结果：选中文件后先输入备份密码
-    func handleRestorePickerResult(_ result: Result<[URL], Error>) {
+    private func handleRestorePickerResult(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
@@ -406,7 +524,7 @@ final class SettingsViewModel: ObservableObject {
                         fileName: fileName,
                         itemCount: 0,
                         skippedCount: 0,
-                        errorMessage: String(localized: "This backup contains no entries.")
+                        errorMessage: AppLocale.string("This backup contains no entries.")
                     )
                 )
                 return

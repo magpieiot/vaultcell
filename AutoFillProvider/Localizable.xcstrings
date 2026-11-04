@@ -43,7 +43,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "该站点与用户名已存在条目，将更新其密码。"
+            "value": "该网站和用户名已存在条目，将更新其密码。"
           }
         }
       }
@@ -101,7 +101,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Authentifizierung fehlgeschlagen. Bitte erneut versuchen."
+            "value": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
           }
         },
         "en": {
@@ -242,7 +242,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das Passwort konnte nicht gespeichert werden. Bitte erneut versuchen."
+            "value": "Das Passwort konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
           }
         },
         "en": {
@@ -372,7 +372,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "未找到该站点对应的密码，请先在 VaultCell 中确认该条目已保存且用户名不为空"
+            "value": "未找到该网站对应的密码，请先在 VaultCell 中确认该条目已保存且用户名不为空。"
           }
         }
       }
@@ -899,7 +899,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der Tresor ist gesperrt. Bitte erneut versuchen."
+            "value": "Der Tresor ist gesperrt. Bitte versuchen Sie es erneut."
           }
         },
         "en": {
@@ -923,7 +923,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "パスワード庫はロックされています。もう一度お試しください。"
+            "value": "保管庫はロックされています。もう一度お試しください。"
           }
         },
         "ru": {
@@ -1017,7 +1017,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "パスワード庫のデータにアクセスできません"
+            "value": "保管庫のデータにアクセスできません"
           }
         },
         "ru": {
@@ -1064,7 +1064,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "パスワード庫はロックされています"
+            "value": "保管庫はロックされています"
           }
         },
         "ru": {
@@ -1111,7 +1111,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "パスワード庫がまだ設定されていません。VaultCell を開いてパスワード庫を作成し、パスワードを保存してください。"
+            "value": "保管庫がまだ設定されていません。VaultCell を開いて保管庫を作成し、パスワードを保存してください。"
           }
         },
         "ru": {

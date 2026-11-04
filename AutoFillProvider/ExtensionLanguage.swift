@@ -11,8 +11,9 @@
 /// 2. 未设置覆盖时回退系统语言（扩展 Bundle 的 preferredLocalization）。
 ////
 /// 实现机制与主 App 的 Bundle+Language 一致：运行时交换
-/// `Bundle.localizedString(forKey:value:table:)`，使 SwiftUI 控件
-/// （literal LocalizedStringKey）与 `String(localized:)` 的解析都走覆盖语言。
+/// `Bundle.localizedString(forKey:value:table:)`，让走该方法解析的文案启用覆盖语言。
+/// 注意 `String(localized:)` 不经过该方法（Foundation 按进程语言解析），
+/// 需要即时跟随覆盖语言的字符串一律用 `ExtensionLocale.string(_:)`。
 
 import Foundation
 import ObjectiveC
@@ -107,7 +108,7 @@ extension Bundle {
     }
 
     /// 获取指定 BCP-47 语言对应的 lproj Bundle，带缓存
-    private static func vcExtOverrideBundle(for bcp47: String) -> Bundle? {
+    fileprivate static func vcExtOverrideBundle(for bcp47: String) -> Bundle? {
         guard let path = Bundle.main.path(forResource: bcp47, ofType: "lproj") else {
             return nil
         }
@@ -117,5 +118,32 @@ extension Bundle {
         let bundle = Bundle(path: path)
         Bundle.main.overrideLanguageBundle = bundle
         return bundle
+    }
+}
+
+/// 按扩展生效的语言解析文案的入口（主 App `AppLocale` 的扩展侧版本）。
+///
+/// `String(localized:)` 由 Foundation 按进程语言解析，既不经过
+/// `Bundle.localizedString(forKey:value:table:)`（swizzling 拦不到），也不看 SwiftUI `\.locale`，
+/// 因此必须显式指定覆盖语言对应的 lproj Bundle 才能即时跟随主 App 的语言选择。
+enum ExtensionLocale {
+    /// 覆盖语言缺少自己的 lproj（即覆盖语言就是 String Catalog 的源语言 en）时使用的表名。
+    /// 该表不存在，Foundation 会原样返回 key —— 正是源语言文案，且占位符替换照常进行。
+    private static let sourceLanguageTable = "__ExtensionLocaleSource__"
+
+    /// 按当前生效语言解析文案；跟随系统时与 `String(localized:)` 等价。
+    static func string(_ key: String.LocalizationValue, comment: StaticString? = nil) -> String {
+        guard let bcp47 = ExtensionLanguage.overrideBCP47 else {
+            return String(localized: key, comment: comment)
+        }
+
+        let locale = Locale(identifier: bcp47)
+        if let bundle = Bundle.vcExtOverrideBundle(for: bcp47) {
+            return String(localized: key, table: nil, bundle: bundle, locale: locale, comment: comment)
+        }
+
+        return String(
+            localized: key, table: sourceLanguageTable, bundle: .main, locale: locale,
+            comment: comment)
     }
 }

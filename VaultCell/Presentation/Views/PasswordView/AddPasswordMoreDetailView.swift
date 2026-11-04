@@ -400,17 +400,17 @@ struct AddPasswordMoreDetailView: View {
             totpFactorConfig?.createdAt = Date()
             totpFactorConfig?.lastVerifiedAt = Date()
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "TOTP secret recognized"), style: .success)
+            currentToast = ToastItem(message: AppLocale.string("TOTP secret recognized"), style: .success)
         } else if !code.isEmpty {
             //is2FAbyTOTP = true
             totpFactorConfig?.secret = code
             totpFactorConfig?.issuer = formModel.siteName
             totpFactorConfig?.boundValue = formModel.username
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "TOTP secret recognized"), style: .success)
+            currentToast = ToastItem(message: AppLocale.string("TOTP secret recognized"), style: .success)
         } else {
             showingScanner = false
-            currentToast = ToastItem(message: String(localized: "Unable to recognize QR code"), style: .error)
+            currentToast = ToastItem(message: AppLocale.string("Unable to recognize QR code"), style: .error)
         }
     }
 

@@ -98,7 +98,10 @@ struct MainEntranceView: View {
                 }
                 .transition(.opacity)
             } else if appState.isAuthenticated && !appState.isLocked {
-                if !hasSeenVaultSetupGuide && VaultSetupGate.isVaultEmpty {
+                if appState.showsCloudRestoreFlow {
+                    CloudVaultRestoreView()
+                        .transition(.opacity)
+                } else if !hasSeenVaultSetupGuide && VaultSetupGate.isVaultEmpty {
                     // 密码库就绪引导：创建密码库后的一次性决策点（新建 / 导入 / 恢复备份）
                     VaultSetupView {
                         hasSeenVaultSetupGuide = true
@@ -123,7 +126,7 @@ struct MainEntranceView: View {
         // 首启一次性告知：远程图标会直连目标站点，先把事实讲清楚
         // 开关已关闭时不再打扰——不抓取就没有请求，也就没有告知的必要
         .alert(
-            String(localized: "Website Icons"),
+            AppLocale.string("Website Icons"),
             isPresented: Binding(
                 get: { !hasSeenIconDisclosure && IconPreferences.isAutoFetchEnabled },
                 set: { presented in
@@ -131,18 +134,16 @@ struct MainEntranceView: View {
                 }
             )
         ) {
-            Button(String(localized: "OK")) {
+            Button(AppLocale.string("OK")) {
                 hasSeenIconDisclosure = true
             }
-            Button(String(localized: "Turn Off Icons"), role: .destructive) {
+            Button(AppLocale.string("Turn Off Icons"), role: .destructive) {
                 IconPreferences.isAutoFetchEnabled = false
                 hasSeenIconDisclosure = true
             }
         } message: {
             Text(
-                String(
-                    localized:
-                        "VaultCell shows a site icon by requesting apple-touch-icon.png or favicon.ico directly from that site. That request reveals your IP address and the site you are visiting. Built-in icons for common apps send no request, and you can turn this off anytime in Settings."
+                AppLocale.string("VaultCell shows a site icon by requesting apple-touch-icon.png or favicon.ico directly from that site. That request reveals your IP address and the site you are visiting. Built-in icons for common apps send no request, and you can turn this off anytime in Settings."
                 ))
         }
         .animation(.easeInOut(duration: 0.2), value: appState.shouldShowPrivacyOverlay)

@@ -49,33 +49,33 @@ struct OnboardingView: View {
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             symbol: "lock.shield.fill",
-            title: String(localized: "Welcome to VaultCell"),
-            subtitle: String(localized: "Your Pocket Password Vault"),
-            description: String(localized: "Keep your passwords, bank cards, secure notes and verification codes in one safe place."),
+            title: AppLocale.string("Welcome to VaultCell"),
+            subtitle: AppLocale.string("Your Pocket Password Vault"),
+            description: AppLocale.string("Keep your passwords, bank cards, secure notes and verification codes in one safe place."),
             accent: Color(red: 0.25, green: 0.60, blue: 1.00),
             accentLight: Color(red: 0.85, green: 0.93, blue: 1.00)
         ),
         OnboardingPage(
             symbol: "key.horizontal.fill",
-            title: String(localized: "End-to-End Encryption"),
-            subtitle: String(localized: "Zero-Knowledge · Local First"),
-            description: String(localized: "AES-256-GCM authenticated encryption with Secure Enclave isolation. Your master key never touches disk."),
+            title: AppLocale.string("End-to-End Encryption"),
+            subtitle: AppLocale.string("Zero-Knowledge · Local First"),
+            description: AppLocale.string("AES-256-GCM authenticated encryption with Secure Enclave isolation. Your master key never touches disk."),
             accent: Color(red: 0.30, green: 0.78, blue: 0.68),
             accentLight: Color(red: 0.85, green: 0.96, blue: 0.93)
         ),
         OnboardingPage(
             symbol: "wand.and.stars",
-            title: String(localized: "One-Tap Autofill & Generate"),
-            subtitle: String(localized: "System-wide Autofill"),
-            description: String(localized: "Autofill credentials in Safari and third-party apps, with a built-in strong password generator."),
+            title: AppLocale.string("One-Tap Autofill & Generate"),
+            subtitle: AppLocale.string("System-wide Autofill"),
+            description: AppLocale.string("Autofill credentials in Safari and third-party apps, with a built-in strong password generator."),
             accent: Color(red: 0.55, green: 0.50, blue: 0.95),
             accentLight: Color(red: 0.92, green: 0.90, blue: 1.00)
         ),
         OnboardingPage(
             symbol: "badge.checkmark.fill",
-            title: String(localized: "Verification Codes & Security Audit"),
-            subtitle: String(localized: "TOTP · 2FA Health Check"),
-            description: String(localized: "Scan and import TOTP codes, manage two-factor authentication, and get security audit reports anytime."),
+            title: AppLocale.string("Verification Codes & Security Audit"),
+            subtitle: AppLocale.string("TOTP · 2FA Health Check"),
+            description: AppLocale.string("Scan and import TOTP codes, manage two-factor authentication, and get security audit reports anytime."),
             accent: Color(red: 0.98, green: 0.55, blue: 0.40),
             accentLight: Color(red: 1.00, green: 0.92, blue: 0.88)
         ),

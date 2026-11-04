@@ -12,6 +12,13 @@ final class VaultListViewModel: ObservableObject {
     @Published var sortField: VaultSortField = .updatedAt
     @Published var sortAscending: Bool = false
 
+    /// 收藏置顶：开关在「工具 → 通用」，改动立即落盘并重排列表（默认关闭）
+    @Published var pinFavoritesToTop: Bool {
+        didSet {
+            UserDefaults.standard.set(pinFavoritesToTop, forKey: VaultKey.pinFavoritesToTop)
+        }
+    }
+
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var selectedDestination: VaultDestination?
@@ -35,6 +42,7 @@ final class VaultListViewModel: ObservableObject {
         self.vaultListService = vaultListService
         self.referenceData = referenceData
         self.tagSelection = TagSelectionViewModel(referenceData: referenceData)
+        self.pinFavoritesToTop = UserDefaults.standard.bool(forKey: VaultKey.pinFavoritesToTop)
 
         Task {
             await referenceData.reloadAll()
@@ -248,8 +256,14 @@ final class VaultListViewModel: ObservableObject {
     }
 
     /// 按指定字段和方向排序；排序键相同时用 id 兜底，保证结果稳定
+    ///
+    /// 开启「收藏置顶」时先按 isFavorite 分组，组内再按选定字段排，
+    /// 这样切换排序字段不会把收藏项打散。
     private func sort(_ items: [VaultItem], by field: VaultSortField, ascending: Bool) -> [VaultItem] {
         items.sorted { lhs, rhs in
+            if pinFavoritesToTop && lhs.isFavorite != rhs.isFavorite {
+                return lhs.isFavorite
+            }
             switch field {
             case .createdAt:
                 let left = lhs.createdAt ?? .distantPast

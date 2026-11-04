@@ -16,15 +16,15 @@ enum IdentityKind: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .phone: return String(localized: "Phone Number")
-        case .email: return String(localized: "Email Address")
+        case .phone: return AppLocale.string("Phone Number")
+        case .email: return AppLocale.string("Email Address")
         }
     }
 
     var pluralDisplayName: String {
         switch self {
-        case .phone: return String(localized: "Phone Numbers")
-        case .email: return String(localized: "Email Addresses")
+        case .phone: return AppLocale.string("Phone Numbers")
+        case .email: return AppLocale.string("Email Addresses")
         }
     }
 
@@ -54,10 +54,10 @@ enum IdentityRiskLevel: Int, CaseIterable, Comparable, Hashable {
 
     var displayName: String {
         switch self {
-        case .low: return String(localized: "Low")
-        case .medium: return String(localized: "Medium")
-        case .high: return String(localized: "High")
-        case .critical: return String(localized: "Critical")
+        case .low: return AppLocale.string("Low")
+        case .medium: return AppLocale.string("Medium")
+        case .high: return AppLocale.string("High")
+        case .critical: return AppLocale.string("Critical")
         }
     }
 
@@ -95,12 +95,12 @@ enum IdentityRole: Int, CaseIterable, Comparable, Hashable {
 
     var displayName: String {
         switch self {
-        case .mention: return String(localized: "Mentioned")
-        case .contact: return String(localized: "Bound contact")
-        case .login: return String(localized: "Login name")
-        case .twoFactor: return String(localized: "2FA")
-        case .oauth: return String(localized: "OAuth")
-        case .recovery: return String(localized: "Password reset")
+        case .mention: return AppLocale.string("Mentioned")
+        case .contact: return AppLocale.string("Bound contact")
+        case .login: return AppLocale.string("Login name")
+        case .twoFactor: return AppLocale.string("2FA")
+        case .oauth: return AppLocale.string("OAuth")
+        case .recovery: return AppLocale.string("Password reset")
         }
     }
 

@@ -13,7 +13,7 @@ import UIKit
 /// 负责管理认证状态、锁定状态、密码库的创建/解锁/锁定等核心业务逻辑，
 /// 以及应用前后台切换时的自动锁定检测。
 @MainActor
-class AppState: ObservableObject {
+class AppState: ObservableObject, CloudSyncStatusReporting {
     
     // MARK: - 公开属性（发布给UI订阅）
     
@@ -28,6 +28,25 @@ class AppState: ObservableObject {
     
     /// 应用目录，启动时从 bundle 的统一目录 JSON 加载到内存
     @Published var apps: [AppCatalogEntry] = []
+
+    /// iCloud 同步状态，仅由同步引擎的实际开始和完成事件更新。
+    @Published private(set) var syncStatus: SyncStatus = .idle
+
+    /// 最近一次同步回执的时间，供「同步与备份」页展示；不持久化，重启后为空。
+    @Published private(set) var lastSyncDate: Date?
+
+    /// 用户明确开启后才允许建立 CloudKit 连接。
+    @Published private(set) var isCloudSyncEnabled =
+        UserDefaults.standard.bool(forKey: VaultKey.iCloudSyncEnabled)
+
+    @Published private(set) var isRestoringCloudVault = false
+    @Published private(set) var cloudRestoreError: String?
+
+    var showsCloudRestoreFlow: Bool {
+        isAuthenticated
+            && !isLocked
+            && UserDefaults.standard.bool(forKey: VaultKey.pendingCloudRestoreDownload)
+    }
 
     /// 是否需要显示快照保护遮罩
     ///
@@ -57,6 +76,11 @@ class AppState: ObservableObject {
     
     /// 应用目录服务，负责从 bundle 加载应用元数据
     private let appCatalogService: AppCatalogServiceProtocol
+
+    /// 仅在用户开启 iCloud 同步后创建；锁库时释放。
+    private var cloudSyncService: CloudSyncService?
+    private var syncDebounceTask: Task<Void, Never>?
+    private var syncObservers: [NSObjectProtocol] = []
 
     /// 是否正在进行生物识别验证
     ///
@@ -91,6 +115,7 @@ class AppState: ObservableObject {
         checkExistingVault()
         // 订阅密码条目变更，驱动 AutoFill 凭据身份同步（自动填充建议的前置条件）
         AutoFillIdentityService.shared.startObservingChanges()
+        observeLocalChangesForCloudSync()
         // 异步加载应用目录到内存
         loadAppCatalog()
         // 图标抓取的启动准备：清 v2 旧缓存 + 首启按 App Store 地区落盘开关默认值（幂等）
@@ -103,6 +128,156 @@ class AppState: ObservableObject {
     var hasExistingVault: Bool {
         lockService.hasExistingVault()
     }
+
+    // MARK: - 公开方法 - iCloud 同步回执
+
+    func syncDidStart() {
+        syncStatus = .inProgress
+    }
+
+    func syncDidComplete() {
+        syncStatus = .completed
+        lastSyncDate = Date()
+    }
+
+    func syncDidFail(_ error: Error) {
+        syncStatus = .failed(message: error.localizedDescription)
+        lastSyncDate = Date()
+    }
+
+    func syncAccountDidChange() {
+        isCloudSyncEnabled = false
+        cloudSyncService = nil
+        UserDefaults.standard.set(false, forKey: VaultKey.iCloudSyncEnabled)
+        syncDidFail(CloudSyncError.iCloudUnavailable)
+    }
+
+    func setCloudSyncEnabled(_ enabled: Bool) async {
+        guard enabled != isCloudSyncEnabled else { return }
+        if enabled {
+            do {
+                try await enableCloudSync()
+            } catch {
+                isCloudSyncEnabled = false
+                UserDefaults.standard.set(false, forKey: VaultKey.iCloudSyncEnabled)
+                await cloudSyncService?.stop()
+                cloudSyncService = nil
+                syncDidFail(error)
+            }
+        } else {
+            isCloudSyncEnabled = false
+            UserDefaults.standard.set(false, forKey: VaultKey.iCloudSyncEnabled)
+            syncDebounceTask?.cancel()
+            await cloudSyncService?.stop()
+            cloudSyncService = nil
+            syncStatus = .idle
+        }
+    }
+
+    func retryCloudVaultRestore() async {
+        await completeCloudVaultRestore()
+    }
+
+    func continueWithoutCloudRestore() {
+        UserDefaults.standard.removeObject(forKey: VaultKey.pendingCloudRestoreDownload)
+        cloudRestoreError = nil
+        isRestoringCloudVault = false
+        Task { [weak self] in
+            guard let self else { return }
+            if self.isCloudSyncEnabled {
+                await self.setCloudSyncEnabled(false)
+            } else {
+                await self.cloudSyncService?.stop()
+                self.cloudSyncService = nil
+            }
+        }
+    }
+
+    private func completeCloudVaultRestore() async {
+        isRestoringCloudVault = true
+        cloudRestoreError = nil
+        do {
+            if isCloudSyncEnabled {
+                try await performCloudSync()
+            } else {
+                try await enableCloudSync()
+            }
+            UserDefaults.standard.removeObject(forKey: VaultKey.pendingCloudRestoreDownload)
+            isRestoringCloudVault = false
+            NotificationCenter.default.post(name: .passwordEntriesDidChange, object: nil)
+            NotificationCenter.default.post(name: .safeNotesDidChange, object: nil)
+        } catch {
+            isRestoringCloudVault = false
+            cloudRestoreError = error.localizedDescription
+        }
+    }
+
+    private func enableCloudSync() async throws {
+        try await performCloudSync()
+        isCloudSyncEnabled = true
+        UserDefaults.standard.set(true, forKey: VaultKey.iCloudSyncEnabled)
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+
+    func synchronizeCloudNow() async {
+        guard isCloudSyncEnabled, !isLocked else { return }
+        do {
+            try await performCloudSync()
+        } catch {
+            // 引擎已把可展示的错误写入 syncStatus。
+        }
+    }
+
+    func retryCloudSync() async {
+        if isCloudSyncEnabled {
+            await synchronizeCloudNow()
+        } else {
+            await setCloudSyncEnabled(true)
+        }
+    }
+
+    private func performCloudSync() async throws {
+        guard !isLocked else { throw CloudSyncError.vaultLocked }
+        let service: CloudSyncService
+        if let existing = cloudSyncService {
+            service = existing
+        } else {
+            let created = CloudSyncService(statusDelegate: self)
+            try await created.start()
+            cloudSyncService = created
+            service = created
+        }
+        try await service.synchronize()
+    }
+
+    private func observeLocalChangesForCloudSync() {
+        let names: [Notification.Name] = [
+            .passwordEntriesDidChange,
+            .safeNotesDidChange,
+            .autoFillDidSaveCredential,
+        ]
+        syncObservers = names.map { name in
+            NotificationCenter.default.addObserver(
+                forName: name,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.scheduleCloudSync()
+                }
+            }
+        }
+    }
+
+    private func scheduleCloudSync() {
+        guard isCloudSyncEnabled, !isLocked else { return }
+        syncDebounceTask?.cancel()
+        syncDebounceTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            guard !Task.isCancelled else { return }
+            await self?.synchronizeCloudNow()
+        }
+    }
     
     // MARK: - 公开方法 - 认证
     
@@ -113,6 +288,20 @@ class AppState: ObservableObject {
         lastActiveTime = Date()
         // 解锁后刷新系统侧的自动填充身份
         synchronizeAutoFillIdentities()
+        if UserDefaults.standard.bool(forKey: VaultKey.pendingCloudRestoreDownload) {
+            isRestoringCloudVault = true
+            cloudRestoreError = nil
+            Task { [weak self] in
+                await self?.completeCloudVaultRestore()
+            }
+        } else {
+            if isCloudSyncEnabled {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+            Task { [weak self] in
+                await self?.synchronizeCloudNow()
+            }
+        }
     }
     
     // MARK: - 公开方法 - 密码库操作
@@ -217,6 +406,52 @@ class AppState: ObservableObject {
         }
     }
 
+    /// 修改主密码：验证当前密码后用新密码重新包裹数据密钥（DEK）
+    ///
+    /// PBKDF2 派生与重新加密都在后台线程执行，避免阻塞界面。
+    /// 数据密钥本身不变，只换包裹它的密钥，因此库内已加密条目无需重写。
+    /// 与解锁共用同一道限流闸门：否则本界面就是一条不限次数的试密码通道。
+    ///
+    /// - Parameters:
+    ///   - currentPassword: 当前主密码（解出 DEK 的同时即完成身份校验）
+    ///   - newPassword: 新主密码
+    func changeMasterPassword(
+        from currentPassword: String,
+        to newPassword: String
+    ) async throws {
+        try throwIfUnlockThrottled()
+        if isCloudSyncEnabled {
+            // 改密前先吸收远端元数据，降低两台设备同时覆盖包裹材料的概率。
+            try await performCloudSync()
+        }
+
+        let lockService = self.lockService
+
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    try lockService.changeMasterPassword(
+                        from: currentPassword, to: newPassword)
+                    DispatchQueue.main.async { @MainActor in
+                        // 能改密码说明当前密码验证通过，成功记录可清零失败计数
+                        self.noteUnlockSucceeded()
+                        continuation.resume()
+                    }
+                } catch {
+                    DispatchQueue.main.async { @MainActor in
+                        self.noteUnlockFailed()
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+
+        if isCloudSyncEnabled {
+            // 本地改密已经成功；上传失败不能再回滚主密码，但必须显示同步失败。
+            try? await performCloudSync()
+        }
+    }
+
     /// 使用生物识别（Face ID / Touch ID）解锁密码库
     ///
     /// 首先检查设备是否支持生物识别，然后调用锁定服务进行验证。
@@ -255,6 +490,11 @@ class AppState: ObservableObject {
     func lock() {
         lastActiveTime = Date()
         isLocked = true
+        syncDebounceTask?.cancel()
+        Task { [weak self] in
+            await self?.cloudSyncService?.stop()
+            self?.cloudSyncService = nil
+        }
         clearSensitiveData()
     }
     
@@ -324,6 +564,9 @@ class AppState: ObservableObject {
         // 兜底同步：系统可能在重装、恢复备份或用户切换自动填充开关后清空 identity
         if isAuthenticated && !isLocked {
             synchronizeAutoFillIdentities()
+            Task { [weak self] in
+                await self?.synchronizeCloudNow()
+            }
         }
     }
 

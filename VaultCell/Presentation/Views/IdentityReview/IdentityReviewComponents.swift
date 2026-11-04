@@ -96,7 +96,7 @@ struct IdentityValueText: View {
     var font: Font = .body
 
     @State private var isRevealed = false
-    /// 辅助功能文案含 `String(localized:)`，需要语言依赖才会随切换重算
+    /// 辅助功能文案由 `AppLocale.string` 求值，需要语言依赖才会随切换重绘
     @Environment(\.locale) private var locale
 
     var body: some View {
@@ -121,7 +121,7 @@ struct IdentityValueText: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(
-            isRevealed ? value : String(localized: "Hidden, double tap to reveal")
+            isRevealed ? value : AppLocale.string("Hidden, double tap to reveal")
         )
     }
 }
@@ -276,7 +276,7 @@ struct DependencyBand: View {
             .map { "\($0.role.displayName) \($0.count)" }
             .joined(separator: ", ")
         return String(
-            format: String(localized: "%lld accounts depend on it: %@"),
+            format: AppLocale.string("%lld accounts depend on it: %@"),
             report.usages.count,
             detail
         )

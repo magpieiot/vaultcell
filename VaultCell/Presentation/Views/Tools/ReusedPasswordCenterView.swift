@@ -47,7 +47,7 @@ struct ReusedPasswordCenterView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(SettingsBackground())
-        .navigationTitle(String(localized: "Reused Passwords"))
+        .navigationTitle(AppLocale.string("Reused Passwords"))
         .navigationBarTitleDisplayMode(.inline)
         // 二级页面隐藏底部 TabBar
         .preference(key: TabBarVisibilityKey.self, value: true)
@@ -75,9 +75,7 @@ struct ReusedPasswordCenterView: View {
             .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
         } footer: {
             Text(
-                String(
-                    localized:
-                        "Only the first and last two characters are shown. Open a group to see the full password — it never touches the clipboard."
+                AppLocale.string("Only the first and last two characters are shown. Open a group to see the full password — it never touches the clipboard."
                 )
             )
         }
@@ -93,12 +91,10 @@ struct ReusedPasswordCenterView: View {
                 }
             }
         } header: {
-            Text(String(localized: "Shared passwords"))
+            Text(AppLocale.string("Shared passwords"))
         } footer: {
             Text(
-                String(
-                    localized:
-                        "Give each account its own password so one breach cannot unlock the rest."
+                AppLocale.string("Give each account its own password so one breach cannot unlock the rest."
                 )
             )
         }
@@ -109,9 +105,7 @@ struct ReusedPasswordCenterView: View {
         Section {
             IdentityNote(
                 icon: reusedVM.isEmpty ? "checkmark.shield.fill" : "line.3.horizontal.decrease.circle",
-                text: reusedVM.isEmpty ? summaryText : String(
-                    localized:
-                        "No password is shared by three or more accounts. Turn off the filter to see every shared password."
+                text: reusedVM.isEmpty ? summaryText : AppLocale.string("No password is shared by three or more accounts. Turn off the filter to see every shared password."
                 ),
                 tint: reusedVM.isEmpty ? .successColor : .primaryBrandColor
             )
@@ -122,12 +116,11 @@ struct ReusedPasswordCenterView: View {
 
     private var summaryText: String {
         guard !reusedVM.isEmpty else {
-            return String(
-                localized: "Every saved account has its own password. Nothing is reused."
+            return AppLocale.string("Every saved account has its own password. Nothing is reused."
             )
         }
         return String(
-            format: String(localized: "%lld passwords are shared by %lld accounts."),
+            format: AppLocale.string("%lld passwords are shared by %lld accounts."),
             reusedVM.groups.count,
             reusedVM.affectedAccountCount
         )
@@ -149,7 +142,7 @@ struct ReusedPasswordCenterView: View {
                 )
                 .foregroundColor(reusedVM.showOnlyWidespread ? .primaryBrandColor : .secondary)
             }
-            .accessibilityLabel(String(localized: "Only show passwords shared by 3 or more accounts"))
+            .accessibilityLabel(AppLocale.string("Only show passwords shared by 3 or more accounts"))
         }
     }
 }
@@ -213,12 +206,12 @@ private struct ReusedPasswordGroupRow: View {
         let count = group.accountCount
         if group.protectedCount == 0 {
             return String(
-                format: String(localized: "%lld accounts · none has 2FA"),
+                format: AppLocale.string("%lld accounts · none has 2FA"),
                 count
             )
         }
         return String(
-            format: String(localized: "%lld accounts · %lld protected by 2FA"),
+            format: AppLocale.string("%lld accounts · %lld protected by 2FA"),
             count,
             group.protectedCount
         )
@@ -268,7 +261,7 @@ private struct ReusedPasswordGroupDetailView: View {
             .padding(.bottom, 40)
         }
         .background(backgroundGradient.ignoresSafeArea())
-        .navigationTitle(String(localized: "Shared Password"))
+        .navigationTitle(AppLocale.string("Shared Password"))
         .navigationBarTitleDisplayMode(.inline)
         .preference(key: TabBarVisibilityKey.self, value: true)
         .onAppear {
@@ -298,7 +291,7 @@ private struct ReusedPasswordGroupDetailView: View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(String(localized: "Shared by"))
+                    Text(AppLocale.string("Shared by"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     passwordLine
@@ -359,8 +352,8 @@ private struct ReusedPasswordGroupDetailView: View {
             }
             .accessibilityLabel(
                 isRevealed
-                    ? String(localized: "Password revealed")
-                    : String(localized: "Password hidden")
+                    ? AppLocale.string("Password revealed")
+                    : AppLocale.string("Password hidden")
             )
 
             Button {
@@ -376,8 +369,8 @@ private struct ReusedPasswordGroupDetailView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(
                 isRevealed
-                    ? String(localized: "Hide password")
-                    : String(localized: "Reveal password")
+                    ? AppLocale.string("Hide password")
+                    : AppLocale.string("Reveal password")
             )
         }
     }
@@ -386,17 +379,13 @@ private struct ReusedPasswordGroupDetailView: View {
         let count = group.accountCount
         if group.protectedCount == 0 {
             return String(
-                format: String(
-                    localized:
-                        "%lld accounts share this password, and none of them has 2FA. One leak opens all of them."
+                format: AppLocale.string("%lld accounts share this password, and none of them has 2FA. One leak opens all of them."
                 ),
                 count
             )
         }
         return String(
-            format: String(
-                localized:
-                    "%lld accounts share this password. %lld of them still have 2FA as a second lock."
+            format: AppLocale.string("%lld accounts share this password. %lld of them still have 2FA as a second lock."
             ),
             count,
             group.protectedCount
@@ -409,8 +398,8 @@ private struct ReusedPasswordGroupDetailView: View {
         VStack(alignment: .leading, spacing: 14) {
             IdentitySectionHeader(
                 icon: "person.2.fill",
-                title: String(localized: "Accounts using it"),
-                subtitle: String(localized: "Give each one its own password."),
+                title: AppLocale.string("Accounts using it"),
+                subtitle: AppLocale.string("Give each one its own password."),
                 tint: group.risk.tint
             )
 
@@ -474,16 +463,16 @@ private struct ReusedPasswordGroupDetailView: View {
     private func subtitle(for account: ReusedPasswordAccount) -> String {
         if account.username.isEmpty {
             return account.has2FA
-                ? String(localized: "2FA is on")
-                : String(localized: "No 2FA")
+                ? AppLocale.string("2FA is on")
+                : AppLocale.string("No 2FA")
         }
         return account.has2FA
             ? String(
-                format: String(localized: "%@ · 2FA is on"),
+                format: AppLocale.string("%@ · 2FA is on"),
                 account.username
             )
             : String(
-                format: String(localized: "%@ · no 2FA"),
+                format: AppLocale.string("%@ · no 2FA"),
                 account.username
             )
     }
@@ -493,9 +482,7 @@ private struct ReusedPasswordGroupDetailView: View {
     private var guidanceSection: some View {
         IdentityNote(
             icon: "lock.shield.fill",
-            text: String(
-                localized:
-                    "Change these accounts one at a time. Breach detection is not available yet, so reuse is the clearest signal you have."
+            text: AppLocale.string("Change these accounts one at a time. Breach detection is not available yet, so reuse is the clearest signal you have."
             ),
             tint: .primaryBrandColor
         )

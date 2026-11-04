@@ -28,6 +28,46 @@ check() {
   fi
 }
 
+# 必须存在的键，但其值必须为 false（能力位一旦为 true，系统就会派发对应请求）
+check_false() {
+  local file="$1"
+  local key="$2"
+  local value
+  value=$(/usr/libexec/PlistBuddy -c "Print :$key" "$file" 2>/dev/null)
+  if [ "$value" = "false" ]; then
+    echo "  [OK] $file : $key = false"
+  else
+    echo "  [INVALID] $file : $key = ${value:-<missing>}（必须为 false）"
+    FAILED=1
+  fi
+}
+
+# 必须存在且取值必须等于期望值
+check_value() {
+  local file="$1"
+  local key="$2"
+  local expected="$3"
+  local value
+  value=$(/usr/libexec/PlistBuddy -c "Print :$key" "$file" 2>/dev/null)
+  if [ "$value" = "$expected" ]; then
+    echo "  [OK] $file : $key = $expected"
+  else
+    echo "  [INVALID] $file : $key = ${value:-<missing>}（必须为 $expected）"
+    FAILED=1
+  fi
+}
+
+# 必须存在的文件（不在 plist 内的产物，例如 bundle 自带的隐私清单）
+require_file() {
+  local file="$1"
+  if [ -f "$file" ]; then
+    echo "  [OK] $file 存在"
+  else
+    echo "  [MISSING] $file 不存在"
+    FAILED=1
+  fi
+}
+
 echo "[verify-entitlements] 校验必须存在的 entitlement / 能力声明 ..."
 
 # --- 主 App ---
@@ -37,6 +77,10 @@ check "$ROOT/VaultCell/VaultCell.entitlements" \
   "com.apple.security.application-groups"
 check "$ROOT/VaultCell/VaultCell.entitlements" \
   "keychain-access-groups"
+check "$ROOT/VaultCell/VaultCell.entitlements" \
+  "com.apple.developer.icloud-services"
+check "$ROOT/VaultCell/VaultCell.entitlements" \
+  "com.apple.developer.icloud-container-identifiers"
 
 # --- 凭据提供器扩展 ---
 check "$ROOT/AutoFillProvider/AutoFillProvider.entitlements" \
@@ -56,9 +100,49 @@ check "$ROOT/AutoFillProvider/Info.plist" \
 check "$ROOT/AutoFillProvider/Info.plist" \
   "NSExtension:NSExtensionAttributes:ASCredentialProviderExtensionCapabilities:SupportsCredentialExchange"
 
+# ⚠️ ProvidesPasskeys 必须为 false：本 App 尚未实现通行密钥。
+# 置 true 会让系统的 passkey 断言/注册请求派发到扩展，而扩展没有
+# completeAssertionRequest / completeRegistrationRequest 的实现，
+# 扫码登录（hybrid QR）会一直等不到回调 —— 表现为系统面板卡死。
+check_false "$ROOT/AutoFillProvider/Info.plist" \
+  "NSExtension:NSExtensionAttributes:ASCredentialProviderExtensionCapabilities:ProvidesPasskeys"
+
 # --- 主 App Info.plist 的凭据交换活动声明 ---
 check "$ROOT/VaultCell/Resources/Info.plist" \
   "NSUserActivityTypes"
+
+# --- 推送能力：CKSyncEngine 的 zone subscription 依赖静默推送 ---
+# 取值由 APS_ENVIRONMENT 构建设置提供（Debug=development / Release=production），
+# 直接写死 development 会让上架版本收不到同步通知，写死 production 则本地联调失败。
+check_value "$ROOT/VaultCell/VaultCell.entitlements" \
+  "aps-environment" '$(APS_ENVIRONMENT)'
+
+# --- 隐私清单：主 App 与扩展是独立 bundle，各自都要有 ---
+require_file "$ROOT/VaultCell/Resources/PrivacyInfo.xcprivacy"
+require_file "$ROOT/AutoFillProvider/PrivacyInfo.xcprivacy"
+
+# --- 打包产物检查（project.yml 改写后最容易静默退化）---
+PBXPROJ="$ROOT/VaultCell.xcodeproj/project.pbxproj"
+
+# 主 App 与扩展的资源阶段各统计一次（局限 PBXResourcesBuildPhase 段内，
+# 避免把 PBXBuildFile 定义行也数进来）
+privacy_count=$(
+  awk '/Begin PBXResourcesBuildPhase/,/End PBXResourcesBuildPhase/' "$PBXPROJ" |
+    grep -c "PrivacyInfo.xcprivacy in Resources" || true)
+if [ "${privacy_count:-0}" -eq 2 ]; then
+  echo "  [OK] 主 App 与扩展的资源阶段各有一份 PrivacyInfo.xcprivacy"
+else
+  echo "  [INVALID] PrivacyInfo.xcprivacy 应出现在 2 个资源阶段，实际 ${privacy_count:-0}（扩展缺隐私清单会触发 ITMS-91053）"
+  FAILED=1
+fi
+
+if awk '/Begin PBXResourcesBuildPhase/,/End PBXResourcesBuildPhase/' "$PBXPROJ" |
+  grep -q "\.md in Resources"; then
+  echo "  [INVALID] 仍有 markdown 文档被打进 bundle（project.yml 的 VaultCell.sources.excludes 需包含 **/*.md）"
+  FAILED=1
+else
+  echo "  [OK] bundle 中没有 markdown 文档"
+fi
 
 if [ "$FAILED" -ne 0 ]; then
   echo ""

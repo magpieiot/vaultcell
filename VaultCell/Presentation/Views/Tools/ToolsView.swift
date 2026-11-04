@@ -21,11 +21,11 @@ enum AutoLockInterval: Double, CaseIterable, Identifiable {
 
     var localizedTitle: String {
         switch self {
-        case .thirtySeconds: return String(localized: "30 Seconds")
-        case .sixtySeconds: return String(localized: "60 Seconds")
-        case .threeMinutes: return String(localized: "3 Minutes")
-        case .fiveMinutes: return String(localized: "5 Minutes")
-        case .never: return String(localized: "Never")
+        case .thirtySeconds: return AppLocale.string("30 Seconds")
+        case .sixtySeconds: return AppLocale.string("60 Seconds")
+        case .threeMinutes: return AppLocale.string("3 Minutes")
+        case .fiveMinutes: return AppLocale.string("5 Minutes")
+        case .never: return AppLocale.string("Never")
         }
     }
 }
@@ -41,10 +41,10 @@ enum ClipboardTimeout: Double, CaseIterable, Identifiable {
 
     var localizedTitle: String {
         switch self {
-        case .thirtySeconds: return String(localized: "30 Seconds")
-        case .sixtySeconds: return String(localized: "60 Seconds")
-        case .twoMinutes: return String(localized: "2 Minutes")
-        case .never: return String(localized: "Never")
+        case .thirtySeconds: return AppLocale.string("30 Seconds")
+        case .sixtySeconds: return AppLocale.string("60 Seconds")
+        case .twoMinutes: return AppLocale.string("2 Minutes")
+        case .never: return AppLocale.string("Never")
         }
     }
 }
@@ -52,14 +52,20 @@ enum ClipboardTimeout: Double, CaseIterable, Identifiable {
 /// 工具中心
 ///
 /// 上半部分是四个工具入口（卡片网格），下半部分是原来的设置项。
-/// 数据管理页已被取消：导入 / 导出 / 备份 / 恢复 / iCloud 直接放在一级，
+/// 数据管理页已被取消：导入 / 导出 / 备份 / 恢复直接放在一级，
 /// 相关文件选择器与弹窗也随之上移到这里挂载——漏挂会让按钮点了没反应。
+/// iCloud 开关与同步回执收在「同步与备份」子页，这里只留一个入口。
+/// 注意导入与恢复只能共用一个 `fileImporter`（见 `DataFilePickerMode`），
+/// 同层级挂两个时系统只认最后一个。
 struct ToolsView: View {
 
     @AppStorage(VaultKey.biometricEnabled) private var biometricEnabled = true
     @AppStorage(VaultKey.autoLockInterval) private var autoLockInterval = 30.0
     @AppStorage(VaultKey.clipboardTimeout) private var clipboardTimeout = 60.0
+    #if DEBUG
+    /// 仅开发模式提供：Release 包不暴露"列表滑动删除"开关
     @AppStorage(VaultKey.allowSwipeDeleteInVaultList) private var allowSwipeDeleteInVaultList = true
+    #endif
     /// 远程网站图标抓取开关：与 IconPreferences 读写同一个 key，默认值由地区在首启落盘一次
     @AppStorage(VaultKey.iconAutoFetch) private var iconAutoFetchEnabled = true
     /// 是否在安全评分页展示"已泄露"相关内容（顶部指标 + "为何被扣分"卡片，默认关闭）
@@ -67,6 +73,7 @@ struct ToolsView: View {
         false
     /// 外观模式：持久化用户的浅色 / 深色 / 跟随系统选择，由 App 根视图统一应用
     @AppStorage(VaultKey.appearanceMode) private var appearanceMode: AppAppearance = .system
+
     /// 「清除图标缓存」的瞬时回执（2 秒后复原）
     @State private var didClearIconCache = false
 
@@ -86,8 +93,25 @@ struct ToolsView: View {
         )
     }
 
+    /// 一级入口只显示简短状态，开关、错误详情与重试统一放到「同步与备份」子页
+    private var syncBadge: String {
+        switch appState.syncStatus {
+        case .idle:
+            return appState.isCloudSyncEnabled
+                ? AppLocale.string("Enabled") : AppLocale.string("Not Enabled")
+        case .inProgress:
+            return AppLocale.string("Sync in progress...")
+        case .completed:
+            return AppLocale.string("Sync completed")
+        case .failed:
+            return AppLocale.string("Sync failed")
+        }
+    }
+
     @State private var showingChangePassword = false
+    #if DEBUG
     @State private var isSeedingTestData = false
+    #endif
     @State private var showingLanguagePicker = false
     @State private var showingResetVerify = false
     @State private var showingTrash = false
@@ -98,7 +122,6 @@ struct ToolsView: View {
     @State private var reusedGroupCount = 0
 
     /// 数据操作状态（原 DataManagementView）：加密备份导出走「设密码 → 系统保存面板」两步
-    @State private var iCloudSyncEnabled = true
     @State private var showingExportPasswordSheet = false
     @State private var showingExporter = false
     @State private var exportDocument: VaultBackupDocument?
@@ -140,12 +163,15 @@ struct ToolsView: View {
                 toolsSection
                 generalSection
                 securitySection
-                autoFillSection
                 //breachDetectionSection
                 privacySection
                 dataSection
                 aboutSection
+                autoFillSection
+                #if DEBUG
+                // 开发模式（生成测试库 / 滑动删除开关）只存在于 Debug 包
                 developmentModeSection
+                #endif
                 dangerSection
             }
             .listStyle(.insetGrouped)
@@ -154,7 +180,7 @@ struct ToolsView: View {
             .contentMargins(.top, 6, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(SettingsBackground())
-            .navigationTitle(String(localized: "Tools"))
+            .navigationTitle(AppLocale.string("Tools"))
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingChangePassword) {
                 ChangeMasterPasswordView()
@@ -197,21 +223,14 @@ struct ToolsView: View {
                     }
                 }
             }
-            // 导入：自动识别来源
+            // 导入与备份恢复共用一个文件选择器：同一层级挂两个 fileImporter 时，
+            // 系统只认最后一个，导入入口会点了没反应。用途由 filePickerMode 决定。
             .fileImporter(
-                isPresented: $settingsVM.showingImportPicker,
-                allowedContentTypes: [.commaSeparatedText, .text, .json, .data],
+                isPresented: $settingsVM.showingFilePicker,
+                allowedContentTypes: settingsVM.filePickerContentTypes,
                 allowsMultipleSelection: false
             ) { result in
-                settingsVM.handleImportResult(result)
-            }
-            // 备份恢复：先选择 .vgbackup 文件
-            .fileImporter(
-                isPresented: $settingsVM.showingRestorePicker,
-                allowedContentTypes: [.vaultBackup, .data, .item],
-                allowsMultipleSelection: false
-            ) { result in
-                settingsVM.handleRestorePickerResult(result)
+                settingsVM.handleFilePickerResult(result)
             }
             // 备份恢复：选择文件后输入备份密码
             .sheet(isPresented: $settingsVM.showingRestorePasswordSheet) {
@@ -277,18 +296,22 @@ struct ToolsView: View {
         ) { alert in
             switch alert {
             case .resetConfirm:
-                Button(String(localized: "Reset"), role: .destructive) {
+                Button(AppLocale.string("Reset"), role: .destructive) {
                     settingsVM.alert = nil
                     showingResetVerify = true
                 }
-                Button(String(localized: "Cancel"), role: .cancel) {}
+                Button(AppLocale.string("Cancel"), role: .cancel) {}
+            #if DEBUG
             case .seedConfirm:
-                Button(String(localized: "Generate")) {
+                Button(AppLocale.string("Generate")) {
                     Task { await seedTestPasswords() }
                 }
-                Button(String(localized: "Cancel"), role: .cancel) {}
-            case .resetFailed, .seedResult, .operationResult:
-                Button(String(localized: "OK"), role: .cancel) {}
+                Button(AppLocale.string("Cancel"), role: .cancel) {}
+            case .seedResult:
+                Button(AppLocale.string("OK"), role: .cancel) {}
+            #endif
+            case .operationResult:
+                Button(AppLocale.string("OK"), role: .cancel) {}
             }
         } message: { alert in
             Text(alert.message)
@@ -400,13 +423,17 @@ struct ToolsView: View {
             Section("AutoFill") {
                 HStack {
                     CustomLabel(
-                        leadingIcon: report.isEnabled ? "checkmark.seal.fill" : "exclamationmark.triangle.fill",
+                        leadingIcon: report.isEnabled
+                            ? "checkmark.seal.fill" : "exclamationmark.triangle.fill",
                         leadingIconColor: report.isEnabled ? .primaryBrandColor : .errorColor,
                         text: "Status")
                     Spacer()
-                    Text(report.isEnabled ? String(localized: "Enabled") : String(localized: "Not Enabled"))
-                        .font(.subheadline)
-                        .foregroundColor(report.isEnabled ? .secondary : .errorColor)
+                    Text(
+                        report.isEnabled
+                            ? AppLocale.string("Enabled") : AppLocale.string("Not Enabled")
+                    )
+                    .font(.subheadline)
+                    .foregroundColor(report.isEnabled ? .secondary : .errorColor)
                 }
 
                 HStack {
@@ -421,7 +448,8 @@ struct ToolsView: View {
 
                 HStack {
                     CustomLabel(
-                        leadingIcon: "square.stack.3d.up.fill", leadingIconColor: .secondaryBrandColor,
+                        leadingIcon: "square.stack.3d.up.fill",
+                        leadingIconColor: .secondaryBrandColor,
                         text: "Entries Synced")
                     Spacer()
                     Text("\(report.entryCount)")
@@ -432,7 +460,8 @@ struct ToolsView: View {
                 if report.droppedEntryCount > 0 {
                     HStack {
                         CustomLabel(
-                            leadingIcon: "exclamationmark.triangle.fill", leadingIconColor: .errorColor,
+                            leadingIcon: "exclamationmark.triangle.fill",
+                            leadingIconColor: .errorColor,
                             text: "Dropped Entries")
                         Spacer()
                         Text("\(report.droppedEntryCount)")
@@ -443,7 +472,8 @@ struct ToolsView: View {
 
                 HStack {
                     CustomLabel(
-                        leadingIcon: "clock.arrow.circlepath", leadingIconColor: .secondaryBrandColor,
+                        leadingIcon: "clock.arrow.circlepath",
+                        leadingIconColor: .secondaryBrandColor,
                         text: "Last Sync")
                     Spacer()
                     Text(report.date, style: .relative)
@@ -482,9 +512,7 @@ struct ToolsView: View {
             .tint(.primaryBrandColor)
         } footer: {
             Text(
-                String(
-                    localized:
-                        "Breach detection is not available yet, so compromised entries do not lower your score. Turn this on to list them under Security Score."
+                AppLocale.string("Breach detection is not available yet, so compromised entries do not lower your score. Turn this on to list them under Security Score."
                 )
             )
         }
@@ -558,10 +586,10 @@ struct ToolsView: View {
 
             // 导入：自动识别本 app 导出的 CSV/JSON 与 Chrome CSV
             Button {
-                settingsVM.showingImportPicker = true
+                settingsVM.presentImportPicker()
             } label: {
                 if settingsVM.isImporting {
-                    dataOperationRow(title: String(localized: "Importing..."))
+                    dataOperationRow(title: AppLocale.string("Importing..."))
                 } else {
                     CustomLabel(
                         leadingIcon: "tray.and.arrow.down", leadingIconColor: .secondaryBrandColor,
@@ -592,10 +620,10 @@ struct ToolsView: View {
 
             // 恢复：选择 .vgbackup 文件并输入备份密码后导入条目
             Button {
-                settingsVM.showingRestorePicker = true
+                settingsVM.presentRestorePicker()
             } label: {
                 if settingsVM.isRestoring {
-                    dataOperationRow(title: String(localized: "Restoring..."))
+                    dataOperationRow(title: AppLocale.string("Restoring..."))
                 } else {
                     CustomLabel(
                         leadingIcon: "arrow.uturn.left.circle",
@@ -605,14 +633,21 @@ struct ToolsView: View {
             }
             .disabled(isDataOperationRunning)
 
-            // iCloud 同步开关（正式版本接入实现）
-            Toggle(isOn: $iCloudSyncEnabled) {
-                CustomLabel(
-                    leadingIcon: "icloud", leadingIconColor: .secondaryBrandColor,
-                    text: "iCloud sync"
-                )
+            NavigationLink {
+                CloudSyncView()
+            } label: {
+                HStack {
+                    CustomLabel(
+                        leadingIcon: "icloud", leadingIconColor: .secondaryBrandColor,
+                        text: "Sync & Backup"
+                    )
+                    Spacer()
+                    Text(syncBadge)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
             }
-            .tint(.primaryBrandColor)
         }
     }
 
@@ -664,16 +699,27 @@ struct ToolsView: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: Text(String(localized: "Font Size"))) {
+            /*
+            NavigationLink(destination: Text(AppLocale.string("Font Size"))) {
                 CustomLabel(
                     leadingIcon: "textformat.size", leadingIconColor: .secondary, text: "Font Size")
             }
+            */
+
+            // 开关直接绑定列表 ViewModel：切换后列表立即重排，落盘由 ViewModel 的 didSet 完成
+            Toggle(isOn: $viewModel.pinFavoritesToTop) {
+                CustomLabel(
+                    leadingIcon: "star.fill", leadingIconColor: .secondary,
+                    text: "Pin Favorites to Top")
+            }
+            .tint(.primaryBrandColor)
 
             NavigationLink(destination: CategoryManagementView(viewModel: viewModel)) {
                 CustomLabel(
                     leadingIcon: "tag.fill", leadingIconColor: .secondaryBrandColor,
                     text: "Password Categories")
             }
+
         }
     }
 
@@ -694,6 +740,9 @@ struct ToolsView: View {
 
     // MARK: - 开发模式
 
+    #if DEBUG
+    /// 开发模式：生成测试库与列表滑动删除开关，仅 Debug 包可见
+    /// （上架包不暴露测试数据入口，避免审核判定为半成品功能，也避免污染用户密码库）
     private var developmentModeSection: some View {
         Section("Development Mode") {
             Toggle(isOn: $allowSwipeDeleteInVaultList) {
@@ -714,6 +763,7 @@ struct ToolsView: View {
             .disabled(isSeedingTestData)
         }
     }
+    #endif
 
     // MARK: - 危险区
 
@@ -736,9 +786,7 @@ struct ToolsView: View {
                 .foregroundColor(.errorColor)
         } footer: {
             Text(
-                String(
-                    localized:
-                        "Resetting will clear Keychain and local data. This action cannot be undone."
+                AppLocale.string("Resetting will clear Keychain and local data. This action cannot be undone."
                 )
             )
             .padding(.bottom, 80)
@@ -747,6 +795,8 @@ struct ToolsView: View {
 
     // MARK: - 测试库
 
+    #if DEBUG
+    /// 生成测试库：仅 Debug 包可用，上架包不包含该入口
     private func seedTestPasswords() async {
         guard !isSeedingTestData else { return }
 
@@ -857,6 +907,7 @@ struct ToolsView: View {
             "Test vault generated: \(insertedCount) passwords, \(insertedPincodeCount) pincodes, \(insertedBankcardCount) bankcards added, \(skippedCount) duplicates skipped. \(storedCount) total passwords stored locally."
         )
     }
+    #endif
 
     /// 备份导出默认文件名（时间戳后缀，避免同名覆盖）
     private static func makeBackupFilename() -> String {

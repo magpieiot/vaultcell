@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — VaultCell</title>
+<meta name="description" content="How VaultCell handles your data: on-device encryption, optional iCloud sync, and the single outbound website-icon request.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/legal.css">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="wordmark" href="index.html"><span class="dot" aria-hidden="true"></span>VaultCell</a>
+    <nav class="doc-switch" aria-label="Legal documents">
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell page" id="content">
+  <div class="page-head">
+    <p class="eyebrow">Legal</p>
+    <h1>Privacy Policy</h1>
+    <dl class="meta">
+      <div><dt>Last updated</dt><dd>November 2, 2026</dd></div>
+      <div><dt>Applies to</dt><dd>VaultCell for iOS, version 1.0 and later</dd></div>
+    </dl>
+  </div>
+
+  <div class="layout">
+    <details class="toc" id="toc">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#who-we-are">1. Who We Are</a></li>
+        <li><a href="#the-short-version">2. The Short Version</a></li>
+        <li><a href="#information-stored-on-your-device">3. Information Stored on Your Device</a></li>
+        <li><a href="#how-your-data-is-protected">4. How Your Data Is Protected</a></li>
+        <li><a href="#biometric-unlock">5. Biometric Unlock</a></li>
+        <li><a href="#optional-icloud-sync">6. Optional iCloud Sync</a></li>
+        <li><a href="#the-one-outbound-request-website-icons">7. The One Outbound Request: Website Icons</a></li>
+        <li><a href="#autofill-extension">8. AutoFill Extension</a></li>
+        <li><a href="#third-party-code">9. Third-Party Code</a></li>
+        <li><a href="#what-we-do-not-collect">10. What We Do Not Collect</a></li>
+        <li><a href="#exports-and-backups">11. Exports and Backups</a></li>
+        <li><a href="#retention-and-deletion">12. Retention and Deletion</a></li>
+        <li><a href="#your-privacy-rights">13. Your Privacy Rights</a></li>
+        <li><a href="#children-s-privacy">14. Children's Privacy</a></li>
+        <li><a href="#international-transfers">15. International Transfers</a></li>
+        <li><a href="#security-incidents">16. Security Incidents</a></li>
+        <li><a href="#contact">17. Contact</a></li>
+        <li><a href="#changes-to-this-policy">18. Changes to This Policy</a></li>
+      </ol>
+    </details>
+    <article class="prose">
+<h2 id="who-we-are">1. Who We Are</h2>
+<p>VaultCell is an iOS password manager developed and published by Gavan Wang ("we," "us," "our"), an independent developer. This policy explains what happens to information when you use the VaultCell app (the "App") and its AutoFill extension.</p>
+<p>We do not operate any backend servers for the App. We have no user accounts, no sign-up, and no way to associate a vault with a person.</p>
+
+<h2 id="the-short-version">2. The Short Version</h2>
+<ul>
+<li><strong>Your vault never reaches us.</strong> Everything you enter is encrypted on your device before it is written to disk. We hold no copy and no key.</li>
+<li><strong>No accounts, no tracking, no analytics.</strong> The App contains no analytics, advertising, or crash-reporting SDK.</li>
+<li><strong>iCloud sync is optional and off by default.</strong> If you enable it, already-encrypted records go to <em>your own</em> private iCloud database, which we cannot read or access.</li>
+<li><strong>A forgotten master password cannot be recovered</strong> — not by you, and not by us. This is a consequence of the design, not a policy choice.</li>
+</ul>
+
+<h2 id="information-stored-on-your-device">3. Information Stored on Your Device</h2>
+<p>The App stores the following, entered by you, in an encrypted local database:</p>
+<ul>
+<li>Passwords and login credentials</li>
+<li>Secure notes</li>
+<li>Bank card details</li>
+<li>Two-factor authentication secrets (TOTP) and backup codes</li>
+<li>Tags, categories, and app preferences</li>
+</ul>
+<p>This data is created by you and remains under your control. We do not receive it.</p>
+
+<h2 id="how-your-data-is-protected">4. How Your Data Is Protected</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bulk encryption</td>
+<td>AES-256-GCM via Apple CryptoKit, authenticated encryption</td>
+</tr>
+<tr>
+<td>Key derivation</td>
+<td>PBKDF2-SHA256, 600,000 iterations, 256-bit salt, 256-bit derived key</td>
+</tr>
+<tr>
+<td>Master password</td>
+<td>Never stored, never transmitted. It exists only in memory while the vault is unlocked</td>
+</tr>
+<tr>
+<td>Unlocked key material</td>
+<td>Device Keychain, protected by the Secure Enclave</td>
+</tr>
+<tr>
+<td>Brute-force resistance</td>
+<td>Progressive throttle on failed unlock attempts</td>
+</tr>
+</tbody>
+</table></div>
+<p>Because the master password is never stored or transmitted, there is no server-side reset, no recovery key held by us, and no backdoor. If you lose your master password and have no encrypted backup, your data is permanently inaccessible.</p>
+
+<h2 id="biometric-unlock">5. Biometric Unlock</h2>
+<p>If you enable Face ID or Touch ID, iOS unlocks a key stored in your device Keychain and protected by the Secure Enclave. Biometric data is handled entirely by iOS: it never leaves your device, is never copied by the App, and is never transmitted to us or anyone else. We receive only a success or failure result.</p>
+<p>You can disable biometric unlock at any time in Settings; the master password continues to work.</p>
+
+<h2 id="optional-icloud-sync">6. Optional iCloud Sync</h2>
+<p><strong>Sync is off by default.</strong> Nothing leaves your device until you deliberately turn it on in Settings.</p>
+<p>When enabled:</p>
+<ul>
+<li><strong>What is uploaded:</strong> only records that are <em>already encrypted</em> on your device. The App uses Apple's CloudKit framework (<code>CKSyncEngine</code>) to write these encrypted records to a private zone in <em>your</em> iCloud account, under the container <code>iCloud.com.magpie.vaultcell</code>.</li>
+<li><strong>Who can read it:</strong> you, through your Apple ID. The database is a <em>private</em> CloudKit database. We have no credentials, no access grant, and no ability to query it.</li>
+<li><strong>Apple's role:</strong> Apple Inc. provides the iCloud storage and transport. Apple's handling of data in your iCloud account is governed by Apple's terms and privacy policy, not this one. Encrypted payloads pass through Apple's infrastructure; Apple cannot decrypt them either.</li>
+<li><strong>Silent notifications:</strong> to keep multiple devices in step, the App registers for silent push notifications from Apple. These wake the App so it can fetch changes. Notifications contain no credential content.</li>
+<li><strong>Turning it off:</strong> disabling sync stops further syncing. Records already written to iCloud remain there until you delete them or delete the App's iCloud data through iOS settings.</li>
+<li><strong>No Apple ID:</strong> every feature except multi-device sync continues to work locally.</li>
+</ul>
+<p>If you never enable sync, the App's only outbound network request is the optional website-icon lookup described in Section 7.</p>
+
+<h2 id="the-one-outbound-request-website-icons">7. The One Outbound Request: Website Icons</h2>
+<p>To display a recognizable icon for a saved login, the App may send a single HTTP request to the website address you stored for that entry, asking for its favicon or site manifest.</p>
+<ul>
+<li>The request goes <strong>directly from your device to that website</strong>. It does not pass through any server of ours.</li>
+<li>The operator of that website may therefore see your IP address and the fact that a request was made, exactly as if you had visited it in a browser.</li>
+<li>This is the only situation in which the App contacts a third-party server on your behalf.</li>
+<li>You can disable it at <strong>Settings → Tools → Website Icons</strong>. With that switch off, the App makes no network requests at all (unless you have enabled iCloud sync), and icons fall back to locally generated placeholders.</li>
+</ul>
+
+<h2 id="autofill-extension">8. AutoFill Extension</h2>
+<p>VaultCell includes an AutoFill Credential Provider extension so you can fill passwords in Safari and other apps.</p>
+<ul>
+<li>The extension reads the same encrypted vault file as the main App, through a shared App Group container.</li>
+<li>It cannot read plaintext without the vault being unlocked by you.</li>
+<li>It supplies iOS with the <em>identity</em> of matching credentials (site, username) so the QuickType bar can offer them. Your passwords are handed to the requesting app only after you authenticate and explicitly select an entry.</li>
+<li>The extension does not read, capture, or transmit anything from other apps' contents.</li>
+</ul>
+
+<h2 id="third-party-code">9. Third-Party Code</h2>
+<p>The App links only two third-party open-source libraries:</p>
+<ul>
+<li><strong>SnapKit</strong> — Auto Layout helpers. No networking, no data collection.</li>
+<li><strong>KeychainAccess</strong> — a thin wrapper over the iOS Keychain. No networking, no data collection.</li>
+</ul>
+<p>There are no analytics SDKs, no advertising SDKs, no crash-reporting SDKs, no attribution SDKs, and no social-media SDKs. No third-party code in the App receives your data.</p>
+<p>Consequently, the App Store privacy questionnaire for VaultCell declares that <strong>no data is collected</strong>.</p>
+
+<h2 id="what-we-do-not-collect">10. What We Do Not Collect</h2>
+<p>We do not collect, and have no technical means of obtaining:</p>
+<ul>
+<li>Your name, email address, phone number, or postal address</li>
+<li>Account credentials of any kind</li>
+<li>Device identifiers (IDFA, IDFV), advertising identifiers, or fingerprinting signals</li>
+<li>IP addresses</li>
+<li>Location data (precise or coarse)</li>
+<li>Contacts, calendars, photos, or health data</li>
+<li>Usage analytics, session recordings, or behavioural profiles</li>
+<li>Crash logs or diagnostics sent to us (iOS may offer to share these with Apple; that is between you and Apple)</li>
+</ul>
+
+<h2 id="exports-and-backups">11. Exports and Backups</h2>
+<p>You can export your vault at any time.</p>
+<ul>
+<li><strong>Encrypted backup (<code>.vgbackup</code>):</strong> protected by a backup password you choose. The file goes exactly where you save it — Files, AirDrop, another app. It never passes through a server of ours. Anyone with the file <em>and</em> the password can read it, so store both carefully.</li>
+<li><strong>Plaintext export (CSV / JSON):</strong> produces an unencrypted file for migration to another password manager. It contains your credentials in the clear. Delete it once migration is complete.</li>
+</ul>
+<p>We cannot access, recover, or restore either kind of file for you.</p>
+
+<h2 id="retention-and-deletion">12. Retention and Deletion</h2>
+<ul>
+<li><strong>Delete items:</strong> remove any entry at any time inside the App.</li>
+<li><strong>Erase the vault:</strong> Settings → Reset Vault destroys the local vault and its key material. If sync is enabled, the deletion propagates to your CloudKit zone.</li>
+<li><strong>Uninstall:</strong> removing the App deletes its container and the encrypted vault file inside it. Note two exceptions that iOS controls: Keychain entries may survive an uninstall and reappear on reinstall (cleared only by Reset Vault or by erasing the device), and iCloud data may persist under your Apple ID until you remove it via iOS Settings → Apple ID → iCloud → Manage Account Storage.</li>
+<li><strong>Retention by us:</strong> zero. We hold no copy of your vault, so there is nothing for us to retain or delete.</li>
+</ul>
+<p>Because deletion is immediate and cryptographic, erased data cannot be restored by us. Export an encrypted backup first if you might need the data later.</p>
+
+<h2 id="your-privacy-rights">13. Your Privacy Rights</h2>
+<p>Even though we hold no vault data, privacy laws such as the EU/UK General Data Protection Regulation ("GDPR") and the California Consumer Privacy Act as amended by the CPRA ("CCPA/CPRA") grant you rights that we respect:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Right</th>
+<th>How it applies here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access / portability</td>
+<td>Your data is on your device and exportable at any time via Settings → Export Data. That is the complete record — there is no shadow copy held by us.</td>
+</tr>
+<tr>
+<td>Rectification</td>
+<td>Edit any entry directly in the App.</td>
+</tr>
+<tr>
+<td>Erasure</td>
+<td>Delete individual items or reset the vault. See Section 12.</td>
+</tr>
+<tr>
+<td>Objection / restriction</td>
+<td>Disable iCloud sync and Website Icons to eliminate all network activity.</td>
+</tr>
+<tr>
+<td>Non-discrimination</td>
+<td>Exercising any of these rights has no effect on your use of the App.</td>
+</tr>
+<tr>
+<td>Opt out of sale/sharing</td>
+<td>We have never sold or shared personal information, and have no data to sell.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Data controller.</strong> We do not act as a controller or processor of your vault contents, because those contents never reach us in readable or attributable form. Where you contact us by email, we process your email address and message solely to respond, and delete it when the matter is closed.</p>
+<p><strong>Exercising your rights.</strong> Write to the address in Section 17. We respond within 30 days. If you are unsatisfied, you may lodge a complaint with your local supervisory authority (in the EU/UK) or the California Privacy Protection Agency.</p>
+
+<h2 id="children-s-privacy">14. Children's Privacy</h2>
+<p>The App is not directed at children under 13. We do not knowingly collect personal information from anyone, including children, because we do not collect personal information at all. A parent or guardian who lets a minor use the App should understand that the vault is protected solely by its master password, and that a forgotten master password means permanent loss of the data. See the COPPA and GDPR provisions above; our compliance rests on the absence of collection, not on age gating.</p>
+
+<h2 id="international-transfers">15. International Transfers</h2>
+<p>We do not transfer your vault data anywhere, because we never receive it. If you enable iCloud sync, Apple stores and moves your encrypted records according to your Apple ID's region and Apple's own terms. Encrypted payloads remain unreadable in transit and at rest.</p>
+
+<h2 id="security-incidents">16. Security Incidents</h2>
+<p>If we ever learn of a vulnerability or incident that could affect the confidentiality of vault data, we will publish details and remediation guidance at our website and in the App's release notes as soon as practicable. Note the structural limit of the risk: we hold no keys and no ciphertext, so an incident on our side cannot expose vault contents. Risks that matter in practice are device-level (malware, jailbreak, shoulder-surfing, weak master passwords) and are addressed in the Terms.</p>
+
+<h2 id="contact">17. Contact</h2>
+<p>Questions about this policy or about how VaultCell handles data:</p>
+<p><strong>Email:</strong> <a href="mailto:magpieiot@gmail.com">magpieiot@gmail.com</a>
+<strong>Website:</strong> <a href="https://www.magpieai.app">www.magpieai.app</a></p>
+
+<h2 id="changes-to-this-policy">18. Changes to This Policy</h2>
+<p>We may update this policy as the App evolves. Material changes will be reflected in the "Last Updated" date above and, for significant changes, noted in the App's release notes. The copy shipped inside the App (Settings → About → Privacy Policy) always describes what the installed version actually does. If the App ever gains a capability this policy does not describe, the policy will be updated before that capability ships.</p>
+
+<p>© 2026 Gavan Wang. All rights reserved.</p>
+    </article>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-inner">
+    <span>&copy; 2026 Gavan Wang &middot; VaultCell</span>
+    <span class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="mailto:magpieiot@gmail.com">Contact</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // 桌面端目录常驻展开；移动端默认折叠，点开才占空间
+  (function () {
+    var toc = document.getElementById("toc");
+    if (toc && window.matchMedia("(min-width: 1000px)").matches) toc.open = true;
+  })();
+</script>
+</body>
+</html>
