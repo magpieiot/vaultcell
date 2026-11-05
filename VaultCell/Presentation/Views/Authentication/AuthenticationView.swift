@@ -135,11 +135,15 @@ struct AuthLogo: View {
             // 形成"偏移→测量→再偏移"的逐帧反馈循环，必须用替身隔离
             Color.clear
                 .frame(width: 240, height: 240)
-                .onGeometryChange(for: CGFloat.self, of: { proxy in
-                    proxy.frame(in: .global).midY
-                }, action: { newValue in
-                    logoMidY = newValue
-                })
+                .onGeometryChange(
+                    for: CGFloat.self,
+                    of: { proxy in
+                        proxy.frame(in: .global).midY
+                    },
+                    action: { newValue in
+                        logoMidY = newValue
+                    }
+                )
                 .overlay {
                     ZStack {
                         // 外层柔光晕
@@ -147,7 +151,9 @@ struct AuthLogo: View {
                         Circle()
                             .fill(
                                 RadialGradient(
-                                    gradient: Gradient(colors: [accent.opacity(0.35), accent.opacity(0)]),
+                                    gradient: Gradient(colors: [
+                                        accent.opacity(0.35), accent.opacity(0),
+                                    ]),
                                     center: .center,
                                     startRadius: 50,
                                     endRadius: 120
@@ -198,7 +204,9 @@ struct AuthLogo: View {
                     }
                     .scaleEffect(isRelaying ? launchLogoSide / logoSide : (appeared ? 1.0 : 0.85))
                     .opacity(appeared ? 1.0 : 0.0)
-                    .offset(y: (isRelaying ? UIScreen.main.bounds.height / 2 - logoMidY : 0) + (floating ? -5 : 5))
+                    .offset(
+                        y: (isRelaying ? UIScreen.main.bounds.height / 2 - logoMidY : 0)
+                            + (floating ? -5 : 5))
                 }
 
             VStack(spacing: 6) {
@@ -320,7 +328,8 @@ struct CreateVaultView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label {
                     Text(
-                        AppLocale.string("Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."
+                        AppLocale.string(
+                            "Your master password encrypts the entire vault and cannot be recovered. Please keep it safe."
                         )
                     )
                     .font(.subheadline)
@@ -587,6 +596,9 @@ private struct DividerLabel: View {
             Text(text)
                 .font(.footnote)
                 .foregroundColor(.secondary)
+                // 先让文案拿到固有宽度，剩余空间才由两条分隔线平分，避免被压出省略号
+                .fixedSize(horizontal: true, vertical: false)
+                .lineLimit(1)
             line
         }
         .padding(.vertical, 2)
