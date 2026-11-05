@@ -97,6 +97,10 @@ enum ResetVaultOutcome {
 /// 设置页弹窗状态：收敛重置/测试库/数据操作相关的确认框与结果提示
 enum SettingsAlert: Identifiable {
     case resetConfirm
+    /// 清除 iCloud 云端数据的二次确认
+    case clearICloudConfirm
+    /// 清除 iCloud 云端数据的结果
+    case clearICloudResult(succeeded: Bool, message: String)
     #if DEBUG
     /// 生成测试库（仅 Debug 包）
     case seedConfirm
@@ -107,6 +111,8 @@ enum SettingsAlert: Identifiable {
     var id: String {
         switch self {
         case .resetConfirm: return "resetConfirm"
+        case .clearICloudConfirm: return "clearICloudConfirm"
+        case .clearICloudResult: return "clearICloudResult"
         #if DEBUG
         case .seedConfirm: return "seedConfirm"
         case .seedResult: return "seedResult"
@@ -119,6 +125,12 @@ enum SettingsAlert: Identifiable {
         switch self {
         case .resetConfirm:
             return AppLocale.string("Reset Vault?")
+        case .clearICloudConfirm:
+            return AppLocale.string("Clear iCloud Data?")
+        case .clearICloudResult(let succeeded, _):
+            return succeeded
+                ? AppLocale.string("iCloud Data Cleared")
+                : AppLocale.string("Clear Failed")
         #if DEBUG
         case .seedConfirm:
             return AppLocale.string("Generate Test Vault?")
@@ -134,6 +146,10 @@ enum SettingsAlert: Identifiable {
         switch self {
         case .resetConfirm:
             return AppLocale.string("This will clear Keychain and local vault data. This action cannot be undone.")
+        case .clearICloudConfirm:
+            return AppLocale.string("This deletes the encrypted vault data stored in your private iCloud account on all your devices. Data on this device is kept, and iCloud sync will be turned off.")
+        case .clearICloudResult(_, let message):
+            return message
         #if DEBUG
         case .seedConfirm:
             return AppLocale.string("This will generate 40+ test entries (passwords, pincodes, and bank cards), at least one for each common app, and will not generate duplicates if they already exist.")
@@ -326,6 +342,28 @@ final class SettingsViewModel: ObservableObject {
         // 搜索历史里留着旧库的站点名，一并清掉
         SearchHistoryStore.clearAll()
         Self.setSeedTestVaultGenerated(false)
+    }
+
+    // MARK: - iCloud 云端数据清除
+
+    /// 清除 iCloud 云端同步数据：先停同步引擎，再删 zone 与订阅，最后复位本机同步游标。
+    ///
+    /// 本地密码库、钥匙串与登录状态不变。删除失败时不复位游标，
+    /// 以免下次同步丢失比对基线、把云端残留记录当成新数据重复写入。
+    func clearICloudData() async {
+        await appState?.setCloudSyncEnabled(false)
+        do {
+            try await CloudVaultClearService().clearCloudData()
+        } catch {
+            alert = .clearICloudResult(succeeded: false, message: error.localizedDescription)
+            return
+        }
+        SyncLocalStore.shared.resetForVaultReset()
+        UserDefaults.standard.removeObject(forKey: VaultKey.pendingCloudRestoreDownload)
+        alert = .clearICloudResult(
+            succeeded: true,
+            message: AppLocale.string("iCloud data has been cleared. Data on this device is kept.")
+        )
     }
 
     // MARK: - 文件选择器

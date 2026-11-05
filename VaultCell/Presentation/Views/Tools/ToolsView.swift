@@ -51,11 +51,8 @@ enum ClipboardTimeout: Double, CaseIterable, Identifiable {
 /// 工具中心
 ///
 /// 上半部分是四个工具入口（卡片网格），下半部分是原来的设置项。
-/// 数据管理页已被取消：导入 / 导出留在一级，备份 / 恢复与 iCloud 同步
-/// 一起收进「同步与备份」子页，这里只留一个入口。
-/// 导入的文件选择器仍挂在这里——漏挂会让按钮点了没反应。
-/// 注意导入与恢复只能共用一个 `fileImporter`（见 `DataFilePickerMode`），
-/// 同层级挂两个时系统只认最后一个。
+/// 数据管理页已被取消：导入 / 导出 / 清除类操作收进「数据中心」子页，
+/// 备份 / 恢复与 iCloud 同步收进「同步与备份」子页，这里只留两个入口。
 struct ToolsView: View {
 
     @AppStorage(VaultKey.biometricEnabled) private var biometricEnabled = true
@@ -112,7 +109,6 @@ struct ToolsView: View {
     @State private var isSeedingTestData = false
     #endif
     @State private var showingLanguagePicker = false
-    @State private var showingResetVerify = false
     @State private var showingTrash = false
     /// 换号 / 注销前必须处理的联系方式数量（进入页面时计算一次）
     @State private var blockingPhoneCount = 0
@@ -120,10 +116,7 @@ struct ToolsView: View {
     /// 被多个账户共用的密码组数量（进入页面时计算一次）
     @State private var reusedGroupCount = 0
 
-    /// 明文导出（CSV / JSON）的分类勾选界面
-    @State private var showingExportSheet = false
-
-    /// 设置页业务逻辑：导入 / 回收站计数 / 重置 / 弹窗状态
+    /// 设置页业务逻辑：回收站计数 / 弹窗状态
     @StateObject private var settingsVM = SettingsViewModel()
 
     /// 最近一次自动填充身份同步结果（供下方诊断区展示）
@@ -143,11 +136,6 @@ struct ToolsView: View {
         }
     }
 
-    /// 数据操作进行中时禁用导入 / 导出入口
-    private var isDataOperationRunning: Bool {
-        settingsVM.isImporting || settingsVM.isRestoring
-    }
-
     var body: some View {
         NavigationStack {
             List {
@@ -163,12 +151,13 @@ struct ToolsView: View {
                 // 开发模式（生成测试库 / 滑动删除开关）只存在于 Debug 包
                 developmentModeSection
                 #endif
-                dangerSection
             }
             .listStyle(.insetGrouped)
             // 首个 Section 上方的系统默认留白偏大，这里压到 6pt；
             // 卡片行自身的 top inset 见 toolsSection
             .contentMargins(.top, 6, for: .scrollContent)
+            // 原危险区 footer 承担的底部留白，移除后改由列表内容边距避开浮动 TabBar
+            .contentMargins(.bottom, 80, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(SettingsBackground())
             .navigationTitle(AppLocale.string("Tools"))
@@ -179,11 +168,6 @@ struct ToolsView: View {
             .sheet(isPresented: $showingLanguagePicker) {
                 LanguagePickerView()
             }
-            .sheet(isPresented: $showingResetVerify) {
-                ResetVaultVerifyView { password in
-                    await settingsVM.verifyAndReset(masterPassword: password)
-                }
-            }
             .sheet(
                 isPresented: $showingTrash,
                 onDismiss: {
@@ -192,19 +176,6 @@ struct ToolsView: View {
                 }
             ) {
                 TrashView()
-            }
-            // 明文导出（CSV / JSON）
-            .sheet(isPresented: $showingExportSheet) {
-                ExportDataView(settingsVM: settingsVM)
-            }
-            // 导入的文件选择器；备份恢复的选择器挂在「同步与备份」子页，
-            // 两者不在同一视图层级，避免系统只认最后一个 fileImporter。
-            .fileImporter(
-                isPresented: $settingsVM.showingFilePicker,
-                allowedContentTypes: settingsVM.filePickerContentTypes,
-                allowsMultipleSelection: false
-            ) { result in
-                settingsVM.handleFilePickerResult(result)
             }
             .onAppear {
                 // 注入共享服务并刷新回收站计数
@@ -231,12 +202,6 @@ struct ToolsView: View {
             presenting: settingsVM.alert
         ) { alert in
             switch alert {
-            case .resetConfirm:
-                Button(AppLocale.string("Reset"), role: .destructive) {
-                    settingsVM.alert = nil
-                    showingResetVerify = true
-                }
-                Button(AppLocale.string("Cancel"), role: .cancel) {}
             #if DEBUG
             case .seedConfirm:
                 Button(AppLocale.string("Generate")) {
@@ -246,7 +211,8 @@ struct ToolsView: View {
             case .seedResult:
                 Button(AppLocale.string("OK"), role: .cancel) {}
             #endif
-            case .operationResult:
+            default:
+                // 导入 / 导出 / 清除类的确认与结果弹窗已迁入「数据中心」页
                 Button(AppLocale.string("OK"), role: .cancel) {}
             }
         } message: { alert in
@@ -488,7 +454,7 @@ struct ToolsView: View {
 
     // MARK: - 数据
 
-    /// 数据操作：原「数据管理」二级页已取消，导入 / 导出留在一级，
+    /// 数据操作：原「数据管理」二级页已取消，导入 / 导出 / 清除类操作收在「数据中心」，
     /// 备份 / 恢复与 iCloud 同步收在「同步与备份」子页
     private var dataSection: some View {
         Section("Data") {
@@ -521,29 +487,15 @@ struct ToolsView: View {
             }
             .foregroundColor(.primary)
 
-            // 导入：自动识别本 app 导出的 CSV/JSON 与 Chrome CSV
-            Button {
-                settingsVM.presentImportPicker()
-            } label: {
-                if settingsVM.isImporting {
-                    dataOperationRow(title: AppLocale.string("Importing..."))
-                } else {
-                    CustomLabel(
-                        leadingIcon: "tray.and.arrow.down", leadingIconColor: .secondaryBrandColor,
-                        text: "Import")
-                }
-            }
-            .disabled(isDataOperationRunning)
-
-            // 明文导出：按分类勾选，生成 CSV / JSON，用于迁移到其他密码管理器
-            Button {
-                showingExportSheet = true
+            // 导入 / 导出 / 密码库清除 / iCloud 清除的入口都在「数据中心」子页
+            NavigationLink {
+                DataCenterView()
             } label: {
                 CustomLabel(
-                    leadingIcon: "square.and.arrow.up", leadingIconColor: .secondaryBrandColor,
-                    text: "Export")
+                    leadingIcon: "externaldrive", leadingIconColor: .secondaryBrandColor,
+                    text: "Data Center"
+                )
             }
-            .disabled(isDataOperationRunning)
 
             // iCloud 同步、加密备份与恢复的入口都在「同步与备份」子页
             NavigationLink {
@@ -561,18 +513,6 @@ struct ToolsView: View {
                         .lineLimit(1)
                 }
             }
-        }
-    }
-
-    /// 导入进行中的占位行（沿用原数据管理页的写法）
-    private func dataOperationRow(title: String) -> some View {
-        HStack(spacing: 8) {
-            ProgressView()
-                .frame(width: 24, height: 24)
-            Text(title)
-                .font(.body)
-                .foregroundColor(.primary)
-            Spacer()
         }
     }
 
@@ -677,34 +617,6 @@ struct ToolsView: View {
         }
     }
     #endif
-
-    // MARK: - 危险区
-
-    private var dangerSection: some View {
-        Section {
-            Button(
-                role: .destructive,
-                action: {
-                    settingsVM.alert = .resetConfirm
-                }
-            ) {
-                CustomLabel(
-                    leadingIcon: "trash", leadingIconColor: .errorColor,
-                    trailingIcon: "chevron.right", text: "Reset Vault / Clear Keychain"
-                )
-                .foregroundColor(.errorColor)
-            }
-        } header: {
-            Text("Danger Zone")
-                .foregroundColor(.errorColor)
-        } footer: {
-            Text(
-                AppLocale.string("Resetting will clear Keychain and local data. This action cannot be undone."
-                )
-            )
-            .padding(.bottom, 80)
-        }
-    }
 
     // MARK: - 测试库
 

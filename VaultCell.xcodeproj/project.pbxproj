@@ -21,6 +21,7 @@
 		11D2120CDA3FD6C811D58F68 /* SyncProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F8BEC91CCAD651C69C278D /* SyncProtocol.swift */; };
 		13A475796A3E1B47B9926E0E /* PasswordText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A9D6DD6658F0FACDE6FB3E /* PasswordText.swift */; };
 		14B2B63C8AB27DFC3134A138 /* SafeNotesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DB0FDE58E3083D4DA189D0 /* SafeNotesListViewModel.swift */; };
+		159016CD2F434BF351019098 /* DataCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B28C3FF22DA4ED07EC896C /* DataCenterView.swift */; };
 		18308129394C075286708B6B /* SecureBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3042163B9FD2395E17C01A41 /* SecureBuffer.swift */; };
 		18776BF70418F7F2BA529124 /* CachedIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6245B0FCF51298163934B114 /* CachedIconView.swift */; };
 		19E1EB7A6DFCE2F7F4E16E7D /* VaultListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D623305DB0D898EF2F2FDD4 /* VaultListViewModel.swift */; };
@@ -77,6 +78,7 @@
 		51C5DE66B1938C7F250CC4AE /* Bundle+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76147C2DD7B6AE040D938AFC /* Bundle+Language.swift */; };
 		53A5FD1DB4F4F369127A6AFC /* IdentityReviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C852A89A1CEBB419C8995517 /* IdentityReviewViewModel.swift */; };
 		56F0CD94AF5911ACA5B1954F /* AddPasswordTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F243442BA7E2CD2F0E7405C /* AddPasswordTitleView.swift */; };
+		57E8A07023AD861C0C6AC9F7 /* CloudVaultClearService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5E063F5478E0DE134EF1F8 /* CloudVaultClearService.swift */; };
 		598D5563F776B16DEDAD70AB /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBF3FC3292468D43F7F58C1 /* CoreDataStack.swift */; };
 		59CBC010251FFB32CA47E1A7 /* LegalDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6423EE1460E0854E77756F3 /* LegalDocumentView.swift */; };
 		5A1759A31267A8B61E88E818 /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B6BC58841DAC7BD8182028 /* EncryptionService.swift */; };
@@ -275,6 +277,7 @@
 		25EC0C7258820E9CD44C74F9 /* AddPasswordMoreDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPasswordMoreDetailView.swift; sourceTree = "<group>"; };
 		26027304D8FD5C992ED77697 /* EditPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPasswordView.swift; sourceTree = "<group>"; };
 		2973F38E870FECAE0737AD48 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		2B5E063F5478E0DE134EF1F8 /* CloudVaultClearService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudVaultClearService.swift; sourceTree = "<group>"; };
 		2CB5E9A7E67C627FBED42124 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		2DEF7464D73BC9A5E3EE5435 /* BackupPasswordViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupPasswordViews.swift; sourceTree = "<group>"; };
 		3042163B9FD2395E17C01A41 /* SecureBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureBuffer.swift; sourceTree = "<group>"; };
@@ -290,6 +293,7 @@
 		40B09540A8BC5A830DA8B537 /* NotesSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesSectionView.swift; sourceTree = "<group>"; };
 		417567D40128E7CFC134E693 /* ReusedPasswordAuditService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusedPasswordAuditService.swift; sourceTree = "<group>"; };
 		41E0C075A35A9AFEA1CFDBA7 /* PasswordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRepository.swift; sourceTree = "<group>"; };
+		42B28C3FF22DA4ED07EC896C /* DataCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCenterView.swift; sourceTree = "<group>"; };
 		4418C07F822223339CE71BFA /* SyncStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatus.swift; sourceTree = "<group>"; };
 		44191F96DC3DE6189C7C850C /* IconFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconFetcher.swift; sourceTree = "<group>"; };
 		448546D60821517C5FF564D2 /* BankcardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankcardDetailView.swift; sourceTree = "<group>"; };
@@ -487,6 +491,7 @@
 				9B20162B1BFDDF2C64685231 /* CategoryManagementView.swift */,
 				E12A3C244CDBADCA6D43197F /* ChangeMasterPasswordView.swift */,
 				3150741E27E39B2FAFD37E1B /* CloudSyncView.swift */,
+				42B28C3FF22DA4ED07EC896C /* DataCenterView.swift */,
 				D3E396FBEE5A4CEA0B2A885C /* ExportDataView.swift */,
 				67DE4DC0835142A4F9F7E5E1 /* LanguageBadge.swift */,
 				87FA332581B64B2EBDAA879B /* LanguagePickerView.swift */,
@@ -501,6 +506,7 @@
 				98215B12401B2812C76E167C /* CloudSyncError.swift */,
 				C7B11133C2C34BBF42C90222 /* CloudSyncRecords.swift */,
 				65E662606866C18EC265D34F /* CloudSyncService.swift */,
+				2B5E063F5478E0DE134EF1F8 /* CloudVaultClearService.swift */,
 				846E707E9B6FE9A21B1D1329 /* CloudVaultKeyMaterial.swift */,
 				D1A52AF2447506B43F1A40BF /* CloudVaultRestoreService.swift */,
 				700D41203DDCB511E9E3F679 /* SyncLocalStore.swift */,
@@ -1169,6 +1175,7 @@
 				83EE0262F7FF81875E295C2E /* CloudSyncRecords.swift in Sources */,
 				A6A6C1066ECC29F4E428027C /* CloudSyncService.swift in Sources */,
 				3DED21DE56F7055FBDE05E95 /* CloudSyncView.swift in Sources */,
+				57E8A07023AD861C0C6AC9F7 /* CloudVaultClearService.swift in Sources */,
 				BD86445583E72E60A417BD61 /* CloudVaultKeyMaterial.swift in Sources */,
 				FFA13C524732F6CEDE5C443B /* CloudVaultRestoreService.swift in Sources */,
 				2B2EE713740033067DC2477A /* CloudVaultRestoreView.swift in Sources */,
@@ -1179,6 +1186,7 @@
 				4CB42D4A8326932E3075E9C4 /* CredentialExchangeService.swift in Sources */,
 				9C7D68DBAC6375C2F8440B83 /* CusomLabel.swift in Sources */,
 				D69A7AF152A0481F9C185F6F /* CustomFieldSection.swift in Sources */,
+				159016CD2F434BF351019098 /* DataCenterView.swift in Sources */,
 				888EE96EF8830795DF68E0AA /* DomainKey.swift in Sources */,
 				ED8A917F7CDC372BA41A6AB1 /* EditPasswordView.swift in Sources */,
 				C2AF648D40BB28E686374E80 /* EditSafeNoteView.swift in Sources */,
