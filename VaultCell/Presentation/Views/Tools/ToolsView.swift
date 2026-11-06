@@ -160,7 +160,7 @@ struct ToolsView: View {
             .contentMargins(.bottom, 80, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(SettingsBackground())
-            .navigationTitle(AppLocale.string("Tools"))
+            .navigationTitle(AppLocale.string("Tools & Settings"))
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingChangePassword) {
                 ChangeMasterPasswordView()
