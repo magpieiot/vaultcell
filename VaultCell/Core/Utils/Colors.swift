@@ -15,12 +15,9 @@ extension Color {
             : UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.00) // #007AFF
     })
 
-    /// 副品牌色：蓝紫渐变结束色，用于渐变背景、次级强调。
-    static let secondaryBrandColor = Color(uiColor: UIColor { trait in
-        trait.userInterfaceStyle == .dark
-            ? UIColor(red: 0.50, green: 0.48, blue: 0.92, alpha: 1.00) // #807AEB
-            : UIColor(red: 0.35, green: 0.34, blue: 0.84, alpha: 1.00) // #5856D6
-    })
+    /// 品牌紫已退场：保留同名入口兼容存量引用，统一返回主蓝色。
+    /// 原先的「蓝 → 紫」渐变因此退化为纯色，界面只保留一个强调色。
+    static let secondaryBrandColor = Color.primaryBrandColor
 
     /// 安全色：用于 2FA 已启用、加密保护等安全相关提示。
     static let safetyColor = Color(uiColor: UIColor { trait in
@@ -61,9 +58,9 @@ extension Color {
 
         return Color(uiColor: UIColor { trait in
             if trait.userInterfaceStyle == .dark {
-                UIColor(hue: hue, saturation: 0.18, brightness: 0.22, alpha: 1.0)
+                UIColor(hue: hue, saturation: 0.10, brightness: 0.22, alpha: 1.0)
             } else {
-                UIColor(hue: hue, saturation: 0.25, brightness: 0.94, alpha: 1.0)
+                UIColor(hue: hue, saturation: 0.12, brightness: 0.94, alpha: 1.0)
             }
         })
     }
@@ -78,9 +75,9 @@ extension Color {
 
         return Color(uiColor: UIColor { trait in
             if trait.userInterfaceStyle == .dark {
-                UIColor(hue: hue, saturation: 0.55, brightness: 0.85, alpha: 1.0)
+                UIColor(hue: hue, saturation: 0.40, brightness: 0.85, alpha: 1.0)
             } else {
-                UIColor(hue: hue, saturation: 0.65, brightness: 0.38, alpha: 1.0)
+                UIColor(hue: hue, saturation: 0.45, brightness: 0.38, alpha: 1.0)
             }
         })
     }
@@ -96,53 +93,73 @@ extension Color {
 
 // 颜色扩展：12 对颜色对
 extension Color {
+    /// 标签色原先只有浅色固定值，深色模式下会过亮。
+    /// 按同一色相派生深色变体：背景压暗、前景提亮，保证前景在背景上仍可读。
+    private static func adaptiveTagColor(
+        _ r: CGFloat, _ g: CGFloat, _ b: CGFloat, isBackground: Bool
+    ) -> Color {
+        let light = UIColor(red: r / 255, green: g / 255, blue: b / 255, alpha: 1)
+        return Color(uiColor: UIColor { trait in
+            guard trait.userInterfaceStyle == .dark else { return light }
+            var hue: CGFloat = 0
+            var saturation: CGFloat = 0
+            var brightness: CGFloat = 0
+            var alpha: CGFloat = 0
+            light.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+            return isBackground
+                ? UIColor(hue: hue, saturation: min(saturation, 0.35), brightness: 0.22, alpha: 1)
+                : UIColor(
+                    hue: hue, saturation: min(saturation * 0.8, 0.6), brightness: 0.80, alpha: 1)
+        })
+    }
+
     // MARK: - Misty Blue 雾蓝
-    static let mistyBlueBackground = Color(red: 213/255, green: 221/255, blue: 227/255)
-    static let mistyBlueForeground = Color(red: 46/255, green: 92/255, blue: 138/255)
+    static let mistyBlueBackground = adaptiveTagColor(213, 221, 227, isBackground: true)
+    static let mistyBlueForeground = adaptiveTagColor(46, 92, 138, isBackground: false)
 
     // MARK: - Moss Green 苔藓绿
-    static let mossGreenBackground = Color(red: 216/255, green: 222/255, blue: 208/255)
-    static let mossGreenForeground = Color(red: 74/255, green: 124/255, blue: 63/255)
+    static let mossGreenBackground = adaptiveTagColor(216, 222, 208, isBackground: true)
+    static let mossGreenForeground = adaptiveTagColor(74, 124, 63, isBackground: false)
 
     // MARK: - Terracotta 陶土粉
-    static let terracottaBackground = Color(red: 232/255, green: 213/255, blue: 204/255)
-    static let terracottaForeground = Color(red: 184/255, green: 92/255, blue: 60/255)
+    static let terracottaBackground = adaptiveTagColor(232, 213, 204, isBackground: true)
+    static let terracottaForeground = adaptiveTagColor(184, 92, 60, isBackground: false)
 
     // MARK: - Twilight Gray 暮云灰
-    static let twilightGrayBackground = Color(red: 222/255, green: 222/255, blue: 224/255)
-    static let twilightGrayForeground = Color(red: 90/255, green: 90/255, blue: 110/255)
+    static let twilightGrayBackground = adaptiveTagColor(222, 222, 224, isBackground: true)
+    static let twilightGrayForeground = adaptiveTagColor(90, 90, 110, isBackground: false)
 
     // MARK: - Amber Gold 琥珀金
-    static let amberGoldBackground = Color(red: 237/255, green: 224/255, blue: 204/255)
-    static let amberGoldForeground = Color(red: 200/255, green: 146/255, blue: 10/255)
+    static let amberGoldBackground = adaptiveTagColor(237, 224, 204, isBackground: true)
+    static let amberGoldForeground = adaptiveTagColor(200, 146, 10, isBackground: false)
 
     // MARK: - Iris Purple 鸢尾紫
-    static let irisPurpleBackground = Color(red: 221/255, green: 213/255, blue: 224/255)
-    static let irisPurpleForeground = Color(red: 107/255, green: 61/255, blue: 122/255)
+    static let irisPurpleBackground = adaptiveTagColor(221, 213, 224, isBackground: true)
+    static let irisPurpleForeground = adaptiveTagColor(107, 61, 122, isBackground: false)
 
     // MARK: - Sea Mist 海雾青
-    static let seaMistBackground = Color(red: 208/255, green: 220/255, blue: 220/255)
-    static let seaMistForeground = Color(red: 42/255, green: 122/255, blue: 120/255)
+    static let seaMistBackground = adaptiveTagColor(208, 220, 220, isBackground: true)
+    static let seaMistForeground = adaptiveTagColor(42, 122, 120, isBackground: false)
 
     // MARK: - Rose Ash 玫瑰灰
-    static let roseAshBackground = Color(red: 224/255, green: 213/255, blue: 216/255)
-    static let roseAshForeground = Color(red: 168/255, green: 69/255, blue: 90/255)
+    static let roseAshBackground = adaptiveTagColor(224, 213, 216, isBackground: true)
+    static let roseAshForeground = adaptiveTagColor(168, 69, 90, isBackground: false)
 
     // MARK: - Olive Gold 橄榄黄
-    static let oliveGoldBackground = Color(red: 224/255, green: 224/255, blue: 204/255)
-    static let oliveGoldForeground = Color(red: 138/255, green: 122/255, blue: 26/255)
+    static let oliveGoldBackground = adaptiveTagColor(224, 224, 204, isBackground: true)
+    static let oliveGoldForeground = adaptiveTagColor(138, 122, 26, isBackground: false)
 
     // MARK: - Slate Blue 石板蓝
-    static let slateBlueBackground = Color(red: 210/255, green: 214/255, blue: 220/255)
-    static let slateBlueForeground = Color(red: 58/255, green: 90/255, blue: 140/255)
+    static let slateBlueBackground = adaptiveTagColor(210, 214, 220, isBackground: true)
+    static let slateBlueForeground = adaptiveTagColor(58, 90, 140, isBackground: false)
 
     // MARK: - Ochre Brown 赭石棕
-    static let ochreBrownBackground = Color(red: 226/255, green: 216/255, blue: 204/255)
-    static let ochreBrownForeground = Color(red: 138/255, green: 90/255, blue: 42/255)
+    static let ochreBrownBackground = adaptiveTagColor(226, 216, 204, isBackground: true)
+    static let ochreBrownForeground = adaptiveTagColor(138, 90, 42, isBackground: false)
 
     // MARK: - Lavender 薰衣草
-    static let lavenderBackground = Color(red: 220/255, green: 213/255, blue: 227/255)
-    static let lavenderForeground = Color(red: 106/255, green: 74/255, blue: 154/255)
+    static let lavenderBackground = adaptiveTagColor(220, 213, 227, isBackground: true)
+    static let lavenderForeground = adaptiveTagColor(106, 74, 154, isBackground: false)
 }
 
 extension Color {

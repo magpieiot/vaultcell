@@ -95,7 +95,7 @@ struct CategoryManagementView: View {
                 Text("")
             }
         }
-        .alert("Alert", isPresented: Binding(
+        .alert("Category Update", isPresented: Binding(
             get: { resultMessage != nil },
             set: { if !$0 { resultMessage = nil } })
         ) {

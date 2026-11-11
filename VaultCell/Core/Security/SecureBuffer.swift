@@ -96,7 +96,16 @@ class ClipboardService {
     private var originalContent: String?
     
     private init() {}
-    
+
+    /// 按设置里的「剪贴板自动清理」时长复制文本，并返回实际倒计时秒数（0 表示不自动清除）。
+    /// 视图层统一走这里，避免直写 UIPasteboard 绕过定时清理；返回值用于生成一致的复制反馈。
+    @discardableResult
+    func copy(_ text: String) -> TimeInterval {
+        let seconds = UserDefaults.clipboardTimeout
+        copyToClipboard(text, clearAfter: seconds)
+        return seconds
+    }
+
     func copyToClipboard(_ text: String, clearAfter seconds: TimeInterval = 60) {
         originalContent = UIPasteboard.general.string
         UIPasteboard.general.string = text

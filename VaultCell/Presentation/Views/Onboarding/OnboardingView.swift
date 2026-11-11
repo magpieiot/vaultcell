@@ -34,6 +34,8 @@ struct OnboardingView: View {
     /// 接力换场完成回调（父级据此消耗一次性接力标记）
     var onRelayFinished: (() -> Void)? = nil
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     /// 接力阶段：0=启动屏姿态（纯色底 + 居中 Logo），1=正常引导内容
     @State private var relayStage: Int
     @State private var relayScheduled: Bool = false
@@ -52,32 +54,32 @@ struct OnboardingView: View {
             title: AppLocale.string("Welcome to VaultCell"),
             subtitle: AppLocale.string("Your Pocket Password Vault"),
             description: AppLocale.string("Keep your passwords, bank cards, secure notes and verification codes in one safe place."),
-            accent: Color(red: 0.25, green: 0.60, blue: 1.00),
-            accentLight: Color(red: 0.85, green: 0.93, blue: 1.00)
+            accent: .appAccent,
+            accentLight: Color.appSurface
         ),
         OnboardingPage(
             symbol: "key.horizontal.fill",
             title: AppLocale.string("End-to-End Encryption"),
-            subtitle: AppLocale.string("Zero-Knowledge · Local First"),
-            description: AppLocale.string("AES-256-GCM authenticated encryption with Secure Enclave isolation. Your master key never touches disk."),
-            accent: Color(red: 0.30, green: 0.78, blue: 0.68),
-            accentLight: Color(red: 0.85, green: 0.96, blue: 0.93)
+            subtitle: AppLocale.string("Everything stays encrypted"),
+            description: AppLocale.string("Your passwords, cards and notes are encrypted before they are saved"),
+            accent: .appAccent,
+            accentLight: Color.appSurface
         ),
         OnboardingPage(
-            symbol: "wand.and.stars",
+            symbol: "key.fill",
             title: AppLocale.string("One-Tap Autofill & Generate"),
             subtitle: AppLocale.string("System-wide Autofill"),
             description: AppLocale.string("Autofill credentials in Safari and third-party apps, with a built-in strong password generator."),
-            accent: Color(red: 0.55, green: 0.50, blue: 0.95),
-            accentLight: Color(red: 0.92, green: 0.90, blue: 1.00)
+            accent: .appAccent,
+            accentLight: Color.appSurface
         ),
         OnboardingPage(
             symbol: "badge.checkmark.fill",
             title: AppLocale.string("Verification Codes & Security Audit"),
-            subtitle: AppLocale.string("TOTP · 2FA Health Check"),
+            subtitle: AppLocale.string("Codes and security checks"),
             description: AppLocale.string("Scan and import TOTP codes, manage two-factor authentication, and get security audit reports anytime."),
-            accent: Color(red: 0.98, green: 0.55, blue: 0.40),
-            accentLight: Color(red: 1.00, green: 0.92, blue: 0.88)
+            accent: .appAccent,
+            accentLight: Color.appSurface
         ),
     ]
 
@@ -86,7 +88,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack(alignment: .top) {
             // 动态柔和背景：随当前页强调色微微晕染
-            OnboardingBackground(accent: pages[currentIndex].accentLight)
+            OnboardingBackground()
 
             VStack(spacing: 0) {
                 // 顶部跳过按钮
@@ -117,7 +119,7 @@ struct OnboardingView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
                 // 底部控制区
-                VStack(spacing: 28) {
+                VStack(spacing: .spaceXl) {
                     OnboardingPageControl(
                         count: pages.count,
                         current: currentIndex,
@@ -192,7 +194,7 @@ struct OnboardingView: View {
         }
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: holdNanoseconds)
-            withAnimation(.easeInOut(duration: 0.5)) {
+            withAnimation(reduceMotion ? nil : .appEntrance) {
                 relayStage = 1
             }
             try? await Task.sleep(nanoseconds: 500_000_000)
@@ -201,7 +203,7 @@ struct OnboardingView: View {
     }
 
     private func complete() {
-        withAnimation(.easeInOut(duration: 0.4)) {
+        withAnimation(reduceMotion ? nil : .appEntrance) {
             onComplete()
         }
     }
@@ -216,22 +218,21 @@ private struct OnboardingPageView: View {
     @State private var iconAppeared: Bool = false
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: .spaceXl) {
             Spacer(minLength: 20)
 
             // 渐变图标
             OnboardingIcon(
                 symbol: page.symbol,
                 accent: page.accent,
-                accentLight: page.accentLight,
-                animate: isActive
+                accentLight: page.accentLight
             )
             .scaleEffect(iconAppeared ? 1.0 : 0.8)
             .opacity(iconAppeared ? 1.0 : 0.0)
 
-            VStack(spacing: 14) {
+            VStack(spacing: .spaceMd) {
                 Text(page.title)
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .font(.appTitle)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
 
@@ -269,74 +270,24 @@ private struct OnboardingPageView: View {
     }
 }
 
-// MARK: - 渐变图标
+// MARK: - 引导图标
 
 private struct OnboardingIcon: View {
     let symbol: String
     let accent: Color
     let accentLight: Color
-    let animate: Bool
-
-    @State private var floating: Bool = false
 
     var body: some View {
         ZStack {
-            // 外层柔光晕
             Circle()
-                .fill(
-                    RadialGradient(
-                        gradient: Gradient(colors: [accentLight, accentLight.opacity(0)]),
-                        center: .center,
-                        startRadius: 60,
-                        endRadius: 150
-                    )
-                )
-                .frame(width: 220, height: 220)
-                .scaleEffect(floating ? 1.05 : 0.95)
-
-            // 渐变主圆
-            Circle()
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: [accent, accent.opacity(0.82)]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+                .fill(accentLight)
                 .frame(width: 140, height: 140)
-                .shadow(color: accent.opacity(0.35), radius: 20, y: 12)
-
-            // 高光
-            Circle()
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.white.opacity(0.45), Color.white.opacity(0)]),
-                        startPoint: .top,
-                        endPoint: .center
-                    )
-                )
-                .frame(width: 140, height: 140)
-                .mask(Circle().frame(width: 140, height: 140))
 
             Image(systemName: symbol)
-                .font(.system(size: 60, weight: .semibold))
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
+                .font(.system(size: 48))
+                .foregroundStyle(accent)
         }
-        .offset(y: floating ? -6 : 6)
-        .onAppear {
-            guard animate else { return }
-            startFloating()
-        }
-        .onChange(of: animate) { _, active in
-            if active { startFloating() }
-        }
-    }
-
-    private func startFloating() {
-        withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-            floating = true
-        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -384,16 +335,9 @@ private struct OnboardingActionButton: View {
             }
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 17)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [accent, accent.opacity(0.85)]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .padding(.vertical, .spaceLg)
+            .background(accent)
             .clipShape(Capsule())
-            .shadow(color: accent.opacity(0.4), radius: 14, y: 8)
         }
         .buttonStyle(.plain)
         .animation(.easeInOut(duration: 0.25), value: isLast)
@@ -403,20 +347,9 @@ private struct OnboardingActionButton: View {
 // MARK: - 柔和背景
 
 private struct OnboardingBackground: View {
-    let accent: Color
-
     var body: some View {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(red: 0.99, green: 0.995, blue: 1.0),
-                accent.opacity(0.55),
-                accent.opacity(0.25),
-            ]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
-        .animation(.easeInOut(duration: 0.6), value: accent)
+        Color(.systemBackground)
+            .ignoresSafeArea()
     }
 }
 

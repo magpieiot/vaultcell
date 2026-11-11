@@ -11,6 +11,8 @@ import SwiftUI
 struct VaultCellApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var languageManager = AppLanguageManager.shared
+    /// 全局唯一的 Toast 中心：提升到 WindowGroup 根级，引导 / 解锁 / 主界面共用
+    @StateObject private var toastCenter = ToastCenter.shared
     /// 外观模式：设置页写入，这里应用到整棵视图树（.system 时 colorScheme 为 nil，回退系统设置）
     @AppStorage(VaultKey.appearanceMode) private var appearanceMode: AppAppearance = .system
 
@@ -23,6 +25,9 @@ struct VaultCellApp: App {
         WindowGroup {
             MainEntranceView()
                 .applyAppLanguage()
+                // Toast 提升到 WindowGroup 根级：引导 / 解锁 / 主界面共用一份反馈
+                .environmentObject(toastCenter)
+                .toastRoot(toastCenter)
                 // 外观模式在根视图统一施加：切换浅色 / 深色 / 跟随系统时整窗即时刷新
                 .preferredColorScheme(appearanceMode.colorScheme)
                 .environmentObject(appState)

@@ -70,7 +70,8 @@ struct TOTPCodeView: View {
             Spacer()
 
             Button {
-                UIPasteboard.general.string = result?.code ?? ""
+                let seconds = ClipboardService.shared.copy(result?.code ?? "")
+                ToastCenter.shared.toast = .copied(clearAfter: seconds)
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
             } label: {
@@ -92,7 +93,7 @@ struct TOTPCodeView: View {
                     .symbolColor(Color.successColor)
             } else {
                 Text("------")
-                    .font(.system(size: 28, design: .monospaced))
+                    .font(.appNumber(.title2))
                     .foregroundColor(.secondary)
             }
         }
@@ -128,11 +129,9 @@ struct TOTPCodeView: View {
     }
 
     private var ringColors: [Color] {
-        guard let result else { return [Color.primaryBrandColor] }
-        if result.remainingSeconds <= 5 {
-            return [Color.errorColor, Color.warningColor]
-        }
-        return [Color.primaryBrandColor, Color.secondaryBrandColor]
+        guard let result else { return [Color.appAccent] }
+        // 最后 5 秒用语义色提醒，其余时间保持单一强调色
+        return result.remainingSeconds <= 5 ? [Color.errorColor] : [Color.appAccent]
     }
 
     private var ringTextColor: Color {

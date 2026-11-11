@@ -54,7 +54,7 @@ struct SecurityScoreDetailView: View {
                     title: AppLocale.string("Compromised Entries"),
                     count: audit.compromisedEntriesCount,
                     countText: String(format: AppLocale.string("%lld entries"), audit.compromisedEntriesCount),
-                    detail: AppLocale.string("Breach detection is not available yet, so these entries do not affect the score right now."),
+                    detail: AppLocale.string("Breach detection is planned and isn't available yet"),
                     symbol: "flame.fill"
                 )
             )
@@ -161,25 +161,8 @@ struct SecurityScoreDetailView: View {
     private var scoreColorDeep: Color { SecurityScorePalette.deepColor(forScore: audit.vaultScore) }
 
     private var backgroundGradient: some View {
-        ZStack {
-            LinearGradient(
-                colors: [
-                    scoreColor.opacity(0.16),
-                    Color(.systemBackground),
-                    Color(.secondarySystemBackground)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            // 顶部柔和光晕，呼应 Onboarding 的 radial 氛围
-            Circle()
-                .fill(scoreColor.opacity(0.10))
-                .frame(width: 320, height: 320)
-                .blur(radius: 90)
-                .offset(y: -220)
-        }
-        .ignoresSafeArea()
+        Color(.systemBackground)
+            .ignoresSafeArea()
     }
 
     // MARK: - Hero 区域
@@ -187,13 +170,13 @@ struct SecurityScoreDetailView: View {
     /// 顶部总分卡片
     /// 展示动态环状分数、总条目数、低分条目数以及已泄露条目数。
     private var heroSection: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: .spaceXl) {
+            VStack(alignment: .leading, spacing: .spaceSm) {
                 Text("Vault health at a glance")
-                    .font(.title.bold())
-                    .fontDesign(.rounded)
+                    .font(.appTitle)
                     .foregroundColor(.primary)
 
+                // 分数不只靠颜色表意：这里给出文字评语，分数环另有数值
                 Text(heroSubtitle)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -202,13 +185,13 @@ struct SecurityScoreDetailView: View {
             }
 
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: 22) {
+                HStack(alignment: .center, spacing: .spaceXl) {
                     ScoreRingView(score: animatedScore, color: scoreColorDeep)
                         .frame(width: 128, height: 128)
                     heroMetrics
                 }
 
-                VStack(alignment: .center, spacing: 18) {
+                VStack(alignment: .center, spacing: .spaceLg) {
                     ScoreRingView(score: animatedScore, color: scoreColorDeep)
                         .frame(width: 128, height: 128)
                     heroMetrics
@@ -216,26 +199,16 @@ struct SecurityScoreDetailView: View {
                 }
             }
         }
-        .padding(22)
+        .padding(.spaceXl)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(.systemBackground),
-                            scoreColor.opacity(0.10)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
+            RoundedRectangle(cornerRadius: .radiusLg, style: .continuous)
+                .fill(Color.appSurface)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: .radiusLg, style: .continuous)
+                .stroke(Color.appHairline, lineWidth: 1)
         )
-        .shadow(color: scoreColor.opacity(0.18), radius: 16, y: 10)
     }
 
     private var heroMetrics: some View {
@@ -440,7 +413,6 @@ private struct SectionHeaderView: View {
                         )
                     )
                     .frame(width: 46, height: 46)
-                    .shadow(color: tint.opacity(0.3), radius: 8, y: 4)
 
                 Image(systemName: icon)
                     .font(.system(size: 19, weight: .semibold))
@@ -559,7 +531,6 @@ private struct RecommendationRow: View {
                         )
                     )
                     .frame(width: 30, height: 30)
-                    .shadow(color: tint.opacity(0.28), radius: 6, y: 3)
 
                 Text("\(index)")
                     .font(.subheadline.bold())
@@ -681,12 +652,6 @@ private struct ScoreRingView: View {
 
     var body: some View {
         ZStack {
-            // 外发光
-            Circle()
-                .fill(color.opacity(0.14))
-                .blur(radius: 18)
-                .padding(-10)
-
             // 轨道
             Circle()
                 .stroke(color.opacity(0.12), lineWidth: 13)
@@ -707,8 +672,7 @@ private struct ScoreRingView: View {
 
             VStack(spacing: 2) {
                 Text("\(Int(score.rounded()))")
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
-                    .monospacedDigit()
+                    .font(.appNumber(.largeTitle))
                     .foregroundColor(.primary)
                     .contentTransition(.numericText())
 

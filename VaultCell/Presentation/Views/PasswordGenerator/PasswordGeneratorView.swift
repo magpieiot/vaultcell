@@ -6,7 +6,6 @@
 /// ------------------------------------------------------------------
 
 import SwiftUI
-import UIKit
 
 struct PasswordGeneratorView: View {
     @ObservedObject var service: PasswordGeneratorService
@@ -123,7 +122,8 @@ struct PasswordGeneratorView: View {
     }
     
     private func copyPassword() {
-        UIPasteboard.general.string = service.generatedPassword
+        let seconds = ClipboardService.shared.copy(service.generatedPassword)
+        ToastCenter.shared.toast = .copied(clearAfter: seconds)
         showCopied = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

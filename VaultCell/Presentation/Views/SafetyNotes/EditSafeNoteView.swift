@@ -161,7 +161,7 @@ struct EditSafeNoteView: View {
                 Text("Deleted items are kept for 30 days, then permanently deleted.")
                     .foregroundColor(.red)
             }
-            .alert("Alert", isPresented: .constant(viewModel.errorMessage != nil)) {
+            .alert("Note Error", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("OK") { viewModel.errorMessage = nil }
             } message: {
                 Text(viewModel.errorMessage ?? "")

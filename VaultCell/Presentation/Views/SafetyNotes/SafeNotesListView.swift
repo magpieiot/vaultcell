@@ -24,13 +24,12 @@ struct SafeNotesListView: View {
         NavigationStack {
             Group {
                 if viewModel.isLoading && viewModel.notes.isEmpty {
-                    ProgressView("Loading Notes...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    AppLoadingStateView(title: "Loading Notes...")
                 } else if viewModel.notes.isEmpty {
-                    ContentUnavailableView(
-                        "No Safe Notes",
+                    AppEmptyStateView(
+                        title: "No security notes",
                         systemImage: "note.text.badge.plus",
-                        description: Text("Your encrypted notes will appear here.")
+                        description: "Your encrypted notes will appear here."
                     )
                 } else {
                     List {
@@ -42,7 +41,7 @@ struct SafeNotesListView: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("Safe Note")
+            .navigationTitle("Security notes")
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadNotes()

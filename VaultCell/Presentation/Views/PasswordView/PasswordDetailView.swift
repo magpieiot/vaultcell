@@ -601,7 +601,8 @@ struct PasswordDetailView: View {
     /// - 参数 text: 要复制的文本内容
     /// - 副作用: 设置 showingCopied 为 true，2 秒后自动恢复；触发轻量触觉反馈
     private func copyToClipboard(_ text: String) {
-        UIPasteboard.general.string = text
+        let seconds = ClipboardService.shared.copy(text)
+        ToastCenter.shared.toast = .copied(clearAfter: seconds)
         showingCopied = true
 
         // 2 秒后隐藏"已复制"标识

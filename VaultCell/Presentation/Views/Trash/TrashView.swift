@@ -29,7 +29,7 @@ struct TrashItem: Identifiable {
             case .password: return AppLocale.string("Password")
             case .pincode: return AppLocale.string("Pincode")
             case .bankcard: return AppLocale.string("BankCard")
-            case .safeNote: return AppLocale.string("Safe Note")
+            case .safeNote: return AppLocale.string("Security notes")
             }
         }
     }
@@ -75,15 +75,13 @@ struct TrashView: View {
                 }
             }
             .presentationDetents([(trashItems.isEmpty ? .medium : .large)])
-            .alert("Empty the Trash?", isPresented: $showingClearConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Empty", role: .destructive) {
-                    Task { await clearAll() }
-                }
-            } message: {
-                Text(
-                    "After emptying, all items in the Trash will be permanently deleted. This action cannot be undone."
-                )
+            .destructiveConfirmation(
+                "Empty the Trash?",
+                isPresented: $showingClearConfirmation,
+                message: "After emptying, all items in the Trash will be permanently deleted. This action cannot be undone.",
+                confirmLabel: "Empty"
+            ) {
+                Task { await clearAll() }
             }
             .task {
                 await loadTrashed()
@@ -127,20 +125,13 @@ struct TrashView: View {
     // MARK: - 视图
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "trash")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            Text("Trash is Empty")
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Text("Deleted items are kept for 30 days")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 64)
-        .listRowBackground(Color.clear)
+        AppEmptyStateView(
+            title: "Trash is Empty",
+            systemImage: "trash",
+            description: "Deleted items are kept for 30 days",
+            style: .inline
+        )
+        .padding(.vertical, 40)
     }
 
     private func trashRow(for item: TrashItem) -> some View {

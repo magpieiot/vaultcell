@@ -183,7 +183,7 @@ struct CreateNewItemView: View {
     NavigationStack {
         CreateNewItemView(
             viewModel: VaultListViewModel(referenceData: referenceData),
-            toastCenter: ToastCenter()
+            toastCenter: ToastCenter.shared
         )
     }
 }

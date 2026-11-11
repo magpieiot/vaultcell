@@ -62,13 +62,13 @@ struct ThirdPartyLoginView: View {
                     GridItem(.flexible()),
                 ], spacing: .radiusMd
             ) {
-                OAuthServiceButton(name: "Google", icon: "g.circle.fill", color: .red)
+                OAuthServiceButton(name: "Google", icon: "globe", color: .secondary)
                 OAuthServiceButton(
-                    name: "GitHub", icon: "chevron.left.forwardslash.chevron.right", color: .purple)
-                OAuthServiceButton(name: "Apple", icon: "apple.logo", color: .black)
-                OAuthServiceButton(name: "Microsoft", icon: "m.circle.fill", color: .blue)
-                OAuthServiceButton(name: "Facebook", icon: "f.circle.fill", color: .blue)
-                OAuthServiceButton(name: "Twitter", icon: "bird.fill", color: .cyan)
+                    name: "GitHub", icon: "chevron.left.forwardslash.chevron.right", color: .secondary)
+                OAuthServiceButton(name: "Apple", icon: "apple.logo", color: .secondary)
+                OAuthServiceButton(name: "Microsoft", icon: "square.grid.2x2", color: .secondary)
+                OAuthServiceButton(name: "Facebook", icon: "person.2.fill", color: .secondary)
+                OAuthServiceButton(name: "Twitter", icon: "at", color: .secondary)
             }
         }
     }
@@ -83,15 +83,15 @@ struct ThirdPartyLoginView: View {
                 ConnectedServiceRow(
                     name: "Google",
                     email: "user@gmail.com",
-                    icon: "g.circle.fill",
-                    color: .red
+                    icon: "globe",
+                    color: .secondary
                 )
 
                 ConnectedServiceRow(
                     name: "GitHub",
                     email: "username",
                     icon: "chevron.left.forwardslash.chevron.right",
-                    color: .purple
+                    color: .secondary
                 )
             }
         }

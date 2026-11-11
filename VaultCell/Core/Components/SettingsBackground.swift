@@ -13,15 +13,7 @@ import SwiftUI
 /// 因此从原设置页文件中独立出来。
 struct SettingsBackground: View {
     var body: some View {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(red: 0.99, green: 0.995, blue: 1.0),
-                Color.primaryBrandColor.opacity(0.10),
-                Color.secondaryBrandColor.opacity(0.06),
-            ]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
+        Color(.systemBackground)
+            .ignoresSafeArea()
     }
 }

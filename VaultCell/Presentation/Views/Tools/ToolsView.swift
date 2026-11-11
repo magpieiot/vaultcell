@@ -414,7 +414,7 @@ struct ToolsView: View {
             .tint(.primaryBrandColor)
         } footer: {
             Text(
-                AppLocale.string("Breach detection is not available yet, so compromised entries do not lower your score. Turn this on to list them under Security Score."
+                AppLocale.string("Breach detection is planned and isn't available yet"
                 )
             )
         }

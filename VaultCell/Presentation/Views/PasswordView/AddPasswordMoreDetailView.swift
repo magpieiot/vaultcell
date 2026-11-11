@@ -452,7 +452,7 @@ struct AddPasswordMoreDetailView: View {
                 UserContactStore.addPhoneNumber(entry.bundlePhoneNumber)
                 TagStore.addTags(entry.tags ?? [])
 
-                toastCenter.toast = ToastItem(message: "Password saved successfully", style: .success)
+                toastCenter.toast = ToastItem(message: AppLocale.string("Password saved successfully"), style: .success)
                 // 刷新列表数据（此处 service 是新实例，不会自动同步到 viewModel）
                 await viewModel.loadItems()
                 // 关闭整个新增流程，直接返回列表页

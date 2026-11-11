@@ -153,24 +153,8 @@ struct SecurityIssueEntriesView: View {
     // MARK: - 背景
 
     private var backgroundGradient: some View {
-        ZStack {
-            LinearGradient(
-                colors: [
-                    tint.opacity(0.16),
-                    Color(.systemBackground),
-                    Color(.secondarySystemBackground)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            Circle()
-                .fill(tintDeep.opacity(0.10))
-                .frame(width: 320, height: 320)
-                .blur(radius: 90)
-                .offset(y: -220)
-        }
-        .ignoresSafeArea()
+        Color(.systemBackground)
+            .ignoresSafeArea()
     }
 }
 

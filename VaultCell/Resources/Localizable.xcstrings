@@ -1,52 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Tools & Settings" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tools & Einstellungen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tools & Settings"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herramientas y ajustes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Outils et réglages"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ツールと設定"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Инструменты и настройки"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "工具与设置"
-          }
-        }
-      }
-    },
     "" : {
       "localizations" : {
         "de" : {
@@ -3045,6 +2999,7 @@
       }
     },
     "AES-256-GCM authenticated encryption with Secure Enclave isolation. Your master key never touches disk." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3137,6 +3092,7 @@
       }
     },
     "Alert" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4798,6 +4754,7 @@
       }
     },
     "Breach detection is not available yet, so compromised entries do not lower your score. Turn this on to list them under Security Score." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4844,6 +4801,7 @@
       }
     },
     "Breach detection is not available yet, so these entries do not affect the score right now." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4885,6 +4843,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "泄露检测尚未上线，因此这些条目目前不会影响评分。"
+          }
+        }
+      }
+    },
+    "Breach detection is planned and isn't available yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prüfung auf Datenlecks ist geplant und noch nicht verfügbar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Breach detection is planned and isn't available yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La detección de filtraciones está prevista y aún no está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La détection des fuites est prévue et n'est pas encore disponible"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漏えい検出は予定しており、まだ利用できません"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверка утечек запланирована и пока недоступна"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "泄露检测已在计划中，暂未开放"
           }
         }
       }
@@ -5674,6 +5678,52 @@
         }
       }
     },
+    "Category Update" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kategorie aktualisiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category Update"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización de categoría"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mise à jour de la catégorie"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カテゴリの更新"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Обновление категории"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分类更新"
+          }
+        }
+      }
+    },
     "Change Master Password" : {
       "localizations" : {
         "de" : {
@@ -5767,6 +5817,7 @@
       }
     },
     "Change these accounts one at a time. Breach detection is not available yet, so reuse is the clearest signal you have." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5808,6 +5859,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请逐个修改这些账户。泄露检测尚未上线，因此重复使用是最明确的判断依据。"
+          }
+        }
+      }
+    },
+    "Change these accounts one at a time. Breach detection is planned, so reuse is the clearest signal you have." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändern Sie diese Konten nacheinander. Die Prüfung auf Datenlecks ist geplant, daher ist die Wiederverwendung der klarste Hinweis, den Sie haben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change these accounts one at a time. Breach detection is planned, so reuse is the clearest signal you have."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia estas cuentas de una en una. La detección de filtraciones está prevista, por lo que la reutilización es la señal más clara que tienes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifiez ces comptes un par un. La détection des fuites est prévue, la réutilisation reste donc le signal le plus clair."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらのアカウントは一つずつ変更してください。漏えい検出は予定段階なので、使い回しが最も分かりやすい手がかりです。"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Меняйте эти аккаунты по одному. Проверка утечек запланирована, поэтому повторное использование — самый ясный сигнал."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逐个修改这些账户。泄露检测尚在计划中，因此密码复用是目前最明确的线索。"
           }
         }
       }
@@ -6688,6 +6785,52 @@
         }
       }
     },
+    "Codes and security checks" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codes und Sicherheitsprüfungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codes and security checks"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códigos y comprobaciones de seguridad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codes et vérifications de sécurité"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードとセキュリティチェック"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Коды и проверки безопасности"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证码与安全检查"
+          }
+        }
+      }
+    },
     "Color" : {
       "localizations" : {
         "de" : {
@@ -7329,6 +7472,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂不恢复，继续使用空密码库"
+          }
+        }
+      }
+    },
+    "Copied" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copié"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピーしました"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировано"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
+          }
+        }
+      }
+    },
+    "Copied · clipboard clears in %lld s" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert · Zwischenablage wird in %lld s gelöscht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied · clipboard clears in %lld s"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiado · el portapapeles se borrará en %lld s"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copié · le presse-papiers sera effacé dans %lld s"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コピーしました · %lld 秒後にクリップボードを消去します"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировано · буфер очистится через %lld с"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制 · 剪贴板将在 %lld 秒后清除"
           }
         }
       }
@@ -10743,6 +10978,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有检查都在本机完成，密码不会被保存、复制或上传。泄露检测尚未上线，因此不在这次检查范围内。"
+          }
+        }
+      }
+    },
+    "Everything stays encrypted" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles bleibt verschlüsselt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything stays encrypted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo permanece cifrado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout reste chiffré"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて暗号化されています"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всё остаётся зашифрованным"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有内容都保持加密"
           }
         }
       }
@@ -16607,52 +16888,6 @@
         }
       }
     },
-    "No Safe Notes" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine sicheren Notizen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Safe Notes"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin notas seguras"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune note sécurisée"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セキュアノートはありません"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Защищённых заметок нет"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "暂无安全笔记"
-          }
-        }
-      }
-    },
     "No saved account depends on this. If you still use it somewhere, add it to an entry first." : {
       "localizations" : {
         "de" : {
@@ -16787,6 +17022,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂无搜索历史"
+          }
+        }
+      }
+    },
+    "No security notes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine sicheren Notizen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No security notes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin notas seguras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune note sécurisée"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セキュアノートはありません"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Защищённых заметок нет"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无安全笔记"
           }
         }
       }
@@ -17202,6 +17483,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "笔记详情"
+          }
+        }
+      }
+    },
+    "Note Error" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehler bei der Notiz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note Error"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de la nota"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur de la note"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メモのエラー"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ошибка заметки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "笔记错误"
           }
         }
       }
@@ -19564,7 +19891,6 @@
       }
     },
     "Password saved successfully" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -23020,52 +23346,6 @@
         }
       }
     },
-    "Safe Note" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sichere Notiz"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Safe Note"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nota segura"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note sécurisée"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セキュアノート"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Защищённая заметка"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "安全笔记"
-          }
-        }
-      }
-    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -23614,6 +23894,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "安全问题"
+          }
+        }
+      }
+    },
+    "Security notes" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichere Notiz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Security notes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota segura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note sécurisée"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セキュアノート"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Защищённая заметка"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安全笔记"
           }
         }
       }
@@ -26941,6 +27267,7 @@
       }
     },
     "Tools" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -26982,6 +27309,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "工具"
+          }
+        }
+      }
+    },
+    "Tools & Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools & Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools & Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas y ajustes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outils et réglages"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールと設定"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Инструменты и настройки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具与设置"
           }
         }
       }
@@ -27079,6 +27452,7 @@
       }
     },
     "TOTP · 2FA Health Check" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27451,43 +27825,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versuchen Sie eine andere Suche oder passen Sie Ihre Filter an."
+            "value" : "Versuchen Sie eine andere Suche oder passen Sie Ihre Filter an"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try a different search or adjust your filters."
+            "value" : "Try a different search or adjust your filters"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prueba otra búsqueda o ajusta tus filtros."
+            "value" : "Prueba otra búsqueda o ajusta tus filtros"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essayez une autre recherche ou ajustez vos filtres."
+            "value" : "Essayez une autre recherche ou ajustez vos filtres"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "別の検索を試すか、フィルターを調整してください。"
+            "value" : "別の検索を試すか、フィルターを調整してください"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Попробуйте другой поиск или измените фильтры."
+            "value" : "Попробуйте другой поиск или измените фильтры"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请尝试其他搜索或调整筛选条件。"
+            "value" : "请尝试其他搜索或调整筛选条件"
           }
         }
       }
@@ -28650,43 +29024,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwenden Sie den Erstellungsablauf, um Ihren ersten Tresoreintrag hinzuzufügen."
+            "value" : "Verwenden Sie den Erstellungsablauf, um Ihren ersten Tresoreintrag hinzuzufügen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use the create flow to add your first vault item."
+            "value" : "Use the create flow to add your first vault item"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usa el flujo de creación para añadir tu primer elemento a la bóveda."
+            "value" : "Usa el flujo de creación para añadir tu primer elemento a la bóveda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilisez le parcours de création pour ajouter votre premier élément au coffre."
+            "value" : "Utilisez le parcours de création pour ajouter votre premier élément au coffre"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作成フローを使用して最初の保管庫項目を追加してください。"
+            "value" : "作成フローを使用して最初の保管庫項目を追加してください"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Используйте процесс создания, чтобы добавить первый элемент хранилища."
+            "value" : "Используйте процесс создания, чтобы добавить первый элемент хранилища"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用创建流程添加你的第一个密码库条目。"
+            "value" : "使用创建流程添加你的第一个密码库条目"
           }
         }
       }
@@ -30306,43 +30680,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihre verschlüsselten Notizen werden hier angezeigt."
+            "value" : "Ihre verschlüsselten Notizen werden hier angezeigt"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your encrypted notes will appear here."
+            "value" : "Your encrypted notes will appear here"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus notas cifradas aparecerán aquí."
+            "value" : "Tus notas cifradas aparecerán aquí"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vos notes chiffrées apparaîtront ici."
+            "value" : "Vos notes chiffrées apparaîtront ici"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暗号化されたメモがここに表示されます。"
+            "value" : "暗号化されたメモがここに表示されます"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ваши зашифрованные заметки появятся здесь."
+            "value" : "Ваши зашифрованные заметки появятся здесь"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的加密笔记将显示在此处。"
+            "value" : "你的加密笔记将显示在此处"
           }
         }
       }
@@ -30435,6 +30809,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "确认此操作需要主密码。这将清除钥匙串与本地密码库数据。"
+          }
+        }
+      }
+    },
+    "Your passwords, cards and notes are encrypted before they are saved" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passwörter, Karten und Notizen werden vor dem Speichern verschlüsselt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your passwords, cards and notes are encrypted before they are saved"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus contraseñas, tarjetas y notas se cifran antes de guardarse"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos mots de passe, cartes et notes sont chiffrés avant d'être enregistrés"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パスワード、カード、メモは保存前に暗号化されます"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пароли, карты и заметки шифруются перед сохранением"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码、卡片和笔记在保存前都会加密"
           }
         }
       }
@@ -30808,6 +31228,7 @@
       }
     },
     "Zero-Knowledge · Local First" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

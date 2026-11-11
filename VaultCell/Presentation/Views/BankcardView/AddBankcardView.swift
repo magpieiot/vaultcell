@@ -302,9 +302,18 @@ struct AddBankcardView: View {
                 Menu {
                     ForEach(BankCardNetwork.allCases, id: \.self) { network in
                         Button {
-                            appendCardNetwork(network)
+                            toggleCardNetwork(network)
                         } label: {
-                            HStack {
+                            HStack(spacing: 6) {
+                                // 未选中项不创建对号图片，避免原生菜单忽略透明度后仍显示图标
+                                if isCardNetworkSelected(network) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)
+                                        .frame(width: 14)
+                                } else {
+                                    Color.clear
+                                        .frame(width: 14, height: 1)
+                                }
                                 Circle()
                                     .fill(network.iconColor)
                                     .frame(width: 10, height: 10)
@@ -405,14 +414,27 @@ struct AddBankcardView: View {
 
     // MARK: - Helpers
 
-    private func appendCardNetwork(_ network: BankCardNetwork) {
-        var existing = formModel.cardNetworksText
+    private var cardNetworkNames: [String] {
+        formModel.cardNetworksText
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        guard !existing.contains(network.rawValue) else { return }
-        existing.append(network.rawValue)
-        formModel.cardNetworksText = existing.joined(separator: ", ")
+    }
+
+    /// 按名称解析文本中的网络，兼容大小写与首尾空白
+    private func isCardNetworkSelected(_ network: BankCardNetwork) -> Bool {
+        cardNetworkNames.contains { BankCardNetwork.from($0) == network }
+    }
+
+    /// 已选中则移除，未选中则追加；文本框中的自定义名称保持不变
+    private func toggleCardNetwork(_ network: BankCardNetwork) {
+        var names = cardNetworkNames
+        if isCardNetworkSelected(network) {
+            names.removeAll { BankCardNetwork.from($0) == network }
+        } else {
+            names.append(network.rawValue)
+        }
+        formModel.cardNetworksText = names.joined(separator: ", ")
     }
 
     private func cardTypeDisplayName(_ type: CardType) -> String {

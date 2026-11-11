@@ -277,7 +277,8 @@ struct PincodeDetailView: View {
     }
 
     private func copyToClipboard(_ text: String) {
-        UIPasteboard.general.string = text
+        let seconds = ClipboardService.shared.copy(text)
+        ToastCenter.shared.toast = .copied(clearAfter: seconds)
         showingCopied = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             showingCopied = false

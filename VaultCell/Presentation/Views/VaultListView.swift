@@ -86,7 +86,8 @@ struct VaultListView: View {
                     }
                 }
                 .onChange(of: viewModel.errorMessage) { _, newValue in
-                    showingLoadError = (newValue != nil)
+                    // 列表为空时错误由内联状态视图呈现，非空时才用弹窗提示
+                    showingLoadError = (newValue != nil) && !viewModel.items.isEmpty
                 }
                 .alert("Loading Failed", isPresented: $showingLoadError) {
                     Button("OK", role: .cancel) {
@@ -112,7 +113,12 @@ struct VaultListView: View {
     private var mainContent: some View {
         ZStack {
             if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView("Loading...")
+                AppLoadingStateView()
+            } else if let errorMessage = viewModel.errorMessage,
+                      !errorMessage.isEmpty, viewModel.items.isEmpty {
+                AppErrorStateView(message: errorMessage) {
+                    Task { await viewModel.loadItems() }
+                }
             } else if viewModel.items.isEmpty {
                 VaultEmptyStateView()
             } else {
@@ -422,30 +428,23 @@ private struct SecurityScoreBadge: View {
 
 private struct VaultEmptyStateView: View {
     var body: some View {
-        ContentUnavailableView(
-            "No Items Yet",
+        AppEmptyStateView(
+            title: "No Items Yet",
             systemImage: "tray",
-            description: Text("Use the create flow to add your first vault item.")
+            description: "Use the create flow to add your first vault item."
         )
     }
 }
 
 private struct VaultNoResultsView: View {
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
-            Text("No Matching Items")
-                .font(.title3)
-                .fontWeight(.semibold)
-            Text("Try a different search or adjust your filters.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.vertical, 40)
-        .frame(maxWidth: .infinity)
+        AppEmptyStateView(
+            title: "No Matching Items",
+            systemImage: "magnifyingglass",
+            description: "Try a different search or adjust your filters.",
+            style: .inline
+        )
+        .padding(.vertical, 24)
     }
 }
 

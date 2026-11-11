@@ -48,7 +48,8 @@ struct MainTabView: View {
     @StateObject private var referenceData: ReferenceDataService
     @StateObject private var vaultListViewModel: VaultListViewModel
     @StateObject private var twoFactorService = TwoFactorService()
-    @StateObject private var toastCenter = ToastCenter()
+    /// 与 WindowGroup 根级共用同一份 ToastCenter
+    private let toastCenter = ToastCenter.shared
     @StateObject private var safeNoteService = SafeNoteVaultService()
 
     @State private var activeTab: MainTab = .vault
@@ -127,6 +128,7 @@ struct MainTabView: View {
             NavigationStack {
                 CreateNewItemView(viewModel: vaultListViewModel, toastCenter: toastCenter)
             }
+            .toastHost()
         }
         .sheet(isPresented: $isPresentingNoteEditor) {
             EditSafeNoteView(
@@ -134,6 +136,7 @@ struct MainTabView: View {
                     service: safeNoteService
                 )
             )
+            .toastHost()
         }
         .onChange(of: isPresentingNoteEditor) { _, isPresented in
             // 编辑页关闭后刷新安全笔记列表
@@ -147,7 +150,6 @@ struct MainTabView: View {
         .environmentObject(toastCenter)
         .environmentObject(vaultListViewModel)
         .environmentObject(safeNoteService)
-        .toast($toastCenter.toast)
         .tint(.blue)
         .onAppear {
             Task {

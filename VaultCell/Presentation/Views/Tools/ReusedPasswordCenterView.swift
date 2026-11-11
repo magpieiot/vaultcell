@@ -482,7 +482,7 @@ private struct ReusedPasswordGroupDetailView: View {
     private var guidanceSection: some View {
         IdentityNote(
             icon: "lock.shield.fill",
-            text: AppLocale.string("Change these accounts one at a time. Breach detection is not available yet, so reuse is the clearest signal you have."
+            text: AppLocale.string("Change these accounts one at a time. Breach detection is planned, so reuse is the clearest signal you have."
             ),
             tint: .primaryBrandColor
         )

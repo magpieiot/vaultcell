@@ -83,7 +83,7 @@ final class VaultSetupViewModel: ObservableObject {
     /// 新增条目流程复用主列表 VM：CreateNewItemView 保存成功后置 isPresentingAddFlow = false
     /// （var 以支持 `$viewModel.listViewModel.isPresentingAddFlow` 可写绑定）
     var listViewModel: VaultListViewModel
-    var toastCenter = ToastCenter()
+    var toastCenter = ToastCenter.shared
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -359,6 +359,7 @@ struct VaultSetupView: View {
             NavigationStack {
                 CreateNewItemView(viewModel: viewModel.listViewModel, toastCenter: viewModel.toastCenter)
             }
+            .toastHost()
         }
         .onChange(of: viewModel.listViewModel.isPresentingAddFlow) { _, presented in
             guard !presented else { return }
@@ -401,7 +402,6 @@ struct VaultSetupView: View {
         } message: {
             Text(viewModel.importResultMessage ?? "")
         }
-        .toast($viewModel.toastCenter.toast)
         .onAppear {
             runEntranceAnimations()
         }
@@ -427,7 +427,7 @@ struct VaultSetupView: View {
     private var titleSection: some View {
         VStack(spacing: 10) {
             Text(AppLocale.string("Your vault is ready"))
-                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .font(.appTitle)
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
 
@@ -651,12 +651,9 @@ private struct OrbitingVaultHero: View {
     let reduceMotion: Bool
 
     @State private var appeared = false
-    @State private var floating = false
-    @State private var orbitAngle: Double = 0
     @State private var satellitesAppeared = [false, false, false, false]
 
     private let accent = Color.primaryBrandColor
-    private let accent2 = Color.secondaryBrandColor
 
     private struct Satellite: Identifiable {
         let id: Int
@@ -665,11 +662,12 @@ private struct OrbitingVaultHero: View {
         let baseAngle: Double
     }
 
+    /// 卫星只作为「四种凭据」的内容示意，颜色统一走文本次级色
     private let satellites: [Satellite] = [
-        Satellite(id: 0, symbol: "key.fill", color: Color(red: 0.25, green: 0.60, blue: 1.00), baseAngle: 0),
-        Satellite(id: 1, symbol: "creditcard.fill", color: Color(red: 0.30, green: 0.78, blue: 0.68), baseAngle: 90),
-        Satellite(id: 2, symbol: "doc.text.fill", color: Color(red: 0.55, green: 0.50, blue: 0.95), baseAngle: 180),
-        Satellite(id: 3, symbol: "wifi", color: Color(red: 0.98, green: 0.55, blue: 0.40), baseAngle: 270),
+        Satellite(id: 0, symbol: "key.fill", color: .secondary, baseAngle: 0),
+        Satellite(id: 1, symbol: "creditcard.fill", color: .secondary, baseAngle: 90),
+        Satellite(id: 2, symbol: "doc.text.fill", color: .secondary, baseAngle: 180),
+        Satellite(id: 3, symbol: "wifi", color: .secondary, baseAngle: 270),
     ]
 
     /// 椭圆轨道半径
@@ -678,52 +676,19 @@ private struct OrbitingVaultHero: View {
 
     var body: some View {
         ZStack {
-            // 中心：渐变主圆 + 柔光晕 + 顶部高光（复用 Onboarding 图标语言）
             ZStack {
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [accent.opacity(0.30), accent.opacity(0)]),
-                            center: .center,
-                            startRadius: 50,
-                            endRadius: 110
-                        )
-                    )
-                    .frame(width: 200, height: 200)
-                    .scaleEffect(floating ? 1.05 : 0.95)
-
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [accent, accent2]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(Color.appSurface)
                     .frame(width: 116, height: 116)
-                    .shadow(color: accent.opacity(0.35), radius: 18, y: 12)
-
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.white.opacity(0.45), Color.white.opacity(0)]),
-                            startPoint: .top,
-                            endPoint: .center
-                        )
-                    )
-                    .frame(width: 116, height: 116)
-                    .mask(Circle().frame(width: 116, height: 116))
 
                 Image(systemName: "lock.shield.fill")
-                    .font(.system(size: 50, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.15), radius: 3, y: 2)
+                    .font(.system(size: 48))
+                    .foregroundStyle(accent)
             }
             .scaleEffect(appeared ? 1.0 : 0.85)
             .opacity(appeared ? 1.0 : 0.0)
-            .offset(y: floating ? -5 : 5)
 
-            // 轨道卫星
+            // 四种凭据固定分布在四个象限，不再持续公转
             ForEach(satellites) { satellite in
                 satelliteView(satellite)
                     .offset(
@@ -743,21 +708,20 @@ private struct OrbitingVaultHero: View {
     private func satelliteView(_ satellite: Satellite) -> some View {
         ZStack {
             Circle()
-                .fill(Color(.systemBackground))
+                .fill(Color.appSurface)
                 .frame(width: 40, height: 40)
-                .shadow(color: satellite.color.opacity(0.35), radius: 8, y: 4)
+                .overlay(Circle().stroke(Color.appHairline, lineWidth: 1))
 
             Image(systemName: satellite.symbol)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16))
                 .foregroundColor(satellite.color)
         }
         .scaleEffect(satellitesAppeared[satellite.id] ? 1.0 : 0.01)
         .opacity(satellitesAppeared[satellite.id] ? 1.0 : 0.0)
     }
 
-    /// 卫星当前轨道角（弧度）
     private func radians(for satellite: Satellite) -> Double {
-        (orbitAngle + satellite.baseAngle) * .pi / 180
+        satellite.baseAngle * .pi / 180
     }
 
     private func startAnimations() {
@@ -769,20 +733,13 @@ private struct OrbitingVaultHero: View {
             return
         }
 
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.1)) {
+        withAnimation(.appEntrance.delay(0.1)) {
             appeared = true
         }
         for index in satellites.indices {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.65).delay(0.35 + Double(index) * 0.06)) {
+            withAnimation(.appEntrance.delay(0.15 + Double(index) * 0.04)) {
                 satellitesAppeared[index] = true
             }
-        }
-        withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
-            floating = true
-        }
-        // 慢速公转（约 22 秒一圈），线性循环保证接缝平滑
-        withAnimation(.linear(duration: 22).repeatForever(autoreverses: false)) {
-            orbitAngle = 360
         }
     }
 }
@@ -854,13 +811,7 @@ private struct SetupActionCard: View {
             switch iconStyle {
             case .gradient:
                 Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.primaryBrandColor, .secondaryBrandColor]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(Color.appAccent)
             case .tinted(let color):
                 Circle()
                     .fill(color.opacity(0.14))

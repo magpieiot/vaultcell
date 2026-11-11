@@ -114,38 +114,20 @@ struct VaultSearchView: View {
         VStack(spacing: 20) {
             Spacer().frame(height: 40)
 
-            // 渐变图标圆，复用 Onboarding 语言
+            // 空结果：中性抬起的表面 + 次级色图标
             ZStack {
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [.primaryBrandColor.opacity(0.15), .clear]),
-                            center: .center,
-                            startRadius: 40,
-                            endRadius: 100
-                        )
-                    )
-                    .frame(width: 160, height: 160)
-
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.primaryBrandColor, .secondaryBrandColor]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(Color.appSurface)
                     .frame(width: 92, height: 92)
-                    .shadow(color: .primaryBrandColor.opacity(0.3), radius: 14, y: 8)
 
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 40, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 36))
+                    .foregroundStyle(.secondary)
             }
 
             VStack(spacing: 8) {
                 Text("No Results Found")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .font(.appTitle)
                     .foregroundColor(.primary)
 
                 Text("Try a different keyword or check your spelling.")
@@ -284,16 +266,8 @@ struct VaultSearchView: View {
 
 private struct SearchBackground: View {
     var body: some View {
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(red: 0.99, green: 0.995, blue: 1.0),
-                Color.primaryBrandColor.opacity(0.08),
-                Color.secondaryBrandColor.opacity(0.05),
-            ]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
+        Color(.systemBackground)
+            .ignoresSafeArea()
     }
 }
 

@@ -41,10 +41,13 @@ struct ToolsGrid: View {
     /// 当前要跳转的工具页，nil 表示停在工具中心
     @State private var route: ToolRoute?
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-    ]
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// 常规宽度（iPad / 横屏）给三列，紧凑宽度保持两列
+    private var columns: [GridItem] {
+        let count = horizontalSizeClass == .regular ? 3 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: .spaceMd), count: count)
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
@@ -66,8 +69,8 @@ struct ToolsGrid: View {
             route = .passwordGenerator
         } label: {
             ToolCard(
-                icon: "sparkles",
-                tint: .secondaryBrandColor,
+                icon: "key.fill",
+                tint: .appAccent,
                 title: "Password Generator",
                 subtitle: "Make a strong password"
             )
@@ -139,22 +142,21 @@ struct ToolsGrid: View {
     }
 }
 
-/// 单张工具卡：渐变图标方块 + 标题 + 一行说明，图标行右侧可选红色数量徽标
+/// 单张工具卡：中性图标方块 + 标题 + 一行说明，右侧可选数量徽标
 ///
-/// 卡片底色是实色而不是材质：它下面是 `SettingsBackground` 渐变，
-/// 半透明叠在渐变上会让正文对比度掉下去（Apple：颜色要放在实心层上）。
+/// 卡片底色是实色而不是材质：半透明叠在内容上会让正文对比度掉下去。
 struct ToolCard: View {
     let icon: String
-    /// 卡片主色：图标渐变与卡片底色的光晕都取自它，一张卡一个气质
+    /// 只用于图标与数量徽标，卡片本身保持中性表面
     let tint: Color
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
     var badgeCount: Int = 0
 
-    private let cornerRadius: CGFloat = 20
+    private let cornerRadius: CGFloat = .radiusLg
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: .spaceSm) {
             HStack(alignment: .top) {
                 iconBadge
                 Spacer(minLength: 0)
@@ -163,9 +165,9 @@ struct ToolCard: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: .spaceXs) {
                 Text(title)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
@@ -179,64 +181,43 @@ struct ToolCard: View {
 
             Spacer(minLength: 0)
         }
-        .padding(12)
-        // maxHeight 让卡片底铺满黄金比例算出的高度，内容仍顶对齐
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(.spaceLg)
+        .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
         .background(cardBackground)
-        // 黄金分割：宽 : 高 = 1.618 : 1
-        .aspectRatio(1.618, contentMode: .fit)
         .contentShape(Rectangle())
     }
 
-    /// 渐变图标方块：与 `SecurityScoreDetailView` 的分区图标同一个写法
+    /// 中性抬起的图标方块，图标跟随文本角色色
     private var iconBadge: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [tint, tint.opacity(0.62)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 30, height: 30)
-                .shadow(color: tint.opacity(0.3), radius: 6, y: 3)
+            RoundedRectangle(cornerRadius: .radiusSm, style: .continuous)
+                .fill(Color.appSurface)
+                .frame(width: 32, height: 32)
 
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white)
+                .font(.system(size: 16))
+                .foregroundColor(tint)
         }
         .accessibilityHidden(true)
     }
 
-    /// 待处理数量徽标：红色是"有东西要处理"的唯一强信号，不随卡片主色变化
+    /// 待处理数量徽标：红色是"有东西要处理"的唯一强信号
     private var countBadge: some View {
         Text("\(badgeCount)")
-            .font(.system(.caption, design: .rounded, weight: .bold))
+            .font(.system(.caption, weight: .medium).monospacedDigit())
             .foregroundColor(.white)
             .padding(.horizontal, 7)
             .padding(.vertical, 3)
             .background(Capsule().fill(Color.errorColor))
     }
 
-    /// 卡片底：实色底 + 主色光晕（右下角淡染）+ 极淡描边 + 轻投影
-    ///
-    /// 投影收到 6pt：行 insets 已归零，卡片左右边缘与下方设置块齐平，
-    /// 原来的 10pt 阴影会外溢到设置块边缘之外，看起来"出框"。
     private var cardBackground: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(
-                LinearGradient(
-                    colors: [Color(.systemBackground), tint.opacity(0.14)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .fill(Color.appSurface)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                    .stroke(Color.appHairline, lineWidth: 1)
             )
-            .shadow(color: .black.opacity(0.05), radius: 6, y: 3)
     }
 }
 
