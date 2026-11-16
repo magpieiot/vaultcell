@@ -413,27 +413,20 @@ struct PrimaryActionButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: .spaceSm) {
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle(tint: .appOnAccent))
                 } else {
                     Text(title)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.appOnAccent)
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 17)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [.primaryBrandColor, .secondaryBrandColor]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .padding(.vertical, .spaceLg)
+            .background(Color.appAccent)
             .clipShape(Capsule())
-            .shadow(color: .primaryBrandColor.opacity(isEnabled ? 0.35 : 0), radius: 12, y: 8)
             .opacity(isEnabled ? 1.0 : 0.45)
         }
         .buttonStyle(.plain)

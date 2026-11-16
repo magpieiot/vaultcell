@@ -12,7 +12,7 @@ final class VaultListViewModel: ObservableObject {
     @Published var sortField: VaultSortField = .updatedAt
     @Published var sortAscending: Bool = false
 
-    /// 收藏置顶：开关在「工具 → 通用」，改动立即落盘并重排列表（默认关闭）
+    /// 收藏置顶：开关在「工具 → 通用」，改动立即落盘并重排列表（默认开启）
     @Published var pinFavoritesToTop: Bool {
         didSet {
             UserDefaults.standard.set(pinFavoritesToTop, forKey: VaultKey.pinFavoritesToTop)
@@ -42,7 +42,10 @@ final class VaultListViewModel: ObservableObject {
         self.vaultListService = vaultListService
         self.referenceData = referenceData
         self.tagSelection = TagSelectionViewModel(referenceData: referenceData)
-        self.pinFavoritesToTop = UserDefaults.standard.bool(forKey: VaultKey.pinFavoritesToTop)
+        // key 不存在时 bool(forKey:) 会返回 false；新用户默认开启，
+        // 显式关过的老用户仍以落盘的 false 为准
+        self.pinFavoritesToTop =
+            UserDefaults.standard.object(forKey: VaultKey.pinFavoritesToTop) as? Bool ?? true
 
         Task {
             await referenceData.reloadAll()

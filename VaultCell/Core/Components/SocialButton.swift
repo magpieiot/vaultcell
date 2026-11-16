@@ -127,7 +127,8 @@ struct Copy2ClipboardButton: View {
     /// 执行复制操作，图标变为 checkmark 并在延迟后恢复
     /// 复制动作由 ClipboardService 完成
     private func copyToClipboard() {
-        ClipboardService.shared.copyToClipboard(text)
+        let seconds = ClipboardService.shared.copy(text)
+        ToastCenter.shared.toast = .copied(clearAfter: seconds)
         action?()
 
         isCopied = true

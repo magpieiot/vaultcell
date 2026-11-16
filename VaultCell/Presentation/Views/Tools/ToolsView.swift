@@ -59,8 +59,9 @@ struct ToolsView: View {
     @AppStorage(VaultKey.autoLockInterval) private var autoLockInterval = 30.0
     @AppStorage(VaultKey.clipboardTimeout) private var clipboardTimeout = 60.0
     #if DEBUG
-    /// 仅开发模式提供：Release 包不暴露"列表滑动删除"开关
-    @AppStorage(VaultKey.allowSwipeDeleteInVaultList) private var allowSwipeDeleteInVaultList = true
+        /// 仅开发模式提供：Release 包不暴露"列表滑动删除"开关
+        @AppStorage(VaultKey.allowSwipeDeleteInVaultList) private var allowSwipeDeleteInVaultList =
+            true
     #endif
     /// 远程网站图标抓取开关：与 IconPreferences 读写同一个 key，默认值由地区在首启落盘一次
     @AppStorage(VaultKey.iconAutoFetch) private var iconAutoFetchEnabled = true
@@ -106,7 +107,7 @@ struct ToolsView: View {
 
     @State private var showingChangePassword = false
     #if DEBUG
-    @State private var isSeedingTestData = false
+        @State private var isSeedingTestData = false
     #endif
     @State private var showingLanguagePicker = false
     @State private var showingTrash = false
@@ -145,11 +146,11 @@ struct ToolsView: View {
                 //breachDetectionSection
                 privacySection
                 dataSection
-                aboutSection
                 autoFillSection
+                aboutSection
                 #if DEBUG
-                // 开发模式（生成测试库 / 滑动删除开关）只存在于 Debug 包
-                developmentModeSection
+                    // 开发模式（生成测试库 / 滑动删除开关）只存在于 Debug 包
+                    developmentModeSection
                 #endif
             }
             .listStyle(.insetGrouped)
@@ -203,13 +204,13 @@ struct ToolsView: View {
         ) { alert in
             switch alert {
             #if DEBUG
-            case .seedConfirm:
-                Button(AppLocale.string("Generate")) {
-                    Task { await seedTestPasswords() }
-                }
-                Button(AppLocale.string("Cancel"), role: .cancel) {}
-            case .seedResult:
-                Button(AppLocale.string("OK"), role: .cancel) {}
+                case .seedConfirm:
+                    Button(AppLocale.string("Generate")) {
+                        Task { await seedTestPasswords() }
+                    }
+                    Button(AppLocale.string("Cancel"), role: .cancel) {}
+                case .seedResult:
+                    Button(AppLocale.string("OK"), role: .cancel) {}
             #endif
             default:
                 // 导入 / 导出 / 清除类的确认与结果弹窗已迁入「数据中心」页
@@ -414,7 +415,8 @@ struct ToolsView: View {
             .tint(.primaryBrandColor)
         } footer: {
             Text(
-                AppLocale.string("Breach detection is planned and isn't available yet"
+                AppLocale.string(
+                    "Breach detection is planned and isn't available yet"
                 )
             )
         }
@@ -560,12 +562,14 @@ struct ToolsView: View {
             */
 
             // 开关直接绑定列表 ViewModel：切换后列表立即重排，落盘由 ViewModel 的 didSet 完成
+            /*
             Toggle(isOn: $viewModel.pinFavoritesToTop) {
                 CustomLabel(
                     leadingIcon: "star.fill", leadingIconColor: .secondary,
                     text: "Pin Favorites to Top")
             }
             .tint(.primaryBrandColor)
+            */
 
             NavigationLink(destination: CategoryManagementView(viewModel: viewModel)) {
                 CustomLabel(
@@ -594,144 +598,145 @@ struct ToolsView: View {
     // MARK: - 开发模式
 
     #if DEBUG
-    /// 开发模式：生成测试库与列表滑动删除开关，仅 Debug 包可见
-    /// （上架包不暴露测试数据入口，避免审核判定为半成品功能，也避免污染用户密码库）
-    private var developmentModeSection: some View {
-        Section("Development Mode") {
-            Toggle(isOn: $allowSwipeDeleteInVaultList) {
-                CustomLabel(
-                    leadingIcon: "hand.draw", leadingIconColor: .secondary,
-                    text: "Swipe to Delete in Vault List")
-            }
-            .tint(.primaryBrandColor)
+        /// 开发模式：生成测试库与列表滑动删除开关，仅 Debug 包可见
+        /// （上架包不暴露测试数据入口，避免审核判定为半成品功能，也避免污染用户密码库）
+        private var developmentModeSection: some View {
+            Section("Development Mode") {
+                Toggle(isOn: $allowSwipeDeleteInVaultList) {
+                    CustomLabel(
+                        leadingIcon: "hand.draw", leadingIconColor: .secondary,
+                        text: "Swipe to Delete in Vault List")
+                }
+                .tint(.primaryBrandColor)
 
-            Button {
-                settingsVM.alert = .seedConfirm
-            } label: {
-                CustomLabel(
-                    leadingIcon: isSeedingTestData ? "hourglass" : "sparkles.rectangle.stack",
-                    leadingIconColor: .secondaryBrandColor,
-                    text: "Generate Test Vault")
+                Button {
+                    settingsVM.alert = .seedConfirm
+                } label: {
+                    CustomLabel(
+                        leadingIcon: isSeedingTestData ? "hourglass" : "sparkles.rectangle.stack",
+                        leadingIconColor: .secondaryBrandColor,
+                        text: "Generate Test Vault")
+                }
+                .disabled(isSeedingTestData)
             }
-            .disabled(isSeedingTestData)
         }
-    }
     #endif
 
     // MARK: - 测试库
 
     #if DEBUG
-    /// 生成测试库：仅 Debug 包可用，上架包不包含该入口
-    private func seedTestPasswords() async {
-        guard !isSeedingTestData else { return }
+        /// 生成测试库：仅 Debug 包可用，上架包不包含该入口
+        private func seedTestPasswords() async {
+            guard !isSeedingTestData else { return }
 
-        if VaultTestDataSeeder.hasSeededTestVault(
-            passwords: passwordEntries,
-            alreadyGenerated: SettingsViewModel.isSeedTestVaultGenerated()
-        ) {
+            if VaultTestDataSeeder.hasSeededTestVault(
+                passwords: passwordEntries,
+                alreadyGenerated: SettingsViewModel.isSeedTestVaultGenerated()
+            ) {
+                settingsVM.alert = .seedResult(
+                    "The test vault already exists. No need to generate it again.")
+                return
+            }
+
+            isSeedingTestData = true
+            defer { isSeedingTestData = false }
+
+            let repository: PasswordRepositoryProtocol = PasswordRepository()
+            let tagRepository: TagRepositoryProtocol = TagRepository()
+
+            // 确保系统预置标签存在
+            try? await tagRepository.ensureDefaults()
+
+            let seedEntries = VaultTestDataSeeder.makeSeedEntries()
+
+            // 收集所有唯一标签名，提前创建 CDTag 实体（分配差异化颜色）
+            let allTagNames = Set(seedEntries.flatMap { $0.tags ?? [] })
+            var tagSortOrder: Int32 = Int32(viewModel.tags.count)
+            for name in allTagNames.sorted() {
+                let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { continue }
+                let existing = try? await tagRepository.fetchByName(trimmed)
+                if existing == nil {
+                    let color = tagColor(for: trimmed)
+                    try? await tagRepository.create(
+                        Tag(name: trimmed, hexColor: color, sortOrder: tagSortOrder)
+                    )
+                    tagSortOrder += 1
+                }
+            }
+
+            let existingKeys = Set(
+                passwordEntries.map { entry in
+                    SettingsViewModel.seedIdentity(
+                        siteName: entry.siteName, username: entry.username)
+                }
+            )
+
+            var insertedCount = 0
+            var skippedCount = 0
+            var seenKeys = existingKeys
+
+            for entry in seedEntries {
+                let key = SettingsViewModel.seedIdentity(
+                    siteName: entry.siteName, username: entry.username)
+                if seenKeys.contains(key) {
+                    skippedCount += 1
+                    continue
+                }
+
+                do {
+                    try await repository.save(entry)
+                    seenKeys.insert(key)
+                    insertedCount += 1
+                } catch {
+                    await viewModel.loadItems()
+                    settingsVM.alert = .seedResult(
+                        "Failed to generate test data: \(error.localizedDescription)")
+                    return
+                }
+            }
+
+            await viewModel.loadItems()
+            await viewModel.referenceData.loadTags()
+            SettingsViewModel.setSeedTestVaultGenerated(true)
+
+            // Seed pincodes
+            let pincodeRepository = PincodeRepository()
+            let seedPincodes = VaultTestDataSeeder.makeSeedPincodes()
+            var insertedPincodeCount = 0
+            for entry in seedPincodes {
+                do {
+                    try await pincodeRepository.save(entry)
+                    insertedPincodeCount += 1
+                } catch {
+                    settingsVM.alert = .seedResult(
+                        "Failed to generate pincode test data: \(error.localizedDescription)")
+                    return
+                }
+            }
+
+            // Seed bankcards
+            let bankcardRepository = BankcardRepository()
+            let seedBankcards = VaultTestDataSeeder.makeSeedBankcards()
+            var insertedBankcardCount = 0
+            for entry in seedBankcards {
+                do {
+                    try await bankcardRepository.save(entry)
+                    insertedBankcardCount += 1
+                } catch {
+                    settingsVM.alert = .seedResult(
+                        "Failed to generate bankcard test data: \(error.localizedDescription)")
+                    return
+                }
+            }
+
+            let request: NSFetchRequest<CDPasswordEntry> = CDPasswordEntry.fetchRequest()
+            let storedCount = (try? CoreDataStack.shared.viewContext.count(for: request)) ?? 0
+
             settingsVM.alert = .seedResult(
-                "The test vault already exists. No need to generate it again.")
-            return
+                "Test vault generated: \(insertedCount) passwords, \(insertedPincodeCount) pincodes, \(insertedBankcardCount) bankcards added, \(skippedCount) duplicates skipped. \(storedCount) total passwords stored locally."
+            )
         }
-
-        isSeedingTestData = true
-        defer { isSeedingTestData = false }
-
-        let repository: PasswordRepositoryProtocol = PasswordRepository()
-        let tagRepository: TagRepositoryProtocol = TagRepository()
-
-        // 确保系统预置标签存在
-        try? await tagRepository.ensureDefaults()
-
-        let seedEntries = VaultTestDataSeeder.makeSeedEntries()
-
-        // 收集所有唯一标签名，提前创建 CDTag 实体（分配差异化颜色）
-        let allTagNames = Set(seedEntries.flatMap { $0.tags ?? [] })
-        var tagSortOrder: Int32 = Int32(viewModel.tags.count)
-        for name in allTagNames.sorted() {
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { continue }
-            let existing = try? await tagRepository.fetchByName(trimmed)
-            if existing == nil {
-                let color = tagColor(for: trimmed)
-                try? await tagRepository.create(
-                    Tag(name: trimmed, hexColor: color, sortOrder: tagSortOrder)
-                )
-                tagSortOrder += 1
-            }
-        }
-
-        let existingKeys = Set(
-            passwordEntries.map { entry in
-                SettingsViewModel.seedIdentity(siteName: entry.siteName, username: entry.username)
-            }
-        )
-
-        var insertedCount = 0
-        var skippedCount = 0
-        var seenKeys = existingKeys
-
-        for entry in seedEntries {
-            let key = SettingsViewModel.seedIdentity(
-                siteName: entry.siteName, username: entry.username)
-            if seenKeys.contains(key) {
-                skippedCount += 1
-                continue
-            }
-
-            do {
-                try await repository.save(entry)
-                seenKeys.insert(key)
-                insertedCount += 1
-            } catch {
-                await viewModel.loadItems()
-                settingsVM.alert = .seedResult(
-                    "Failed to generate test data: \(error.localizedDescription)")
-                return
-            }
-        }
-
-        await viewModel.loadItems()
-        await viewModel.referenceData.loadTags()
-        SettingsViewModel.setSeedTestVaultGenerated(true)
-
-        // Seed pincodes
-        let pincodeRepository = PincodeRepository()
-        let seedPincodes = VaultTestDataSeeder.makeSeedPincodes()
-        var insertedPincodeCount = 0
-        for entry in seedPincodes {
-            do {
-                try await pincodeRepository.save(entry)
-                insertedPincodeCount += 1
-            } catch {
-                settingsVM.alert = .seedResult(
-                    "Failed to generate pincode test data: \(error.localizedDescription)")
-                return
-            }
-        }
-
-        // Seed bankcards
-        let bankcardRepository = BankcardRepository()
-        let seedBankcards = VaultTestDataSeeder.makeSeedBankcards()
-        var insertedBankcardCount = 0
-        for entry in seedBankcards {
-            do {
-                try await bankcardRepository.save(entry)
-                insertedBankcardCount += 1
-            } catch {
-                settingsVM.alert = .seedResult(
-                    "Failed to generate bankcard test data: \(error.localizedDescription)")
-                return
-            }
-        }
-
-        let request: NSFetchRequest<CDPasswordEntry> = CDPasswordEntry.fetchRequest()
-        let storedCount = (try? CoreDataStack.shared.viewContext.count(for: request)) ?? 0
-
-        settingsVM.alert = .seedResult(
-            "Test vault generated: \(insertedCount) passwords, \(insertedPincodeCount) pincodes, \(insertedBankcardCount) bankcards added, \(skippedCount) duplicates skipped. \(storedCount) total passwords stored locally."
-        )
-    }
     #endif
 
 }

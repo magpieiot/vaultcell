@@ -53,6 +53,8 @@ targets:
       - path: VaultCell/Resources/VaultCell.icon
         type: file
         buildPhase: resources
+      # 主 App 与 AutoFill 扩展共享的界面常量与设计语言
+      - path: Shared/UIDesignTokens.swift
       - path: VaultCell
         excludes:
           - "**/.DS_Store"
@@ -176,6 +178,8 @@ targets:
       # 共享主 App 的 Core Data 模型：编译为 VaultCell.momd 打进扩展 Bundle，
       # 扩展据此打开 App Group 中的同一份 SQLite（模型必须与主 App 同步升级）
       - path: VaultCell/Resources/VaultCell.xcdatamodeld
+      # 主 App 与 AutoFill 扩展共享的界面常量与设计语言
+      - path: Shared/UIDesignTokens.swift
       # 主 App 与 AutoFill 扩展共享的纯逻辑源码（注册端与匹配端必须同源）
       - path: Shared/AutoFillDomainMatcher.swift
       - path: Shared/AutoFillCredentialIdentityFactory.swift

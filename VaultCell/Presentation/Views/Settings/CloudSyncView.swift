@@ -33,14 +33,14 @@ struct CloudSyncView: View {
     /// 本次备份生成的文件名（保存面板与结果对话框共用，避免时间戳不一致）
     @State private var backupFileName = ""
 
-    /// 参考图中循环箭头的紫色
-    private let accent = Color(red: 0.65, green: 0.24, blue: 0.90)
+    /// 与主 App 保持同一个强调色
+    private let accent = Color.appAccent
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 Text("Sync & Backup")
-                    .font(.system(size: 32, weight: .heavy))
+                    .font(.appTitle)
 
                 heroCard
 

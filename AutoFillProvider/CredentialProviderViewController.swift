@@ -451,10 +451,10 @@ struct CredentialListView: View {
                     }) {
                         HStack(spacing: 12) {
                             Image(systemName: "lock.fill")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.appAccent)
                                 .frame(width: 40, height: 40)
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(8)
+                                .background(Color.appAccent.opacity(0.1))
+                                .cornerRadius(.radiusSm)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(credential.siteName)
@@ -680,7 +680,7 @@ struct SavePasswordView: View {
                 VStack(spacing: 6) {
                     Image(systemName: "lock.square.stack")
                         .font(.system(size: 40))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.appAccent)
                     Text("Save this password to VaultCell?")
                         .font(.headline)
                         .multilineTextAlignment(.center)
@@ -694,7 +694,7 @@ struct SavePasswordView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
                 .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
+                .cornerRadius(.radiusMd)
 
                 if existingEntryExists {
                     Text("An item for this site and username already exists. Its password will be updated.")

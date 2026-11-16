@@ -8,12 +8,8 @@
 import SwiftUI
 
 extension Color {
-    /// 主品牌色：蓝紫渐变起始色，用于主按钮、链接、强调态。
-    static let primaryBrandColor = Color(uiColor: UIColor { trait in
-        trait.userInterfaceStyle == .dark
-            ? UIColor(red: 0.25, green: 0.56, blue: 1.00, alpha: 1.00) // #408FFF
-            : UIColor(red: 0.00, green: 0.48, blue: 1.00, alpha: 1.00) // #007AFF
-    })
+    /// 主品牌色：统一指向共享的唯一强调色（浅色下已加深以保证白字对比度）
+    static let primaryBrandColor = Color.appAccent
 
     /// 品牌紫已退场：保留同名入口兼容存量引用，统一返回主蓝色。
     /// 原先的「蓝 → 紫」渐变因此退化为纯色，界面只保留一个强调色。
@@ -44,7 +40,7 @@ extension Color {
     static let errorColor = Color(uiColor: UIColor { trait in
         trait.userInterfaceStyle == .dark
             ? UIColor(red: 1.00, green: 0.47, blue: 0.43, alpha: 1.00) // #FF786E
-            : UIColor(red: 1.00, green: 0.23, blue: 0.19, alpha: 1.00) // #FF3B30
+            : UIColor(red: 0.78, green: 0.16, blue: 0.16, alpha: 1.00) // #C62828，白字 ≥4.5:1
     })
 }
 

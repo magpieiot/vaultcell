@@ -25,14 +25,14 @@ struct DataCenterView: View {
     @State private var showingExportSheet = false
     @State private var showingResetVerify = false
 
-    /// 参考图中盾牌的浅蓝色
-    private let accent = Color(red: 0.34, green: 0.71, blue: 0.90)
+    /// 与主 App 保持同一个强调色
+    private let accent = Color.appAccent
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 Text("Data Center")
-                    .font(.system(size: 32, weight: .heavy))
+                    .font(.appTitle)
 
                 heroCard
 

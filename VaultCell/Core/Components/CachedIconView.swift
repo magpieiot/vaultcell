@@ -105,8 +105,8 @@ private struct RemoteIconDarkPlate: ViewModifier {
         if active {
             content
                 .padding(4)
-                .background(Color(red: 0.949, green: 0.949, blue: 0.969)) // #F2F2F7
-                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .background(Color.appSurface)
+                .clipShape(RoundedRectangle(cornerRadius: .radiusSm, style: .continuous))
         } else {
             content
         }

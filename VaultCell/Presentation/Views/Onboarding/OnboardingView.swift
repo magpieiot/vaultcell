@@ -74,7 +74,7 @@ struct OnboardingView: View {
             accentLight: Color.appSurface
         ),
         OnboardingPage(
-            symbol: "badge.checkmark.fill",
+            symbol: "checkmark.shield.fill",
             title: AppLocale.string("Verification Codes & Security Audit"),
             subtitle: AppLocale.string("Codes and security checks"),
             description: AppLocale.string("Scan and import TOTP codes, manage two-factor authentication, and get security audit reports anytime."),
@@ -277,13 +277,21 @@ private struct OnboardingIcon: View {
     let accent: Color
     let accentLight: Color
 
+    /// 符号名无效时 SF Symbol 会静默返回空图，兜底成有效图标避免只剩一个空圆
+    private var icon: Image {
+        guard UIImage(systemName: symbol) != nil else {
+            return Image(systemName: "lock.shield.fill")
+        }
+        return Image(systemName: symbol)
+    }
+
     var body: some View {
         ZStack {
             Circle()
                 .fill(accentLight)
                 .frame(width: 140, height: 140)
 
-            Image(systemName: symbol)
+            icon
                 .font(.system(size: 48))
                 .foregroundStyle(accent)
         }
@@ -333,7 +341,7 @@ private struct OnboardingActionButton: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
             }
-            .foregroundColor(.white)
+            .foregroundColor(.appOnAccent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, .spaceLg)
             .background(accent)

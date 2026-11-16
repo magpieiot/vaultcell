@@ -132,5 +132,15 @@ class ClipboardService {
         }
         clearTimer?.invalidate()
         clearTimer = nil
+        originalContent = nil
+    }
+
+    /// 锁定时丢弃待清除的上下文：取消定时器、不还原原文，直接清空剪贴板。
+    /// 与 `clearClipboard()` 的区别是绝不回写复制前的内容，避免锁定后数据重新出现。
+    func discardPendingCopy() {
+        clearTimer?.invalidate()
+        clearTimer = nil
+        originalContent = nil
+        UIPasteboard.general.items = []
     }
 }

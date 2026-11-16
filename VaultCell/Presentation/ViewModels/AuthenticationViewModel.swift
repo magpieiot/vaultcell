@@ -72,7 +72,7 @@ class AuthenticationViewModel: ObservableObject {
         if newPassword.isEmpty {
             return ""
         } else if newPassword.count < 8 {
-            return "Password must be at least 8 characters"
+            return AppLocale.string("Password must be at least 8 characters")
         } else {
             return ""
         }
@@ -131,16 +131,16 @@ class AuthenticationViewModel: ObservableObject {
     func createVault() async {
         validationError = ""
         guard newPassword.count >= 8 else {
-            validationError = "Password must be at least 8 characters long"
+            validationError = AppLocale.string("Password must be at least 8 characters")
             return
         }
         guard newPassword == confirmPassword else {
-            validationError = "Passwords do not match"
-    
+            validationError = AppLocale.string("Passwords do not match")
+
             return
         }
         guard passwordStrength.rawValue >= PasswordStrength.medium.rawValue else {
-            validationError = "Password strength is too weak, please use a stronger password. "
+            validationError = AppLocale.string("Password strength is too weak")
             return
         }
         

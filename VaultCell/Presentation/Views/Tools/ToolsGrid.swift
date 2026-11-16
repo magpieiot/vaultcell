@@ -154,6 +154,9 @@ struct ToolCard: View {
     var badgeCount: Int = 0
 
     private let cornerRadius: CGFloat = .radiusLg
+    /// 大字号下让卡片高度与图标框随动态类型增长，避免文字被挤掉
+    @ScaledMetric(relativeTo: .body) private var minCardHeight: CGFloat = 128
+    @ScaledMetric(relativeTo: .body) private var iconBox: CGFloat = 32
 
     var body: some View {
         VStack(alignment: .leading, spacing: .spaceSm) {
@@ -169,20 +172,20 @@ struct ToolCard: View {
                 Text(title)
                     .font(.subheadline.weight(.medium))
                     .foregroundColor(.primary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Text(subtitle)
                     .font(.caption)
                     .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer(minLength: 0)
         }
         .padding(.spaceLg)
-        .frame(maxWidth: .infinity, minHeight: 128, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: minCardHeight, alignment: .topLeading)
         .background(cardBackground)
         .contentShape(Rectangle())
     }
@@ -192,10 +195,10 @@ struct ToolCard: View {
         ZStack {
             RoundedRectangle(cornerRadius: .radiusSm, style: .continuous)
                 .fill(Color.appSurface)
-                .frame(width: 32, height: 32)
+                .frame(width: iconBox, height: iconBox)
 
             Image(systemName: icon)
-                .font(.system(size: 16))
+                .font(.body)
                 .foregroundColor(tint)
         }
         .accessibilityHidden(true)
@@ -205,7 +208,7 @@ struct ToolCard: View {
     private var countBadge: some View {
         Text("\(badgeCount)")
             .font(.system(.caption, weight: .medium).monospacedDigit())
-            .foregroundColor(.white)
+            .foregroundColor(.appOnAccent)
             .padding(.horizontal, 7)
             .padding(.vertical, 3)
             .background(Capsule().fill(Color.errorColor))

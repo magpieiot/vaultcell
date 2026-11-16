@@ -684,8 +684,9 @@ class AppState: ObservableObject, CloudSyncStatusReporting {
     /// 清除系统剪贴板内容，并移除内存中的加密密钥，
     /// 确保锁定后敏感信息不会残留在内存或剪贴板中。
     private func clearSensitiveData() {
-        // 清空系统剪贴板
-        UIPasteboard.general.items = []
+        // 统一走剪贴板服务：取消定时清除、丢弃复制前原文并清空，
+        // 避免锁定后定时器仍把原文回写到剪贴板
+        ClipboardService.shared.discardPendingCopy()
         // 清除内存中的加密密钥
         EncryptionService.shared.clearEncryptionKey()
     }

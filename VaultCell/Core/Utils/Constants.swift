@@ -113,7 +113,7 @@ enum VaultKey {
     static let showCompromisedInScoreReasons = "vaultcell.showCompromisedInScoreReasons"
     /// 外观模式：AppAppearance 的 rawValue（0 浅色 / 1 深色 / 2 跟随系统）
     static let appearanceMode = "vaultcell.appearanceMode"
-    /// 收藏条目是否置顶显示（默认关闭，保持现有列表顺序不变）
+    /// 收藏条目是否置顶显示（默认开启，用户关闭后以落盘值为准）
     static let pinFavoritesToTop = "vaultcell.pinFavoritesToTop"
 }
 

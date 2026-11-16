@@ -61,6 +61,10 @@ class CoreDataStack {
     func newBackgroundContext() -> NSManagedObjectContext {
         let context = container.newBackgroundContext()
         context.transactionAuthor = VaultCoreDataStoreConfiguration.hostAuthor
+        // 后台 context 与 viewContext / 同步回写共用同一份存储：自动合并其它 context 的提交，
+        // 并用属性级「本地优先」策略解决乐观锁冲突，避免保存直接抛 133020「未能合并更改。」
+        context.automaticallyMergesChangesFromParent = true
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         return context
     }
 
@@ -168,7 +172,14 @@ final class CoreDataDataSource: @unchecked Sendable {
             return false
         }
         if context.hasChanges {
-            try context.save()
+            do {
+                try context.save()
+            } catch {
+                // 保存失败后必须丢弃未提交的改动：这些长期复用的 context 若留下脏对象，
+                // 后续编辑会持续失败，直到应用重启。
+                context.rollback()
+                throw error
+            }
         }
         return true
     }

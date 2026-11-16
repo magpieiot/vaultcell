@@ -54,7 +54,9 @@ struct TrashView: View {
     var body: some View {
         NavigationStack {
             List {
-                if trashItems.isEmpty && !isLoading {
+                if isLoading && trashItems.isEmpty {
+                    AppLoadingStateView()
+                } else if trashItems.isEmpty {
                     emptyState
                 } else {
                     ForEach(trashItems) { item in

@@ -96,16 +96,7 @@ struct VaultSearchView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: 16) {
-            Spacer().frame(height: 60)
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .primaryBrandColor))
-            Text("Searching...")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
+        AppLoadingStateView(title: "Searching...")
     }
 
     // MARK: - No Results
