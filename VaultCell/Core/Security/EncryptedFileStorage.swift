@@ -22,13 +22,7 @@ protocol EncryptedFileStorageProtocol {
 final class EncryptedFileStorage: EncryptedFileStorageProtocol {
     private let fileManager: FileManager
     private let encryptionService: EncryptionServiceProtocol
-    private let appGroupIdentifier: String = {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }()
+    private let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
 
     init(
         fileManager: FileManager = .default,

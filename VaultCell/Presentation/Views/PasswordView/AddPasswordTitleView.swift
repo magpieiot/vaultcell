@@ -116,9 +116,8 @@ struct AddPasswordTitleView: View {
 
         if query.isEmpty {
             // 输入为空：仅展示内置常用应用（保持原有顺序）
-            // 根据 BundleID 区分国内外版本：VaultCell → famousApps，VaultCellCn → famousAppsCn
             // 图标不在这里指定：由内置图标表按域名/标题命中，命中不了就显示字母图块
-            let builtinApps = AppEdition.isChina ? famousAppsCn : famousApps
+            let builtinApps = famousApps
             for app in builtinApps {
                 append(title: app.title, url: app.url, categoryID: app.categoryID)
             }

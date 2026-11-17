@@ -12,7 +12,7 @@ import Foundation
 ///
 /// 原本写在设置页里，随工具中心改造抽出来：这一块有三百多行纯数据构造，
 /// 混在页面代码里会让页面无法阅读。
-/// 上架包不包含该功能：整个文件以 `#if DEBUG` 隔离，Release / Release-CN 不编译，
+/// 上架包不包含该功能：整个文件以 `#if DEBUG` 隔离，Release 不编译，
 /// 包内也就没有测试数据入口（避免审核判定为半成品，也避免污染用户密码库）。
 enum VaultTestDataSeeder {
 

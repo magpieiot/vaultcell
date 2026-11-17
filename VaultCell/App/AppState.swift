@@ -589,14 +589,8 @@ class AppState: ObservableObject, CloudSyncStatusReporting {
         NotificationCenter.default.post(name: .passwordEntriesDidChange, object: nil)
     }
 
-    /// 当前构建变体对应的 App Group（与扩展侧 AutoFillCredentialStore 保持一致）
-    private static var appGroupIdentifier: String {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }
+    /// App Group（与扩展侧 AutoFillCredentialStore 保持一致）
+    private static let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
     
     /// 应用即将进入非活跃状态时的处理
     ///

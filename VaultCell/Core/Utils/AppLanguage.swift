@@ -124,14 +124,8 @@ extension AppLanguage {
         }
     }
 
-    /// 当前构建变体对应的 App Group（与扩展侧 ExtensionLanguage 保持一致）
-    private static var appGroupIdentifier: String {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }
+    /// App Group（与扩展侧 ExtensionLanguage 保持一致）
+    private static let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
 
     /// 将当前选择写入 AppleLanguages，使系统在下一次启动时也使用该语言。
     static func applyAppleLanguages() {

@@ -99,7 +99,7 @@ AutoFill: 交互路径填充成功（解锁 0.88s，合计 0.89s）
 
 ### 3.7 废弃 API 迁移
 
-`exists(for:)` 改用 `kSecUseAuthenticationContext` + `LAContext(interactionNotAllowed: true)`，语义不变（存在性检查永不弹认证 UI）。CN 构建中该警告由 2 条归零。
+`exists(for:)` 改用 `kSecUseAuthenticationContext` + `LAContext(interactionNotAllowed: true)`，语义不变（存在性检查永不弹认证 UI）。该警告由 2 条归零。
 
 ### 3.8 扩展多语言
 
@@ -131,7 +131,7 @@ AutoFill: 交互路径填充成功（解锁 0.88s，合计 0.89s）
 ## 四、验证结果
 
 - `xcodegen generate` 通过，entitlement 校验全部通过
-- Debug / Debug-CN 两个 scheme 模拟器构建均 `BUILD SUCCEEDED`，无新增诊断
+- Debug scheme 模拟器构建 `BUILD SUCCEEDED`，无新增诊断
 - 扩展产物已生成 7 个 `.lproj`（en / zh-Hans / fr / ja / de / es / ru）
 - `kSecUseAuthenticationUIFail` 废弃警告归零
 - 真机 Release 实测填充速度正常

@@ -106,14 +106,8 @@ final class AutoFillCredentialStore {
 
     private init() {}
 
-    /// 当前构建变体对应的 App Group
-    private var appGroupIdentifier: String {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }
+    /// App Group
+    private let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
 
     /// 是否已解锁（DEK 已在内存中）
     var isUnlocked: Bool {

@@ -22,14 +22,8 @@ enum ExtensionLanguage {
     /// 与主 App VaultKey.appLanguage 一致
     private static let appLanguageKey = "vaultcell.appLanguage"
 
-    /// 当前构建变体对应的 App Group（与主 App AppLanguage.persist 保持一致）
-    private static var appGroupIdentifier: String {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }
+    /// App Group（与主 App AppLanguage.persist 保持一致）
+    private static let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
 
     /// 安装 swizzle（幂等）。在扩展任一入口最先调用。
     static func activate() {

@@ -13,8 +13,6 @@ options:
 configs:
   Debug: debug
   Release: release
-  Debug-CN: debug
-  Release-CN: release
 
 settings:
   base:
@@ -24,12 +22,6 @@ settings:
     DEVELOPMENT_TEAM: T34FRBNZP8
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: "NO"
-  configs:
-    Debug-CN:
-      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
-      SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG CN
-    Release-CN:
-      SWIFT_OPTIMIZATION_LEVEL: "-O"
 
 packages:
   SnapKit:
@@ -94,16 +86,6 @@ targets:
           APS_ENVIRONMENT: development
         Release:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
-          APS_ENVIRONMENT: production
-        Debug-CN:
-          PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn
-          APP_GROUP_ID: com.magpie.vaultcell.cn.shared
-          ICLOUD_CONTAINER_ID: iCloud.com.magpie.vaultcell.cn
-          APS_ENVIRONMENT: development
-        Release-CN:
-          PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn
-          APP_GROUP_ID: com.magpie.vaultcell.cn.shared
-          ICLOUD_CONTAINER_ID: iCloud.com.magpie.vaultcell.cn
           APS_ENVIRONMENT: production
     dependencies:
       - package: SnapKit
@@ -201,14 +183,6 @@ targets:
           SWIFT_OPTIMIZATION_LEVEL: "-Onone"
         Release:
           SWIFT_OPTIMIZATION_LEVEL: "-O"
-        Debug-CN:
-          PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn.autofill
-          APP_GROUP_ID: com.magpie.vaultcell.cn.shared
-          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG CN
-        Release-CN:
-          PRODUCT_BUNDLE_IDENTIFIER: com.magpie.vaultcell.cn.autofill
-          APP_GROUP_ID: com.magpie.vaultcell.cn.shared
-          SWIFT_ACTIVE_COMPILATION_CONDITIONS: CN
     dependencies:
       # 扩展侧无 KeychainAccess 使用方（凭据读取走共享 Core Data + Security 框架），
       # AutoFillKeychainService 删除后不再链接该包
@@ -233,6 +207,8 @@ schemes:
         AutoFillProvider: all
     run:
       config: Debug
+      executable: VaultCell
+      macroExpansion: AutoFillProvider
     test:
       config: Debug
       targets:
@@ -243,20 +219,3 @@ schemes:
       config: Debug
     archive:
       config: Release
-  VaultCell-CN:
-    build:
-      targets:
-        VaultCell: all
-        AutoFillProvider: all
-    run:
-      config: Debug-CN
-    test:
-      config: Debug-CN
-      targets:
-        - VaultCellTests
-    profile:
-      config: Release-CN
-    analyze:
-      config: Debug-CN
-    archive:
-      config: Release-CN

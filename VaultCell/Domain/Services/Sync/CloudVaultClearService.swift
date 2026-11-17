@@ -7,11 +7,7 @@ import Foundation
 /// 调用方必须先关闭 iCloud 同步，否则 `CKSyncEngine` 会自动把 zone 重新建回来。
 struct CloudVaultClearService {
     func clearCloudData() async throws {
-        #if CN
-        let containerID = "iCloud.com.magpie.vaultcell.cn"
-        #else
         let containerID = "iCloud.com.magpie.vaultcell"
-        #endif
         let container = CKContainer(identifier: containerID)
         guard try await container.accountStatus() == .available else {
             throw CloudSyncError.iCloudUnavailable

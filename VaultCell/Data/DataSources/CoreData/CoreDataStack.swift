@@ -11,16 +11,9 @@ import Foundation
 class CoreDataStack {
     static let shared = CoreDataStack()
     
-    /// 当前构建变体对应的 App Group（CN 变体有独立的 bundle 与共享容器）。
-    /// 必须与 AutoFillProvider 扩展一致，否则两边打开的是不同的数据库文件
+    /// App Group，必须与 AutoFillProvider 扩展一致，否则两边打开的是不同的数据库文件
     /// （表现为扩展保存成功、主 App 永远查不到）。
-    private let appGroupIdentifier: String = {
-        #if CN
-        return "group.com.magpie.vaultcell.cn.shared"
-        #else
-        return "group.com.magpie.vaultcell.shared"
-        #endif
-    }()
+    private let appGroupIdentifier = "group.com.magpie.vaultcell.shared"
 
     /// 线程安全的容器访问
     private let lock = NSLock()

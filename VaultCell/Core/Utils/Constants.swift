@@ -7,27 +7,6 @@
 
 import Foundation
 
-enum AppEdition {
-    case global
-    case china
-
-    static let current: AppEdition = {
-        #if CN
-            return .china
-        #else
-            return .global
-        #endif
-    }()
-
-    static var isChina: Bool { current == .china }
-    static var isGlobal: Bool { current == .global }
-
-    static func fromBundleID() -> AppEdition {
-        let id = Bundle.main.bundleIdentifier ?? ""
-        return id.hasSuffix(".cn") ? .china : .global
-    }
-}
-
 enum AppStore {
     /// App Store 应用 ID（上架后替换为真实 ID）
     static let appID = "0000000000"
@@ -218,62 +197,6 @@ let famousApps: [AppTitle] = [
         categoryID: PasswordCategory.systemDefaults[5].id),
     AppTitle(
         icon: "YouTube", title: "YouTube", url: "https://www.youtube.com/",
-        categoryID: PasswordCategory.systemDefaults[5].id),
-]
-
-/// 中国版常用应用（图标来自 Assets.xcassets/ChinaAppIcon）
-let famousAppsCn: [AppTitle] = [
-    // Primary：主账号
-    AppTitle(
-        icon: "Xiaomi", title: "小米", url: "https://www.mi.com/",
-        categoryID: PasswordCategory.systemDefaults[0].id),
-    AppTitle(
-        icon: "Baidu", title: "百度", url: "https://www.baidu.com/",
-        categoryID: PasswordCategory.systemDefaults[0].id),
-    // Finance：金融财务
-    AppTitle(
-        icon: "Alipay", title: "支付宝", url: "https://www.alipay.com/",
-        categoryID: PasswordCategory.systemDefaults[2].id),
-    // Life：生活社交
-    AppTitle(
-        icon: "Wechat", title: "微信", url: "https://weixin.qq.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Weibo", title: "微博", url: "https://www.weibo.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Taobao", title: "淘宝", url: "https://www.taobao.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Tmall", title: "天猫", url: "https://www.tmall.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Jd", title: "京东", url: "https://www.jd.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Meituan", title: "美团", url: "https://www.meituan.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Ctrip", title: "携程", url: "https://www.ctrip.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Xiaohongshu", title: "小红书", url: "https://www.xiaohongshu.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    AppTitle(
-        icon: "Zhihu", title: "知乎", url: "https://www.zhihu.com/",
-        categoryID: PasswordCategory.systemDefaults[4].id),
-    // Media：影音娱乐
-    AppTitle(
-        icon: "Bilibili", title: "哔哩哔哩", url: "https://www.bilibili.com/",
-        categoryID: PasswordCategory.systemDefaults[5].id),
-    AppTitle(
-        icon: "Iqiyi", title: "爱奇艺", url: "https://www.iqiyi.com/",
-        categoryID: PasswordCategory.systemDefaults[5].id),
-    AppTitle(
-        icon: "Kuaishou", title: "快手", url: "https://www.kuaishou.com/",
-        categoryID: PasswordCategory.systemDefaults[5].id),
-    AppTitle(
-        icon: "Neteasecloud", title: "网易云音乐", url: "https://music.163.com/",
         categoryID: PasswordCategory.systemDefaults[5].id),
 ]
 

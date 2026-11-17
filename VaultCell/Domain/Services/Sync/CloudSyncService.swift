@@ -33,11 +33,7 @@ actor CloudSyncService: CKSyncEngineDelegate {
         records: CloudSyncRecords = CloudSyncRecords(),
         localStore: SyncLocalStore = .shared
     ) {
-        #if CN
-        let containerID = "iCloud.com.magpie.vaultcell.cn"
-        #else
         let containerID = "iCloud.com.magpie.vaultcell"
-        #endif
         self.container = CKContainer(identifier: containerID)
         self.database = container.privateCloudDatabase
         self.zoneID = CKRecordZone.ID(zoneName: "VaultCellZone", ownerName: CKCurrentUserDefaultName)
