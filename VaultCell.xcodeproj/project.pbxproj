@@ -339,7 +339,7 @@
 		7A3DCF3DCB871875EDEA222A /* PasswordCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCategory.swift; sourceTree = "<group>"; };
 		7A418B7DB34DFFE73311559C /* BankcardRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankcardRepository.swift; sourceTree = "<group>"; };
 		7D2F441E35DF46F4EA491151 /* VaultListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultListService.swift; sourceTree = "<group>"; };
-		7D694F828DCE5DECAEE07539 /* AutoFillProvider.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = AutoFillProvider.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D694F828DCE5DECAEE07539 /* AutoFillProvider.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AutoFillProvider.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		800FC9E8C841B2C3B9C31EA5 /* AutoFillCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFillCredentialStore.swift; sourceTree = "<group>"; };
 		807FE97ACED39ECF6AA48295 /* ReferenceDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceDataService.swift; sourceTree = "<group>"; };
 		8286921DC0021309499FECC0 /* SafeNoteVaultService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeNoteVaultService.swift; sourceTree = "<group>"; };
@@ -1404,6 +1404,10 @@
 				PRODUCT_NAME = AutoFillProvider;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1418,8 +1422,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = VaultCell/VaultCell.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2647;
 				ICLOUD_CONTAINER_ID = iCloud.com.magpie.vaultcell;
 				INFOPLIST_FILE = VaultCell/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1454,6 +1460,10 @@
 				PRODUCT_NAME = AutoFillProvider;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1546,8 +1556,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = VaultCell/VaultCell.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2647;
 				ICLOUD_CONTAINER_ID = iCloud.com.magpie.vaultcell;
 				INFOPLIST_FILE = VaultCell/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

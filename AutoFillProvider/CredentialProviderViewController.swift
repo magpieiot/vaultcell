@@ -382,12 +382,24 @@ struct CredentialListView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Select Password")
-                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Cancel") {
                             onCancel()
+                        }
+                    }
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 6) {
+                            Image("AppLogo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                                .accessibilityHidden(true)
+
+                            Text("Select Password")
+                                .font(.system(size: 17, weight: .semibold))
+                                .lineLimit(1)
                         }
                     }
                 }

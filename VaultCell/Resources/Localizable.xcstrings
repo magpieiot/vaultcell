@@ -1613,6 +1613,9 @@
         }
       }
     },
+    "%llds" : {
+
+    },
     "+%lld more issues" : {
       "localizations" : {
         "de" : {
@@ -3183,6 +3186,9 @@
           }
         }
       }
+    },
+    "All codes refresh in" : {
+
     },
     "All records already exist in your vault." : {
       "localizations" : {

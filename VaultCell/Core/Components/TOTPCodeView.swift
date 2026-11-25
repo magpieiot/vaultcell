@@ -8,7 +8,8 @@
 import SwiftUI
 
 /// TOTP 验证码显示控件
-/// 根据 TwoFactorConfig 中的密钥、算法、位数与周期实时生成验证码，并显示倒计时进度环。
+/// 根据 TwoFactorConfig 中的密钥、算法、位数与周期实时生成验证码。
+/// 默认显示倒计时进度环；列表中多个条目共用指示器时可传 `showsProgressRing: false` 关闭。
 /// 验证码按配置的 period（默认 30 秒）刷新，最后一 5 秒内进度环变红提醒。
 ///
 /// 用法：
@@ -20,13 +21,18 @@ import SwiftUI
 struct TOTPCodeView: View {
     let config: TwoFactorConfig
 
+    /// 是否显示倒计时进度环；列表中所有验证码共用一个指示器时传 false
+    var showsProgressRing: Bool = true
+
     @State private var result: TOTPResult?
     @State private var timer: Timer?
 
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             codeDisplay
-            progressRing
+            if showsProgressRing {
+                progressRing
+            }
             
             /*
             if let result {
@@ -100,43 +106,15 @@ struct TOTPCodeView: View {
     }
 
     private var progressRing: some View {
-        ZStack {
-            Circle()
-                .stroke(Color(.tertiarySystemFill), lineWidth: 4)
-
-            Circle()
-                .trim(from: 0, to: progressValue)
-                .stroke(
-                    AngularGradient(
-                        colors: ringColors,
-                        center: .center
-                    ),
-                    style: StrokeStyle(lineWidth: 4, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 0.3), value: result?.progress)
-
-            Text("\(result?.remainingSeconds ?? 0)")
-                .font(.system(.headline, design: .monospaced).bold())
-                .foregroundColor(ringTextColor)
-        }
-        .frame(width: 40, height: 40)
+        TOTPProgressRing(
+            progress: progressValue,
+            remainingSeconds: result?.remainingSeconds ?? 0
+        )
     }
 
     private var progressValue: CGFloat {
         guard let result else { return 0 }
         return 1.0 - CGFloat(result.progress)
-    }
-
-    private var ringColors: [Color] {
-        guard let result else { return [Color.appAccent] }
-        // 最后 5 秒用语义色提醒，其余时间保持单一强调色
-        return result.remainingSeconds <= 5 ? [Color.errorColor] : [Color.appAccent]
-    }
-
-    private var ringTextColor: Color {
-        guard let result else { return .secondary }
-        return result.remainingSeconds <= 5 ? Color.errorColor : .primary
     }
 
     // MARK: - 定时器
@@ -173,6 +151,50 @@ struct TOTPCodeView: View {
         }
 
         result = newResult
+    }
+}
+
+// MARK: - 可复用的倒计时进度环
+
+/// TOTP 倒计时环：既可由单条验证码使用，也可由列表顶部的共享指示器复用。
+/// - `progress`：已过去的周期比例（0 ~ 1）
+/// - `remainingSeconds`：距下次刷新的秒数；0 表示尚无有效数据
+struct TOTPProgressRing: View {
+    let progress: CGFloat
+    let remainingSeconds: Int
+    var size: CGFloat = 40
+    var lineWidth: CGFloat = 4
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color(.tertiarySystemFill), lineWidth: lineWidth)
+
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    AngularGradient(colors: ringColors, center: .center),
+                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.linear(duration: 0.3), value: progress)
+
+            Text("\(remainingSeconds)")
+                .font(.system(.headline, design: .monospaced).bold())
+                .foregroundColor(ringTextColor)
+        }
+        .frame(width: size, height: size)
+    }
+
+    private var ringColors: [Color] {
+        guard remainingSeconds > 0 else { return [Color.appAccent] }
+        // 最后 5 秒用语义色提醒，其余时间保持单一强调色
+        return remainingSeconds <= 5 ? [Color.errorColor] : [Color.appAccent]
+    }
+
+    private var ringTextColor: Color {
+        guard remainingSeconds > 0 else { return .secondary }
+        return remainingSeconds <= 5 ? Color.errorColor : .primary
     }
 }
 

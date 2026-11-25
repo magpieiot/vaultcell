@@ -36,36 +36,45 @@ struct TwoFactorListView: View {
         securityAuditService.calculate(entries: viewModel.passwordEntriesForAudit)
     }
 
+    /// 所有 TOTP 条目共用同一时间步长，取第一条配置即可；无配置时回退默认值 30 秒。
+    private var sharedTOTPPPeriod: Int {
+        totpEntries.first?.twoFactorConfigs?.first { $0.type == .totp }?.period ?? 30
+    }
+
     var body: some View {
         NavigationStack {
             Group {
                 if totpEntries.isEmpty {
                     emptyView
                 } else {
-                    List {
-                        Section {
-                            ForEach(totpEntries) { entry in
-                                Button {
-                                    viewModel.selectedDestination = .passwordDetail(entry.id)
-                                } label: {
-                                    TOTPEntryRow(
-                                        entry: entry,
-                                        category: viewModel.category(for: entry.categoryID)
-                                    )
+                    VStack(spacing: 0) {
+                        TOTPSharedProgressView(period: sharedTOTPPPeriod)
+
+                        List {
+                            Section {
+                                ForEach(totpEntries) { entry in
+                                    Button {
+                                        viewModel.selectedDestination = .passwordDetail(entry.id)
+                                    } label: {
+                                        TOTPEntryRow(
+                                            entry: entry,
+                                            category: viewModel.category(for: entry.categoryID)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
+                            }
+
+                            // 底部空行，避免最后一条记录被 CustomTabBar 遮挡
+                            Section {
+                                Color.clear
+                                    .frame(height: 60)
+                                    .listRowSeparator(.hidden)
+                                    .listRowBackground(Color.clear)
                             }
                         }
-
-                        // 底部空行，避免最后一条记录被 CustomTabBar 遮挡
-                        Section {
-                            Color.clear
-                                .frame(height: 60)
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                        }
+                        .listStyle(.plain)
                     }
-                    .listStyle(.plain)
                 }
             }
             .navigationTitle("TOTP")
@@ -100,6 +109,55 @@ struct TwoFactorListView: View {
     }
 }
 
+// MARK: - 共享 TOTP 刷新指示器
+
+/// 所有验证码按同一周期刷新，用一个顶部线性指示器替代每行重复的倒计时环。
+private struct TOTPSharedProgressView: View {
+    let period: Int
+
+    var body: some View {
+        TimelineView(.animation) { context in
+            let step = TOTPService.shared.currentTimeStep(period: period, at: context.date)
+
+            VStack(spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Spacer(minLength: 0)
+                    Text("All codes refresh in")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text("\(step.remainingSeconds)s")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .monospacedDigit()
+                        .foregroundStyle(progressColor(for: step.remainingSeconds))
+                    //Spacer(minLength: 0)
+                }
+
+                GeometryReader { proxy in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color(.tertiarySystemFill))
+                        Capsule()
+                            .fill(progressColor(for: step.remainingSeconds))
+                            .frame(width: proxy.size.width * CGFloat(1 - step.progress))
+                    }
+                }
+                .frame(height: 3)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .background(Color(.systemBackground))
+    }
+
+    /// 剩余时间的强调色，进度条与秒数共用；最后 5 秒切换为语义色提醒。
+    private func progressColor(for remainingSeconds: Int) -> Color {
+        remainingSeconds > 0 && remainingSeconds <= 5
+            ? Color.errorColor
+            : Color.appAccent
+    }
+}
+
 // MARK: - 单条 TOTP 记录行
 
 struct TOTPEntryRow: View {
@@ -129,7 +187,7 @@ struct TOTPEntryRow: View {
             .layoutPriority(0)
 
             if let config = totpConfig {
-                TOTPCodeView(config: config)
+                TOTPCodeView(config: config, showsProgressRing: false)
                     .fixedSize(horizontal: true, vertical: false)
                     .layoutPriority(1)
             }

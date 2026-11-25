@@ -71,10 +71,29 @@ final class TOTPService {
         let now = Int(Date().timeIntervalSince1970)
         let counter = now / config.period
         let code = generate(at: UInt64(counter), config: config)
-        let elapsed = now % config.period
-        let remaining = config.period - elapsed
-        let progress = Double(elapsed) / Double(config.period)
-        return TOTPResult(code: code, remainingSeconds: remaining, progress: progress)
+        // 验证码按 RFC 6238 的整秒计数器生成；进度沿用同一整秒基准，行为保持不变。
+        let step = timeStep(at: Double(now), period: config.period)
+        return TOTPResult(code: code, remainingSeconds: step.remainingSeconds, progress: step.progress)
+    }
+
+    /// 当前时间步的剩余秒数与已过去进度。
+    /// 供页面上的共享进度条使用；传入逐帧更新的 `date` 可让进度连续平滑推进。
+    /// 与 `generate(config:)` 共用同一时间基准，保证验证码切换与进度归零同步。
+    func currentTimeStep(
+        period: Int,
+        at date: Date = Date()
+    ) -> (remainingSeconds: Int, progress: Double) {
+        timeStep(at: date.timeIntervalSince1970, period: period)
+    }
+
+    /// 计算给定时间戳在周期内的剩余秒数与进度，保留亚秒精度，防御 period <= 0。
+    private func timeStep(
+        at timestamp: TimeInterval,
+        period: Int
+    ) -> (remainingSeconds: Int, progress: Double) {
+        let safePeriod = Double(max(1, period))
+        let elapsed = timestamp.truncatingRemainder(dividingBy: safePeriod)
+        return (Int(ceil(safePeriod - elapsed)), elapsed / safePeriod)
     }
 
     /// 生成指定时间步的 TOTP 验证码
